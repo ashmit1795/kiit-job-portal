@@ -5,7 +5,6 @@ export default function errorHandler(err, req, res, next) {
 	const statusCode = err.statusCode || 500;
 	const isOperational = err.isOperational || false;
 
-	// Log full error details
 	logger.error("Request failed", {
 		method: req.method,
 		url: req.originalUrl,
@@ -14,13 +13,17 @@ export default function errorHandler(err, req, res, next) {
 		stack: err.stack,
 	});
 
-	// Response payload
+	let message = "Internal Server Error";
+
+	if (isOperational) {
+		message = err.message;
+	}
+
 	const response = {
 		success: false,
-		message: statusCode === 500 && !isOperational ? "Internal Server Error" : err.message,
+		message,
 	};
 
-	// Include stack trace only in development
 	if (env.NODE_ENV !== "production") {
 		response.stack = err.stack;
 	}
