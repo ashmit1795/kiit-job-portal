@@ -1,3 +1,4 @@
+import AppResponse from "../../utils/AppResponse.js";
 import healthService from "./health.service.js";
 
 class HealthController {
@@ -6,7 +7,12 @@ class HealthController {
 	async check (req, res, next) {
 		try {
 			const data = await healthService.getStatus();
-			res.status(200).json(data);
+			return new AppResponse({
+				message: "Health check successful",
+				data,
+				statusCode: 200,
+				success: true,
+			}).send(res);
 		} catch (error) {
 			next(error);
 		}
