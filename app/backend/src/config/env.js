@@ -7,7 +7,7 @@ class Env {
 		this.PORT = process.env.PORT || 5000;
 		this.NODE_ENV = process.env.NODE_ENV || "development";
 		this.SUPABASE_URL = process.env.SUPABASE_URL;
-		this.SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+		this.SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 
 		this.validate();
 	}
@@ -17,8 +17,8 @@ class Env {
 			console.warn("⚠️ SUPABASE_URL not set");
 		}
 
-		if (!this.SUPABASE_ANON_KEY) {
-			console.warn("⚠️ SUPABASE_ANON_KEY not set");
+		if (!this.SUPABASE_SECRET_KEY) {
+			console.warn("⚠️ SUPABASE_SECRET_KEY not set");
 		}
 	}
 }
