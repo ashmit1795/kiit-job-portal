@@ -18,8 +18,10 @@ export default async function authenticate(req, res, next) {
 		}
 
 		// Domain restriction
-		if (!data.user.email.endsWith("@kiit.ac.in")) {
-			throw new AppError("Unauthorized domain", 403);
+		const email = data.user.email;
+
+		if (!/^\d+@kiit\.ac\.in$/.test(email)) {
+			throw new AppError("Unauthorized KIIT email format", 403);
 		}
 
 		req.user = data.user;
