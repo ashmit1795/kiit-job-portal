@@ -5,7 +5,7 @@ class HealthService {
 
 	async getStatus() {
 		const dbStatus = await healthRepository.checkConnection();
-
+		
 		return {
 			status: "API running",
 			database: dbStatus ? "connected" : "disconnected",
