@@ -1,12 +1,27 @@
 import { Router } from "express";
-import healthRoute from "../modules/health/health.route.js";
-import profileRoute from "../modules/users/profile.route.js";
+import authenticate from "../middlewares/auth.middleware.js";
+import profileGuard from "../middlewares/profileGuard.middleware.js";
+
 import authRoute from "../modules/users/auth.route.js";
+import profileRoute from "../modules/users/profile.route.js";
+import healthRoute from "../modules/health/health.route.js";
 
 const router = Router();
 
+// Public routes (if any in future)
+
+// Health check route (public)
 router.use("/health", healthRoute);
-router.use("/profile", profileRoute);
-router.use("/auth", authRoute);
+
+// Auth route (needs authentication but no profile guard)
+router.use("/auth", authenticate, authRoute);
+
+// Profile route (needs authentication but not profile guard)
+router.use("/profile", authenticate, profileRoute);
+
+// Apply authentication + profile guard globally for protected routes
+router.use(authenticate, profileGuard);
+
+
 
 export default router;
