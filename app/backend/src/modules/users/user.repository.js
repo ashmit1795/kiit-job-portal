@@ -3,9 +3,37 @@ import logger from "../../utils/logger.js";
 
 class UserRepository {
 	async findById(userId) {
-		const { data, error } = await supabase.schema("placement").from("users").select("*").eq("id", userId).single();
+		const { data, error } = await supabase
+			.schema("placement")
+			.from("users")
+			.select(
+				`
+					id,
+					email,
+					roll_number,
+					role,
+					profile_completed,
+					cgpa,
+					branch:branches (
+						id,
+						name,
+						code,
+						program:programs (
+						id,
+						name,
+						level,
+						duration_years
+						)
+					),
+					batch:batches (
+						id,
+						year
+					)
+				`,
+			)
+			.eq("id", userId)
+			.single();
 
-		// PGRST116 = no rows found
 		if (error && error.code !== "PGRST116") {
 			logger.error("Error fetching user by ID", {
 				userId,
@@ -46,7 +74,37 @@ class UserRepository {
 	}
 
 	async findByEmail(email) {
-		const { data, error } = await supabase.schema("placement").from("users").select("*").eq("email", email).single();
+		const { data, error } = await supabase
+			.schema("placement")
+			.from("users")
+			.select(
+				`
+					id,
+					email,
+					roll_number,
+					role,
+					profile_completed,
+					cgpa,
+					branch:branches (
+						id,
+						name,
+						code,
+						program:programs (
+						id,
+						name,
+						level,
+						duration_years
+						)
+					),
+					batch:batches (
+						id,
+						year
+					)
+				`,
+			)
+			.eq("id", userId)
+			.single();
+		
 		// PGRST116 = no rows found
 		if (error && error.code !== "PGRST116") {
 			logger.error("Error fetching user by email", {
@@ -55,7 +113,7 @@ class UserRepository {
 			});
 			throw error;
 		}
-		
+
 		return data;
 	}
 }
