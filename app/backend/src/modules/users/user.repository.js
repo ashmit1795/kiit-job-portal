@@ -102,7 +102,7 @@ class UserRepository {
 					)
 				`,
 			)
-			.eq("id", userId)
+			.eq("email", email)
 			.single();
 		
 		// PGRST116 = no rows found
