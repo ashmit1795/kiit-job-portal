@@ -44,6 +44,20 @@ class UserRepository {
 
 		return data;
 	}
+
+	async findByEmail(email) {
+		const { data, error } = await supabase.schema("placement").from("users").select("*").eq("email", email).single();
+		// PGRST116 = no rows found
+		if (error && error.code !== "PGRST116") {
+			logger.error("Error fetching user by email", {
+				email,
+				message: error.message,
+			});
+			throw error;
+		}
+		
+		return data;
+	}
 }
 
 export default new UserRepository();
