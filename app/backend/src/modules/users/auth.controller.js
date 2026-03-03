@@ -11,7 +11,7 @@ class AuthController {
 				email: user.email,
 				roll_number: user.roll_number,
 				role: user.role,
-				profile_completed: user.profile_completed,
+                profile_completed: user.profile_completed
 			};
 
 			return new AppResponse({
