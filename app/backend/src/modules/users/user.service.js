@@ -1,5 +1,6 @@
 import userRepository from "./user.repository.js";
 import AppError from "../../utils/AppError.js";
+import env from "../../config/env.js";
 
 class UserService {
 	extractRollNumber(email) {
@@ -21,7 +22,7 @@ class UserService {
 			let role = "student";
 
 			// Bootstrap admin only in non-production
-			if (env.NODE_ENV !== "production" && env.ADMIN_EMAILS.includes(email)) {
+			if (env.NODE_ENV !== "production" && env.ADMIN_EMAILS.includes(supabaseUser.email)) {
 				role = "admin";
 			}
 
