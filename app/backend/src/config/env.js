@@ -9,6 +9,8 @@ class Env {
 		this.SUPABASE_URL = process.env.SUPABASE_URL;
 		this.SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 
+		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
+
 		this.validate();
 	}
 
