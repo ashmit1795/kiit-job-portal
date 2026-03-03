@@ -18,6 +18,7 @@ export default function errorHandler(err, req, res, next) {
 	let message = err.message || "An error occurred";
 
 	if (!isOperational) {
+		statusCode = 500;
 		message = "An unexpected error occurred. Please try again later.";
 	}
 
