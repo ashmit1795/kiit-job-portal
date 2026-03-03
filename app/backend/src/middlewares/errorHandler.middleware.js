@@ -15,7 +15,7 @@ export default function errorHandler(err, req, res, next) {
 		stack: err.stack,
 	});
 
-	let message;
+	let message = err.message || "An error occurred";
 
 	if (!isOperational) {
 		message = "An unexpected error occurred. Please try again later.";
