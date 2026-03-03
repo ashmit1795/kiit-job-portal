@@ -3,7 +3,7 @@ import env from "../config/env.js";
 
 export default function errorHandler(err, req, res, next) {
 	const statusCode = err.statusCode || 500;
-	const isOperational = err.isOperational || false;
+	const isOperational = err.isOperational || true;
 
 	logger.error("Request failed", {
 		method: req.method,
