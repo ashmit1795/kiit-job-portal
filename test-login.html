@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Supabase Login Test</title>
+	</head>
+	<body>
+		<button id="login">Login with Google</button>
+
+		<script type="module">
+			import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+			const supabase = createClient("https://goocnepzxrpxcugnkhmd.supabase.co/", "sb_publishable_K6jWeLTAgsgX-r1RXKi0jQ_2evdBys3");
+
+			document.getElementById("login").onclick = async () => {
+				await supabase.auth.signInWithOAuth({
+					provider: "google",
+				});
+			};
+
+			window.getToken = async () => {
+				const { data } = await supabase.auth.getSession();
+				console.log("Access Token:", data.session.access_token);
+			};
+		</script>
+	</body>
+</html>

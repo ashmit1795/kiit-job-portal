@@ -3,6 +3,7 @@ import AppError from "../utils/AppError.js";
 import userRepository from "../modules/users/user.repository.js";
 import env from "../config/env.js";
 import logger from "../utils/logger.js";
+import crypto from "crypto";
 
 export default async function authenticate(req, res, next) {
 	try {
