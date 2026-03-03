@@ -18,7 +18,8 @@ export const validate = (schema, source = "body") => {
 					new AppError(
 						formattedErrors.map((e) => `${e.message}`).join(", "),
 						400,
-						true
+						true,
+						formattedErrors, // optional extra metadata
 					),
 				);
 			}
