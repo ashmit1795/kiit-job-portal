@@ -16,7 +16,7 @@ export const validate = (schema, source = "body") => {
 
 				return next(
 					new AppError(
-						formattedErrors.map((e) => `${e.field}: ${e.message}`).join(", "),
+						formattedErrors.map((e) => `${e.message}`).join(", "),
 						400,
 						true
 					),
