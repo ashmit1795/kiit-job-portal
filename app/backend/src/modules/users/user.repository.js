@@ -1,5 +1,5 @@
 import supabase from "../../config/supabase.js";
-import logger from "../../utils/logger.js";
+import mapSupabaseError from "../../utils/mapSupabaseError.js";
 
 class UserRepository {
 	async findById(userId) {
@@ -34,12 +34,9 @@ class UserRepository {
 			.eq("id", userId)
 			.single();
 
-		if (error && error.code !== "PGRST116") {
-			logger.error("Error fetching user by ID", {
-				userId,
-				message: error.message,
-			});
-			throw error;
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
 		}
 
 		return data;
@@ -49,13 +46,9 @@ class UserRepository {
 		const { data, error } = await supabase.schema("placement").from("users").insert(userData).select().single();
 
 		if (error) {
-			logger.error("Error creating user", {
-				message: error.message,
-				userData,
-			});
-			throw error;
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
 		}
-
 		return data;
 	}
 
@@ -63,11 +56,8 @@ class UserRepository {
 		const { data, error } = await supabase.schema("placement").from("users").update(updates).eq("id", userId).select().single();
 
 		if (error) {
-			logger.error("Error updating user", {
-				userId,
-				message: error.message,
-			});
-			throw error;
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
 		}
 
 		return data;
@@ -105,13 +95,9 @@ class UserRepository {
 			.eq("email", email)
 			.single();
 		
-		// PGRST116 = no rows found
-		if (error && error.code !== "PGRST116") {
-			logger.error("Error fetching user by email", {
-				email,
-				message: error.message,
-			});
-			throw error;
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
 		}
 
 		return data;
