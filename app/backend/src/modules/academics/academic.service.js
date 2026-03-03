@@ -1,3 +1,4 @@
+import AppError from "../../utils/AppError.js";
 import academicRepository from "./academic.repository.js";
 
 class AcademicService {
@@ -17,7 +18,9 @@ class AcademicService {
 		return academicRepository.createProgram(payload);
 	}
 
-	async createBranch(payload) {
+    async createBranch(payload) {
+        const program = await academicRepository.findProgramById(payload.program_id);
+		if (!program) throw new AppError("Program not found", 404);
 		return academicRepository.createBranch(payload);
 	}
 
