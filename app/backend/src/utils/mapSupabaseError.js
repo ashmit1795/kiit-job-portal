@@ -1,5 +1,10 @@
 import AppError from "./AppError.js";
 
+/**
+ * Maps Supabase error objects to standardized AppError instances for consistent error handling.
+ * @param {Object} error - The error object returned by Supabase operations.
+ * @return {AppError|null} - An instance of AppError with a standardized message and status code, or null if the error cannot be mapped.
+ */
 export default function mapSupabaseError(error) {
 	if (!error?.code) return null;
 
