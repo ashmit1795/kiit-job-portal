@@ -3,9 +3,9 @@ import env from "../config/env.js";
 import AppError from "../utils/AppError.js";
 
 export default function errorHandler(err, req, res, next) {
-	const statusCode = err.statusCode || 500;
-	const isOperational = err instanceof AppError ? err.isOperational : false;
-	const details = err.details || null;
+	let statusCode = err.statusCode || 500;
+	let isOperational = err instanceof AppError ? err.isOperational : false;
+	let details = err.details || null;
 
 	logger.error("Request failed", {
 		method: req.method,
