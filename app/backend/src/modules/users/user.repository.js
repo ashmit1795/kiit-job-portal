@@ -28,7 +28,10 @@ class UserRepository {
 					batch:batches (
 						id,
 						year
-					)
+					),
+					tenth_percentage,
+					twelfth_percentage,
+					resume_url
 				`,
 			)
 			.eq("id", userId)
@@ -89,7 +92,10 @@ class UserRepository {
 					batch:batches (
 						id,
 						year
-					)
+					),
+					tenth_percentage,
+					twelfth_percentage,
+					resume_url
 				`,
 			)
 			.eq("email", email)
