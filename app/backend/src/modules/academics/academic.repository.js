@@ -54,7 +54,25 @@ class AcademicRepository {
 		}
 
 		return data;
-	}
+    }
+    
+    async findBranchById(branchId) {
+        const { data, error } = await supabase.schema("placement").from("branches").select("*").eq("id", branchId).single();
+        if (error) {
+            const mapped = mapSupabaseError(error);
+            if (mapped) throw mapped;
+        }
+        return data;
+    }
+
+    async findBatchById(batchId) {
+        const { data, error } = await supabase.schema("placement").from("batches").select("*").eq("id", batchId).single();
+        if (error) {
+            const mapped = mapSupabaseError(error);
+            if (mapped) throw mapped;
+        }
+        return data;
+    }
 
 	async createProgram(programData) {
 		const { data, error } = await supabase.schema("placement").from("programs").insert(programData).select().single();
@@ -84,7 +102,7 @@ class AcademicRepository {
 			if (mapped) throw mapped;
 		}
 		return data;
-	}
+    }
 }
 
 export default new AcademicRepository();
