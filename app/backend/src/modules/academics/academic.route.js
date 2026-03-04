@@ -21,9 +21,7 @@ ADMIN ROUTES
 ====================== */
 
 router.post("/programs", authenticate, roleGuard("admin"), validate(createProgramSchema), academicController.createProgram);
-
 router.post("/branches", authenticate, roleGuard("admin"), validate(createBranchSchema), academicController.createBranch);
-
 router.post("/batches", authenticate, roleGuard("admin"), validate(createBatchSchema), academicController.createBatch);
 
 export default router;
