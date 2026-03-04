@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * Environment configuration class that loads and validates environment variables for the application. It ensures that required variables such as Supabase credentials are present and provides default values for optional variables. The class also includes a validation method to check for the presence of critical environment variables and logs warnings if they are missing. This centralized configuration allows for easy management of environment-specific settings and helps prevent runtime errors due to missing configurations.
+ */
 class Env {
 	constructor() {
 		this.PORT = process.env.PORT || 5000;
@@ -14,6 +17,9 @@ class Env {
 		this.validate();
 	}
 
+	/**
+	 * Validates the presence of critical environment variables and logs warnings if they are missing. This method checks for the Supabase URL and secret key, which are essential for the application's authentication and database interactions. If either of these variables is not set, a warning is logged to alert developers or administrators to the missing configuration, which could lead to runtime errors if not addressed.
+	 */
 	validate() {
 		if (!this.SUPABASE_URL) {
 			console.warn("⚠️ SUPABASE_URL not set");
