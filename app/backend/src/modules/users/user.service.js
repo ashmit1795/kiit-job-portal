@@ -8,21 +8,20 @@ import env from "../../config/env.js";
  */
 class UserService {
 	/**
-	 * Extracts the roll number from a KIIT email address.
-	 * This method takes a KIIT email address and extracts the roll number from it. It throws an error if the email format is invalid.
+	 * This method takes a KIIT email address and extracts the roll number from it. It checks if the local part of the email (the part before the @ symbol) consists entirely of digits, which is the expected format for KIIT student emails. If the format is valid, it returns the local part as the roll number; otherwise, it returns null.
 	 *
 	 * @param {string} email - The KIIT email address from which to extract the roll number.
-	 * @returns {string} - The extracted roll number.
+	 * @returns {string|null} - The extracted roll number or null if not found.
 	 * @throws {AppError} - Throws an AppError if the email format is invalid.
 	 */
 	extractRollNumber(email) {
-		const roll = email.split("@")[0];
+		const localPart = email.split("@")[0];
 
-		if (!/^\d+$/.test(roll)) {
-			throw new AppError("Invalid KIIT email format", 400);
+		if (/^\d+$/.test(localPart)) {
+			return localPart;
 		}
 
-		return roll;
+		return null;
 	}
 
 	/**
@@ -35,25 +34,31 @@ class UserService {
 	async syncUser(supabaseUser) {
 		let user = await userRepository.findById(supabaseUser.id);
 
-		if (!user) {
-			const rollNumber = this.extractRollNumber(supabaseUser.email);
+		if (user) return user;
 
-			let role = "student";
+		const email = supabaseUser.email;
 
-			// Bootstrap admin only in non-production
-			if (env.NODE_ENV !== "production" && env.ADMIN_EMAILS.includes(supabaseUser.email)) {
-				role = "admin";
-			}
-
-			user = await userRepository.create({
-				id: supabaseUser.id,
-				email: supabaseUser.email,
-				roll_number: rollNumber,
-				profile_completed: role === "admin" ? true : false, // Admins don't need to complete profile
-			});
+		if (!email.endsWith("@kiit.ac.in") && !env.ADMIN_EMAILS.includes(email)) {
+			throw new AppError("Unauthorized email domain", 403);
 		}
 
-		return user;
+		const rollNumber = this.extractRollNumber(email);
+
+		let role = "student";
+
+		if (env.ADMIN_EMAILS.includes(email)) {
+			role = "admin";
+		}
+
+		const newUser = await userRepository.create({
+			id: supabaseUser.id,
+			email,
+			roll_number: rollNumber,
+			role,
+			profile_completed: role === "admin",
+		});
+
+		return newUser;
 	}
 }
 

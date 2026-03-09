@@ -1,9 +1,8 @@
 import supabase from "../config/supabase.js";
 import AppError from "../utils/AppError.js";
-import userRepository from "../modules/users/user.repository.js";
 import env from "../config/env.js";
 import logger from "../utils/logger.js";
-import crypto from "crypto";
+import userService from "../modules/users/user.service.js";
 
 /**
  * Middleware to authenticate incoming requests using Supabase authentication. It supports a development authentication mode for non-production environments, allowing developers to simulate authentication by providing an email in the request headers. In production, it validates the Bearer token from the Authorization header, retrieves the user information from Supabase, and ensures that the email belongs to the KIIT domain. If the user does not exist in the application database, it creates a new user record. The authenticated user's information is then attached to the request object for use in subsequent middleware or route handlers.
@@ -16,37 +15,29 @@ import crypto from "crypto";
  */
 export default async function authenticate(req, res, next) {
 	try {
-		// 🔹 DEV AUTH MODE
-		if (env.NODE_ENV !== "production" && process.env.DEV_AUTH_ENABLED === "true") {
+		/* ---------------- DEV AUTH MODE ---------------- */
+
+		if (env.NODE_ENV !== "production" && env.DEV_AUTH_ENABLED === "true") {
 			const devEmail = req.headers["x-dev-email"];
 
 			if (!devEmail) {
 				throw new AppError("x-dev-email header required in dev mode", 401);
 			}
 
-			if (!/^\d+@kiit\.ac\.in$/.test(devEmail)) {
-				throw new AppError("Invalid KIIT email format", 403);
-			}
 			logger.warn(`⚠️ DEV AUTH: Logging in as ${devEmail}`);
 
-			let user = await userRepository.findByEmail(devEmail);
-
-			const rollNumber = devEmail.split("@")[0];
-
-			if (!user) {
-				user = await userRepository.create({
-					id: crypto.randomUUID(), // temporary UUID
-					email: devEmail,
-					roll_number: rollNumber,
-					profile_completed: false,
-				});
-			}
+			const user = await userService.syncUser({
+				id: `dev-${devEmail}`,
+				email: devEmail,
+			});
 
 			req.user = user;
+
 			return next();
 		}
 
-		// 🔹 NORMAL AUTH FLOW (Production)
+		/* ---------------- NORMAL AUTH ---------------- */
+
 		const authHeader = req.headers.authorization;
 
 		if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -61,24 +52,7 @@ export default async function authenticate(req, res, next) {
 			throw new AppError("Invalid or expired token", 401);
 		}
 
-		const email = data.user.email;
-
-		if (!/^\d+@kiit\.ac\.in$/.test(email)) {
-			throw new AppError("Unauthorized KIIT email format", 403);
-		}
-
-		let appUser = await userRepository.findById(data.user.id);
-
-		if (!appUser) {
-			const rollNumber = email.split("@")[0];
-
-			appUser = await userRepository.create({
-				id: data.user.id,
-				email,
-				roll_number: rollNumber,
-				profile_completed: false,
-			});
-		}
+		const appUser = await userService.syncUser(data.user);
 
 		req.user = appUser;
 
