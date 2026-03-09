@@ -11,6 +11,7 @@ class Env {
 		this.NODE_ENV = process.env.NODE_ENV || "development";
 		this.SUPABASE_URL = process.env.SUPABASE_URL;
 		this.SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
+		this.DEV_AUTH_ENABLED = process.env.DEV_AUTH_ENABLED === "true";
 
 		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
 
