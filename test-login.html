@@ -3,23 +3,104 @@
 	<head>
 		<title>Supabase Login Test</title>
 	</head>
+
 	<body>
+		<h2>Supabase Auth Test</h2>
+
 		<button id="login">Login with Google</button>
+		<button id="getToken">Get Access Token</button>
+		<button id="callBackend">Call Backend /auth/me</button>
+
+		<pre id="output"></pre>
 
 		<script type="module">
 			import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-			const supabase = createClient("https://goocnepzxrpxcugnkhmd.supabase.co/", "sb_publishable_K6jWeLTAgsgX-r1RXKi0jQ_2evdBys3");
+			const SUPABASE_URL = "https://goocnepzxrpxcugnkhmd.supabase.co";
+			const SUPABASE_ANON_KEY =
+				"sb_publishable_K6jWeLTAgsgX-r1RXKi0jQ_2evdBys3";
+
+			const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+			const output = document.getElementById("output");
+
+			function log(message) {
+				output.textContent = JSON.stringify(message, null, 2);
+				console.log(message);
+			}
+
+			/* ---------------- LOGIN ---------------- */
 
 			document.getElementById("login").onclick = async () => {
 				await supabase.auth.signInWithOAuth({
 					provider: "google",
+					options: {
+						redirectTo: "http://localhost:5500/test-login.html",
+					},
 				});
 			};
 
-			window.getToken = async () => {
+			/* ---------------- CHECK SESSION AFTER REDIRECT ---------------- */
+
+			async function checkSession() {
+				const { data, error } = await supabase.auth.getSession();
+
+				if (error) {
+					log(error);
+					return;
+				}
+
+				if (data.session) {
+					log({
+						message: "Session detected",
+						user: data.session.user,
+						access_token: data.session.access_token,
+					});
+				} else {
+					log("No active session");
+				}
+			}
+
+			checkSession();
+
+			/* ---------------- GET TOKEN ---------------- */
+
+			document.getElementById("getToken").onclick = async () => {
 				const { data } = await supabase.auth.getSession();
-				console.log("Access Token:", data.session.access_token);
+
+				if (!data.session) {
+					log("User not logged in");
+					return;
+				}
+
+				log({
+					access_token: data.session.access_token,
+				});
+			};
+
+			/* ---------------- CALL BACKEND ---------------- */
+
+			document.getElementById("callBackend").onclick = async () => {
+				const { data } = await supabase.auth.getSession();
+
+				if (!data.session) {
+					log("User not logged in");
+					return;
+				}
+
+				const token = data.session.access_token;
+
+				const res = await fetch("http://localhost:5000/api/auth/me", {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+
+				const json = await res.json();
+
+				log({
+					backend_response: json,
+				});
 			};
 		</script>
 	</body>
