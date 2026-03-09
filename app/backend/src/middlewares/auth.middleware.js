@@ -16,8 +16,7 @@ import userService from "../modules/users/user.service.js";
 export default async function authenticate(req, res, next) {
 	try {
 		/* ---------------- DEV AUTH MODE ---------------- */
-
-		if (env.NODE_ENV !== "production" && env.DEV_AUTH_ENABLED === "true") {
+		if (env.NODE_ENV !== "production" && String(env.DEV_AUTH_ENABLED) === "true") {
 			const devEmail = req.headers["x-dev-email"];
 
 			if (!devEmail) {
