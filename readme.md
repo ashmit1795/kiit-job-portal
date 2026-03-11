@@ -1,358 +1,376 @@
-# 📌 PROJECT CONTEXT DOCUMENT
+# KIIT Placement Portal
 
-## KIIT Placement Portal (Student-Driven)
+A centralized platform for KIIT University students to track placement, internship, hackathon, and webinar opportunities shared by the Training & Placement (T&P) Cell.
 
----
-
-# 1️⃣ PROJECT IDENTITY
-
-**Name (Working):** KIIT Placement Portal
-**Type:** Web Application
-**Scope:** KIIT University Only
-**Users:** KIIT students + approved volunteers + admins
-**Phase:** MVP → Scalable SaaS-grade Architecture
-
-This is NOT:
-
-* A social media platform
-* A general job portal
-* A multi-college system (for now)
-
-It is a **structured placement intelligence system** for KIIT.
+Currently, most opportunities are shared via WhatsApp or Telegram groups, making them scattered and easy to miss. This platform solves that problem by aggregating all opportunities in a structured portal with reminders and eligibility filtering.
 
 ---
 
-# 2️⃣ CORE PROBLEM STATEMENT
+# Problem Statement
 
-Currently:
+The KIIT Training & Placement Cell shares job circulars through messaging groups.
 
-* Placement circulars are posted in WhatsApp/Telegram
-* Students miss deadlines
-* No centralized tracking
-* No structured eligibility filtering
-* No reminder automation
+Problems with the current system:
 
-We are solving:
+• Circulars get lost in chats  
+• Students miss deadlines  
+• Eligibility filtering is manual  
+• No centralized record of opportunities  
 
-> Centralization + Eligibility Filtering + Deadline Reminders + Structured Volunteer Posting
-
----
-
-# 3️⃣ PRODUCT PRINCIPLES
-
-All future design decisions must follow these rules:
-
-### 🔹 1. Academic Database Perfection
-
-* Fully normalized schema
-* Strict referential integrity
-* ENUM usage for domain control
-* Composite uniqueness constraints
-* No free-text inconsistencies
-
-### 🔹 2. Backend Controls Business Logic
-
-Frontend never talks directly to DB.
-
-All:
-
-* Eligibility filtering
-* Role enforcement
-* Volunteer validation
-* Reminder scheduling
-* Approval logic
-
-Must pass through backend.
-
-### 🔹 3. Strong Separation of Concerns
-
-Frontend:
-
-* UI
-* Authentication session handling
-* User interaction
-
-Backend:
-
-* Business rules
-* DB interaction
-* Workflow triggering
-* Role validation
-
-Supabase:
-
-* Auth provider
-* PostgreSQL DB
-* Storage only
-
-Inngest:
-
-* Event-driven async system
-* Reminder scheduling
-* Workflow management
-
-### 🔹 4. Security First
-
-* Only `@kiit.ac.in` login allowed
-* Role-based access control
-* No trust in frontend role
-* JWT verification in backend
-* No direct DB exposure
-
-
-### 🔹 5. Scalable by Design
-
-System must support:
-
-* 10,000+ students
-* 500+ jobs per semester
-* Thousands of reminders
-* High concurrent reads
-
-Architecture must avoid:
-
-* N+1 queries
-* Redundant joins
-* Unindexed filtering
+This portal solves these issues by providing a **centralized placement opportunity feed**.
 
 ---
 
-# 4️⃣ TECH STACK (FINALIZED)
+# Core Features (MVP)
 
-Frontend:
+### Authentication
+- Google OAuth using Supabase Auth
+- Only `@kiit.ac.in` emails allowed
+- Automatic user sync with backend database
 
-* Next.js
-* Tailwind CSS
+### User Profiles
+Students must complete profile with:
 
-Backend:
+- Branch
+- Batch
+- CGPA
+- 10th percentage
+- 12th percentage
+- Resume upload
 
-* Node.js
-* Express
-
-Database:
-
-* Supabase PostgreSQL
-
-Auth:
-
-* Supabase Google OAuth
-* Domain restricted to @kiit.ac.in
-
-Async Workflow:
-
-* Inngest
-
-Deployment:
-
-* Frontend → Vercel
-* Backend → AWS / Render
-
-Monorepo:
-
-* Yes
-
-Language:
-
-* JavaScript (strict structure, potential TS migration later)
-
-
-# 5️⃣ USER ROLES (Strict Hierarchy)
-
-### 🔹 1. Student
-
-* View eligible jobs
-* Set reminders
-
-### 🔹 2. Volunteer
-
-* Post jobs
-* Only for assigned branch + batch
-* Cannot self-approve
-
-### 🔹 3. Admin
-
-* Approve/reject jobs
-* Manage volunteers
-* Full system control
-
-No other roles exist in MVP.
+Profile completion enforced before accessing core features.
 
 ---
 
-# 6️⃣ DATA MODEL CONTRACT
+### Job Posting
 
-Entities:
+Jobs can be created by:
 
-* users
-* branches
-* batches
-* jobs
-* job_eligibility
-* reminders
-* volunteer_permissions
+- **Admins**
+- **Volunteers**
 
-Design rules:
+Rules:
 
-* No arrays in relational columns
-* All foreign keys enforced
-* ENUM types used for controlled domains
-* Composite uniqueness constraints applied
-* ON DELETE behavior explicitly defined
-
-System is in 3NF.
+| Role | Behavior |
+|-----|------|
+Admin | Job auto-approved |
+Volunteer | Requires admin approval |
 
 ---
 
-# 7️⃣ AUTHENTICATION FLOW (FINAL)
+### Job Types
 
-1. User logs in via Supabase Google OAuth
-2. Supabase validates identity
-3. Backend verifies Supabase JWT
-4. Backend checks:
+Supported opportunity types:
 
-   * Domain restriction
-   * User existence
-   * Role
-5. If first login:
-
-   * Force profile completion (roll no, branch, batch, cgpa)
-
-Backend never trusts frontend role value.
+- Placement
+- Internship
+- Internship + Fulltime
+- Hackathon
+- Webinar
 
 ---
 
-# 8️⃣ ELIGIBILITY ENGINE PRINCIPLE
+### Job Information Stored
 
-Eligibility depends on:
+Each job contains:
 
-* branch_id
-* batch_id
-* min_cgpa
-* approval_status
-* deadline
-* is_active
+- Circular number
+- Company name
+- Role title
+- Job type
+- Stipend / CTC
+- Minimum CGPA
+- Deadline
+- Joining date
+- Job locations
+- Eligible branches
+- Eligible batches
+- Circular PDF
 
-Eligibility query must always include:
-
-* approval_status = 'approved'
-* is_active = true
-* deadline > NOW()
-
-No job shown otherwise.
-
----
-
-# 9️⃣ REMINDER SYSTEM PRINCIPLE
-
-When user sets reminder:
-
-* Backend validates job eligibility
-* Backend creates reminder rows
-* Backend emits Inngest event
-
-Inngest:
-
-* Schedules 48h, 24h, 3h triggers
-* Sends email via Nodemailer
-* Marks email_sent = true
-* Handles retries safely
-
-If:
-
-* Job deadline changes → reschedule
-* Job deactivated → cancel reminders
-
-Reminders must be idempotent.
+Circular PDF is uploaded to **Supabase Storage**.
 
 ---
 
-# 🔟 VOLUNTEER PERMISSION RULES
+### Eligibility Filtering
 
-Volunteer can post job ONLY if:
+Jobs are mapped to:
 
-EXISTS (
-volunteer_permissions
-WHERE user_id = current_user
-AND branch_id IN job_eligibility
-AND batch_id IN job_eligibility
-)
+- Eligible branches
+- Eligible batches
 
-This must be validated in backend.
+This allows future implementation of a **personalized job feed**.
 
 ---
 
-# 1️⃣1️⃣ WHAT THIS SYSTEM IS NOT (Important)
+### Circular Storage
 
-* Not real-time chat system
-* Not social discussion forum
-* Not resume builder
-* Not company review platform
-* Not AI suggestion engine (yet)
+Circular PDFs are stored in:
+- Supabase Storage
+- bucket: `job-circulars`
+- path: `circulars/{circular_number}.pdf`
 
-We build core first.
 
 ---
 
-# 1️⃣2️⃣ FUTURE EXTENSION READINESS
+# Tech Stack
 
-Schema supports:
+### Backend
 
-* Application tracking (can add later)
-* Company history
-* Analytics dashboards
-* Multi-college expansion
-* Mobile app
-* Notification channels (SMS/WhatsApp)
+- Node.js
+- Express.js
 
-Without restructuring DB.
+### Database
 
----
+- Supabase PostgreSQL
+- Supabase Storage
 
-# 1️⃣3️⃣ DEVELOPMENT PHILOSOPHY
+### Authentication
 
-We optimize for:
+- Supabase Auth
+- Google OAuth
 
-* Clean architecture
-* Long-term maintainability
-* Clear modular separation
-* Professional-grade backend patterns
-* Resume-quality engineering
+### Validation
+- Zod
 
-We do NOT optimize for:
+### File Upload
+- Multer
 
-* Quick hacks
-* Overengineering
-* Unnecessary microservices
+### Frontend (Future)
+- React.js
+- Tailwind CSS
+- Axios
+- React Router
 
 ---
 
-# 1️⃣4️⃣ MY INTERNAL OPERATING RULES FOR THIS PROJECT
+# Architecture
 
-From now on:
+Backend follows a **layered architecture**
 
-When you ask anything related to this portal, I will:
+Controller
+----↓----
+Service
+----↓----
+Repository
+----↓----
+Database
 
-1. Think in relational database first
-2. Respect normalization decisions
-3. Enforce role-based backend logic
-4. Avoid shortcuts that break integrity
-5. Keep scalability in mind
-6. Keep architecture professional
-
-I will not:
-
-* Suggest direct frontend-to-Supabase writes
-* Suggest breaking normalization
-* Suggest skipping constraints for speed
 
 ---
 
-# 🏁 PROJECT STATE
+### Controllers
 
-Architecture: Defined
-Database Schema: Academically Strong
-Tech Stack: Finalized
-Scope: Controlled MVP
-System Philosophy: Professional
+Handle:
 
+- HTTP requests
+- responses
+- validation middleware
+
+---
+
+### Services
+
+Contain business logic such as:
+
+- job approval rules
+- circular upload
+- profile completion
+
+---
+
+### Repositories
+
+Responsible for:
+
+- database queries
+- RPC calls
+- Supabase interaction
+
+---
+
+# Database Design
+
+Key tables:
+- `users`
+- `branches`
+- `batches`
+- `programs`
+- `jobs`
+- `job_locations`
+- `job_eligible_branches`
+- `job_eligible_batches`
+
+---
+
+### Job Relations
+
+`jobs`
+├── `job_eligible_branches`
+├── `job_eligible_batches`
+└── `job_locations`
+
+---
+
+### Job Circular Uniqueness
+
+Jobs are uniquely identified using:
+
+`(circular_number, role_title)`
+
+This allows:
+
+Example:
+
+- Circular: KIIT-DU/T&P/26/210
+
+- Roles:
+  - SDE
+  - Data Analyst
+
+# Authentication Flow
+
+1. User logs in with Google
+2. Supabase creates auth user
+3. Frontend receives access token
+4. Frontend calls backend with: `Authorization: Bearer <token>`
+5. Backend verifies token using Supabase
+6. Backend syncs user into `placement.users`
+
+# Storage Buckets
+
+### Resume Upload
+
+bucket: `resumes`
+
+path: `resumes/{userld}.pdf`
+
+### Job Circulars
+
+bucket: `job-circulars`
+path: `circulars/{circular_number}.pdf`
+
+---
+
+# Current Modules Implemented
+
+- health
+- academics
+- users
+- jobs
+
+# APIs Implemented
+
+### Auth
+
+GET `/api/auth/me`
+
+### Profile
+
+POST `/api/profile/complete`
+PATCH `/api/profile/update`
+POST `/api/profile/resume`
+GET `/api/profile/resume`
+
+### Jobs
+
+POST `/api/jobs`
+GET `/api/jobs`
+GET `/api/jobs/:id`
+PATCH `/api/jobs/:id/approve`
+PATCH `/api/jobs/:id/reject`
+
+---
+
+# Security
+
+- Role-based access control
+- Profile completion guard
+- Domain-restricted login
+- Centralized error handling
+
+---
+
+# Current Status
+
+Backend core features are implemented.
+
+Working components:
+
+✅ Google OAuth
+✅ User sync
+✅ Profile system
+✅ Resume upload
+✅ Job creation
+✅ Job approval flow
+✅ Circular upload
+✅ Eligibility mapping
+
+---
+
+# Next Steps
+
+
+
+### 1️⃣ Job Feed Logic
+Implement personalized job feed:
+GET `/jobs/feed`
+
+Filter by:
+
+- branch
+- batch
+- cgpa
+- approval_status
+- deadline
+
+### 2️⃣ Deadline Reminder System
+
+Students should be able to:
+
+- subscribe to jobs
+- receive reminder alerts before deadline
+
+Possible implementation:
+
+- background cron
+- notification queue
+
+### 3️⃣ Volunteer Management
+
+Admin should be able to:
+
+`promote student -> volunteer`
+
+
+
+### 4️⃣ Admin Dashboard
+
+Features:
+- pending job approvals
+- job analytics
+- volunteer management
+
+### 5️⃣ Frontend
+
+Build UI:
+
+- job feed
+- job details
+- circular viewer
+- profile dashboard
+
+### 6️⃣ AI Circular Parsing (Future)
+
+Use LLM to extract from circular:
+
+- company
+- role
+- stipend
+- CGPA
+- deadline
+
+Autofill job creation form.
+
+---
+Crafting with ❤️ by **Team UdaanX🚀**
 
