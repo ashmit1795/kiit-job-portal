@@ -1,0 +1,2 @@
+ALTER TABLE placement.jobs 
+ADD COLUMN IF NOT EXISTS circular_number TEXT UNIQUE NOT NULL;
