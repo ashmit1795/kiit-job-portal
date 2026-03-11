@@ -23,3 +23,4 @@ const upload = multer({
 });
 
 export const uploadResume = upload.single("resume");
+export const uploadCircular = upload.single("circular");
