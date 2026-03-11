@@ -148,11 +148,17 @@ Circular PDFs are stored in:
 Backend follows a **layered architecture**
 
 Controller
+
 ----↓----
+
 Service
+
 ----↓----
+
 Repository
+
 ----↓----
+
 Database
 
 
@@ -205,8 +211,11 @@ Key tables:
 ### Job Relations
 
 `jobs`
+
 ├── `job_eligible_branches`
+
 ├── `job_eligible_batches`
+
 └── `job_locations`
 
 ---
@@ -267,16 +276,23 @@ GET `/api/auth/me`
 ### Profile
 
 POST `/api/profile/complete`
+
 PATCH `/api/profile/update`
+
 POST `/api/profile/resume`
+
 GET `/api/profile/resume`
 
 ### Jobs
 
 POST `/api/jobs`
+
 GET `/api/jobs`
+
 GET `/api/jobs/:id`
+
 PATCH `/api/jobs/:id/approve`
+
 PATCH `/api/jobs/:id/reject`
 
 ---
@@ -297,12 +313,19 @@ Backend core features are implemented.
 Working components:
 
 ✅ Google OAuth
+
 ✅ User sync
+
 ✅ Profile system
+
 ✅ Resume upload
+
 ✅ Job creation
+
 ✅ Job approval flow
+
 ✅ Circular upload
+
 ✅ Eligibility mapping
 
 ---
