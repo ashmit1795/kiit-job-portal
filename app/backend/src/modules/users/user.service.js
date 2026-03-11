@@ -32,7 +32,7 @@ class UserService {
 	 * @throws {AppError} - Throws an AppError if the email format is invalid or if any database error occurs during user creation.
 	 */
 	async syncUser(supabaseUser) {
-		let user = await userRepository.findById(supabaseUser.id);
+		let user = await userRepository.findByEmail(supabaseUser.email);
 
 		if (user) return user;
 
