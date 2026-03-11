@@ -6,6 +6,7 @@ import authRoute from "../modules/users/auth.route.js";
 import profileRoute from "../modules/users/profile.route.js";
 import healthRoute from "../modules/health/health.route.js";
 import academicRoute from "../modules/academics/academic.route.js";
+import jobRoute from "../modules/job/job.route.js";
 
 const router = Router();
 
@@ -24,6 +25,8 @@ router.use("/profile", authenticate, profileRoute);
 
 // Apply authentication + profile guard globally for protected routes
 router.use(authenticate, profileGuard);
+
+router.use("/jobs", jobRoute);
 
 
 
