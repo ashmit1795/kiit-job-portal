@@ -18,10 +18,20 @@ router.post("/", roleGuard("admin", "volunteer"), uploadCircular, validate(creat
  */
 router.get("/", jobController.getJobs);
 
+/** 
+ * Job feed for students
+ */
+router.get("/feed", jobController.getJobFeed);
+
 /**
  * Job details
  */
 router.get("/:id", jobController.getJobById);
+
+/**
+ * Download circular
+ */
+router.get("/:id/circular", jobController.downloadCircular);
 
 /**
  * Admin approval

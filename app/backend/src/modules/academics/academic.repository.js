@@ -113,6 +113,22 @@ class AcademicRepository {
     }
 
     /**
+     * Finds an academic program by its ID.
+     * This method retrieves a program from the database based on its ID. It returns the program's data if found, or null if no program is found with the specified ID. If any database error occurs during the query, it maps the error to a standardized application error and throws it.
+     * @param {uuid} programId - The ID of the program to find.
+     * @returns {Object|null} - The program data if found, or null if not found.
+     * @throws {AppError} - Throws an AppError if a database error occurs that can be mapped to a known error type.
+     */
+    async findProgramById(programId) {
+        const { data, error } = await supabase.schema("placement").from("programs").select("*").eq("id", programId).single();
+        if (error) {
+            const mapped = mapSupabaseError(error);
+            if (mapped) throw mapped;
+        }
+        return data;
+    }
+
+    /**
      * Creates a new academic program in the database.
      * This method inserts a new program record into the database using the provided program data. It returns the created program's data if the insertion is successful. If any database error occurs during the insertion, it maps the error to a standardized application error and throws it.
      * @param {Object} programData - The data for the new program to be created.
