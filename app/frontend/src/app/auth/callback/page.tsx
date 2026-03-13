@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -22,7 +23,9 @@ export default function AuthCallbackPage() {
         await refreshUser();
       } catch (err: any) {
         console.error("Auth callback error:", err);
-        setError(err.message || "Failed to authenticate.");
+        const message = err?.response?.data?.message || err.message || "Authentication failed. Please try again.";
+        setError(message);
+        toast.error(message);
       }
     };
 
@@ -41,19 +44,28 @@ export default function AuthCallbackPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <p className="text-red-500 font-medium">Authentication Error: {error}</p>
-        <button onClick={() => router.push("/login")} className="text-blue-500 underline">
-          Return to login
-        </button>
+      <div className="flex h-screen flex-col items-center justify-center gap-4 p-4">
+        <div className="max-w-sm text-center space-y-4">
+          <div className="mx-auto h-12 w-12 rounded-full bg-red-600/20 flex items-center justify-center text-red-400 mb-2">
+            ✕
+          </div>
+          <h2 className="text-lg font-bold text-red-400">Authentication Failed</h2>
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <Button
+            onClick={() => router.push("/login")}
+            className="bg-gradient-brand hover:opacity-90 text-white font-semibold"
+          >
+            Return to Login
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex h-screen flex-col items-center justify-center space-y-4">
-      <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
-      <p className="text-sm text-zinc-500">Signing you in...</p>
+      <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+      <p className="text-sm text-muted-foreground">Signing you in...</p>
     </div>
   );
 }

@@ -27,4 +27,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// On 401, clear token and redirect to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      cachedAccessToken = null;
+      supabase.auth.signOut();
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+        // Dynamic import to avoid circular deps — toast fires before redirect
+        import("sonner").then(({ toast }) => {
+          toast.error("Session expired, please sign in again.");
+        });
+        setTimeout(() => { window.location.href = "/login"; }, 500);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

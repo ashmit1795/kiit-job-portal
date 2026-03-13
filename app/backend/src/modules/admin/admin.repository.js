@@ -22,6 +22,9 @@ class AdminRepository {
 				`
 				id,
 				email,
+                full_name,
+                avatar_url,
+                roll_number,
 				role,
 				profile_completed,
 				cgpa,
@@ -52,32 +55,7 @@ class AdminRepository {
 			if (mapped) throw mapped;
 		}
 
-		/* -------------------------------
-	    Fetch auth metadata in parallel
-		-------------------------------- */
-
-		const usersWithMeta = await Promise.all(
-			data.map(async (user) => {
-				const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(user.id);
-
-				if (authError) {
-					throw new AppError("Failed to retrieve user metadata from Supabase", 500);
-				}
-
-				return {
-					full_name: authUser.user.user_metadata?.full_name ?? null,
-
-					avatar_url: authUser.user.user_metadata?.avatar_url ?? authUser.user.user_metadata?.picture ?? null,
-
-					...user,
-				};
-			}),
-		);
-
-		return {
-			users: usersWithMeta,
-			total: count,
-		};
+		return { users: data, total: count };
 	}
 
 	async getUserById(userId) {
@@ -88,6 +66,9 @@ class AdminRepository {
 				`
 				id,
 				email,
+                full_name,
+                avatar_url,
+                roll_number,
 				role,
 				profile_completed,
 				cgpa,
@@ -113,19 +94,7 @@ class AdminRepository {
 			if (mapped) throw mapped;
 		}
 
-		const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(data.id);
-
-		if (authError) {
-			throw new AppError("Failed to retrieve user metadata from Supabase", 500);
-		}
-
-		return {
-			full_name: authUser.user.user_metadata?.full_name ?? null,
-
-			avatar_url: authUser.user.user_metadata?.avatar_url ?? authUser.user.user_metadata?.picture ?? null,
-
-			...data,
-		};
+		return data;
 	}
 
 	async updateUserRole(userId, role) {

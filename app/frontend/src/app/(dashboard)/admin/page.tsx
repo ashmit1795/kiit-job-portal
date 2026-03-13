@@ -26,13 +26,13 @@ export default function AdminPage() {
   const approveMutation = useMutation({
     mutationFn: jobService.approveJob,
     onSuccess: () => { toast.success("Job approved"); queryClient.invalidateQueries({ queryKey: ["jobs"] }); },
-    onError: () => toast.error("Failed to approve"),
+    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to approve job."),
   });
 
   const rejectMutation = useMutation({
     mutationFn: jobService.rejectJob,
     onSuccess: () => { toast.success("Job rejected"); queryClient.invalidateQueries({ queryKey: ["jobs"] }); },
-    onError: () => toast.error("Failed to reject"),
+    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to reject job."),
   });
 
   if (!user || user.role !== "admin") return null;

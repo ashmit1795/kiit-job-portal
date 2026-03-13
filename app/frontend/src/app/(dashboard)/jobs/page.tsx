@@ -6,22 +6,24 @@ import { JobCard } from "@/components/features/jobs/job-card";
 import { JobCardSkeleton } from "@/components/features/jobs/job-card-skeleton";
 import { useAuth } from "@/providers/auth-provider";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Briefcase, Sparkles } from "lucide-react";
+import { Search, Briefcase, Sparkles, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 
 export default function JobsFeedPage() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
 
-  const { data: allJobs, isLoading: isAllLoading } = useQuery({
+  const { data: allJobs, isLoading: isAllLoading, error: allJobsError, refetch: refetchAllJobs } = useQuery({
     queryKey: ["jobs"],
     queryFn: jobService.fetchJobs,
   });
 
-  const { data: feedJobs, isLoading: isFeedLoading } = useQuery({
+  const { data: feedJobs, isLoading: isFeedLoading, error: feedJobsError, refetch: refetchFeedJobs } = useQuery({
     queryKey: ["jobs", "feed"],
     queryFn: jobService.fetchJobFeed,
     enabled: !!user?.profile_completed,
@@ -68,13 +70,26 @@ export default function JobsFeedPage() {
     </div>
   );
 
-  const JobGrid = ({ jobs, loading }: { jobs: typeof allJobs; loading: boolean }) => {
+  const JobGrid = ({ jobs, loading, error, onRetry }: { jobs: typeof allJobs; loading: boolean; error: Error | null; onRetry: () => void }) => {
     if (loading) {
       return (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <JobCardSkeleton key={i} />
           ))}
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-center py-16 text-muted-foreground bg-card rounded-xl border border-red-700/30">
+          <AlertTriangle className="h-10 w-10 mx-auto mb-3 text-red-400 opacity-60" />
+          <p className="font-medium text-red-400">Failed to load jobs</p>
+          <p className="text-sm mt-1">Something went wrong while fetching opportunities.</p>
+          <Button variant="outline" size="sm" className="mt-4 border-red-700/30 text-red-400 hover:bg-red-600/10" onClick={onRetry}>
+            Try Again
+          </Button>
         </div>
       );
     }
@@ -119,7 +134,7 @@ export default function JobsFeedPage() {
         </div>
 
         <TabsContent value="all" className="mt-4">
-          <JobGrid jobs={allJobs} loading={isAllLoading} />
+          <JobGrid jobs={allJobs} loading={isAllLoading} error={allJobsError} onRetry={() => refetchAllJobs()} />
         </TabsContent>
 
         <TabsContent value="feed" className="mt-4">
@@ -130,7 +145,7 @@ export default function JobsFeedPage() {
               <p className="text-sm mt-1">Personalized feed requires your academic details.</p>
             </div>
           ) : (
-            <JobGrid jobs={feedJobs} loading={isFeedLoading} />
+            <JobGrid jobs={feedJobs} loading={isFeedLoading} error={feedJobsError} onRetry={() => refetchFeedJobs()} />
           )}
         </TabsContent>
       </Tabs>

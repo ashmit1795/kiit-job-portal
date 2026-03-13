@@ -6,6 +6,7 @@ import { User, Session } from "@supabase/supabase-js";
 import { User as AppUser } from "@/types/user";
 import api from "@/lib/api";
 import { ApiResponse } from "@/types/api";
+import { toast } from "sonner";
 
 interface AuthContextType {
   session: Session | null;
@@ -36,7 +37,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.success && data.data) {
         setUser(data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const message = error?.response?.data?.message;
+
+      if (status === 403) {
+        toast.error(message || "Access denied. Only @kiit.ac.in emails are allowed.");
+        await supabase.auth.signOut();
+      } else if (status === 401) {
+        // 401 is handled by the api interceptor — no extra action needed
+      } else {
+        toast.error(message || "Something went wrong. Please try again.");
+      }
       console.error("Failed to fetch app user", error);
     }
   };

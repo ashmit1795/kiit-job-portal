@@ -53,8 +53,8 @@ export default function JobDetailPage() {
     try {
       const url = await jobService.downloadCircular(jobId);
       if (url) window.open(url, "_blank");
-    } catch {
-      // Error handled silently
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to download circular.");
     } finally {
       setIsDownloading(false);
     }
