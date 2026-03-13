@@ -25,9 +25,19 @@ export const jobService = {
     return data.data || [];
   },
 
+  fetchJobFeed: async () => {
+    const { data } = await api.get<ApiResponse<Job[]>>("/jobs/feed");
+    return data.data || [];
+  },
+
   fetchJobById: async (id: string) => {
     const { data } = await api.get<ApiResponse<Job>>(`/jobs/${id}`);
     return data.data || null;
+  },
+
+  downloadCircular: async (id: string) => {
+    const { data } = await api.get<ApiResponse<{ url: string }>>(`/jobs/${id}/circular`);
+    return data.data?.url || null;
   },
 
   createJob: async (payload: CreateJobPayload) => {

@@ -8,8 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "KIIT Placement Portal",
-  description: "A centralized platform for KIIT University students to track placement opportunities.",
+  title: "Avsaar — Placement Portal",
+  description: "A centralized platform for KIIT University students to discover and track placement opportunities.",
 };
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={inter.className}>
         <QueryProvider>
           <AuthProvider>

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, GraduationCap } from "lucide-react";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -28,36 +28,21 @@ export default function OnboardingPage() {
     twelfth_percentage: 0,
   });
 
-  // Protect route
   useEffect(() => {
     if (!isAuthLoading && user?.profile_completed) {
       router.push("/jobs");
     }
   }, [user, isAuthLoading, router]);
 
-  // Queries
-  const { data: programs, isLoading: isProgramsLoading } = useQuery({
-    queryKey: ["programs"],
-    queryFn: academicService.fetchPrograms,
-  });
+  const { data: programs, isLoading: isProgramsLoading } = useQuery({ queryKey: ["programs"], queryFn: academicService.fetchPrograms });
+  const { data: branches, isLoading: isBranchesLoading } = useQuery({ queryKey: ["branches", programId], queryFn: () => academicService.fetchBranches(programId), enabled: !!programId });
+  const { data: batches, isLoading: isBatchesLoading } = useQuery({ queryKey: ["batches"], queryFn: academicService.fetchBatches });
 
-  const { data: branches, isLoading: isBranchesLoading } = useQuery({
-    queryKey: ["branches", programId],
-    queryFn: () => academicService.fetchBranches(programId),
-    enabled: !!programId,
-  });
-
-  const { data: batches, isLoading: isBatchesLoading } = useQuery({
-    queryKey: ["batches"],
-    queryFn: academicService.fetchBatches,
-  });
-
-  // Mutation
   const completeProfileMutation = useMutation({
     mutationFn: profileService.completeProfile,
     onSuccess: async () => {
       await refreshUser();
-      toast.success("Profile completed successfully!");
+      toast.success("Profile completed!");
       router.push("/jobs");
     },
     onError: (error: any) => {
@@ -68,143 +53,79 @@ export default function OnboardingPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.branch_id || !formData.batch_id) {
-      toast.error("Please select a branch and a batch.");
+      toast.error("Please select a branch and batch.");
       return;
     }
     completeProfileMutation.mutate(formData);
   };
 
-  const isPageLoading = isAuthLoading || user?.profile_completed;
-
-  if (isPageLoading) {
+  if (isAuthLoading || user?.profile_completed) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50/50 p-4 dark:bg-zinc-950">
-      <Card className="w-full max-w-lg shadow-lg border-zinc-200 dark:border-zinc-800">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold tracking-tight">Complete your profile</CardTitle>
-          <CardDescription>
-            You need to complete your profile before accessing placement opportunities.
-          </CardDescription>
+    <div className="flex min-h-screen items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/60 via-background to-background pointer-events-none" />
+      <div className="absolute top-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-600/5 rounded-full blur-[100px] pointer-events-none" />
+
+      <Card className="relative z-10 w-full max-w-lg border-border/50 bg-card/80 backdrop-blur-xl shadow-2xl shadow-emerald-900/10">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto h-12 w-12 rounded-xl bg-emerald-600/20 flex items-center justify-center text-emerald-400 mb-2">
+            <GraduationCap className="h-6 w-6" />
+          </div>
+          <CardTitle className="text-xl font-bold">Complete your profile</CardTitle>
+          <CardDescription>Fill in your academic details to access placement opportunities.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* Academic Info */}
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Academic Information</h3>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="program">Program</Label>
-                <Select onValueChange={(val) => {
-                  setProgramId(val as string);
-                  setFormData({ ...formData, branch_id: "" });
-                }}>
-                  <SelectTrigger id="program" disabled={isProgramsLoading}>
-                    <SelectValue placeholder="Select Program" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {programs?.map(p => (
-                      <SelectItem key={p.id} value={p.id}>{p.name} ({p.level})</SelectItem>
-                    ))}
-                  </SelectContent>
+              <div className="space-y-2">
+                <Label>Program</Label>
+                <Select onValueChange={(val) => { setProgramId(val as string); setFormData({ ...formData, branch_id: "" }); }}>
+                  <SelectTrigger disabled={isProgramsLoading}><SelectValue placeholder="Select Program" /></SelectTrigger>
+                  <SelectContent>{programs?.map((p) => <SelectItem key={p.id} value={p.id}>{p.name} ({p.level})</SelectItem>)}</SelectContent>
                 </Select>
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="branch">Branch</Label>
-                <Select 
-                  disabled={!programId || isBranchesLoading}
-                  onValueChange={(val) => setFormData({ ...formData, branch_id: val as string })}
-                >
-                  <SelectTrigger id="branch">
-                    <SelectValue placeholder="Select Branch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {branches?.map(b => (
-                      <SelectItem key={b.id} value={b.id}>{b.name} ({b.code})</SelectItem>
-                    ))}
-                  </SelectContent>
+              <div className="space-y-2">
+                <Label>Branch</Label>
+                <Select disabled={!programId || isBranchesLoading} onValueChange={(val) => setFormData({ ...formData, branch_id: val as string })}>
+                  <SelectTrigger><SelectValue placeholder="Select Branch" /></SelectTrigger>
+                  <SelectContent>{branches?.map((b) => <SelectItem key={b.id} value={b.id}>{b.name} ({b.code})</SelectItem>)}</SelectContent>
                 </Select>
               </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="batch">Graduation Batch (Year)</Label>
-                <Select
-                  disabled={isBatchesLoading}
-                  onValueChange={(val) => setFormData({ ...formData, batch_id: val as string })}
-                >
-                  <SelectTrigger id="batch">
-                    <SelectValue placeholder="Select Batch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {batches?.map(b => (
-                      <SelectItem key={b.id} value={b.id}>{b.year}</SelectItem>
-                    ))}
-                  </SelectContent>
+              <div className="space-y-2">
+                <Label>Graduation Batch</Label>
+                <Select disabled={isBatchesLoading} onValueChange={(val) => setFormData({ ...formData, batch_id: val as string })}>
+                  <SelectTrigger><SelectValue placeholder="Select Batch" /></SelectTrigger>
+                  <SelectContent>{batches?.map((b) => <SelectItem key={b.id} value={b.id}>{b.year}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             </div>
 
-            {/* Performance */}
-            <div className="space-y-4 pt-4 border-t border-zinc-200 dark:border-zinc-800">
-              <h3 className="font-semibold text-lg">Performance</h3>
-              
-              <div className="grid gap-2">
-                <Label htmlFor="cgpa">Current CGPA (Out of 10)</Label>
-                <Input
-                  id="cgpa"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="10"
-                  required
-                  placeholder="e.g. 8.5"
-                  onChange={(e) => setFormData({ ...formData, cgpa: parseFloat(e.target.value) })}
-                />
+            <div className="space-y-4 pt-4 border-t border-border/50">
+              <div className="space-y-2">
+                <Label>Current CGPA (out of 10)</Label>
+                <Input type="number" step="0.01" min="0" max="10" required placeholder="e.g. 8.5" onChange={(e) => setFormData({ ...formData, cgpa: parseFloat(e.target.value) })} />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="tenth">10th Percentage</Label>
-                  <Input
-                    id="tenth"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    required
-                    placeholder="e.g. 90.5"
-                    onChange={(e) => setFormData({ ...formData, tenth_percentage: parseFloat(e.target.value) })}
-                  />
+                <div className="space-y-2">
+                  <Label>10th %</Label>
+                  <Input type="number" step="0.01" min="0" max="100" required placeholder="e.g. 90.5" onChange={(e) => setFormData({ ...formData, tenth_percentage: parseFloat(e.target.value) })} />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="twelfth">12th Percentage</Label>
-                  <Input
-                    id="twelfth"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max="100"
-                    required
-                    placeholder="e.g. 88.0"
-                    onChange={(e) => setFormData({ ...formData, twelfth_percentage: parseFloat(e.target.value) })}
-                  />
+                <div className="space-y-2">
+                  <Label>12th %</Label>
+                  <Input type="number" step="0.01" min="0" max="100" required placeholder="e.g. 88.0" onChange={(e) => setFormData({ ...formData, twelfth_percentage: parseFloat(e.target.value) })} />
                 </div>
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white" 
-              disabled={completeProfileMutation.isPending}
-            >
+            <Button type="submit" className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold h-11 rounded-xl shadow-lg shadow-emerald-900/20" disabled={completeProfileMutation.isPending}>
               {completeProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Complete Profile
             </Button>

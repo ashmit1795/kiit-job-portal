@@ -1,0 +1,534 @@
+
+/auth/me
+
+{
+    "success": true,
+    "message": "User authenticated successfully",
+    "data": {
+        "id": "8ca2bf33-f903-4364-9145-a38180743502",
+        "email": "23052187@kiit.ac.in",
+        "roll_number": "23052187",
+        "role": "volunteer",
+        "profile_completed": true,
+        "cgpa": 9.1,
+        "tenth_percentage": 93.2,
+        "twelfth_percentage": 95.4,
+        "resume_url": null,
+        "branch": {
+            "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+            "code": "CSE",
+            "name": "Computer Science & Engineering",
+            "program": {
+                "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+                "name": "B.Tech",
+                "level": "UG",
+                "duration_years": 4
+            }
+        },
+        "batch": {
+            "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+            "year": 2027
+        }
+    }
+}
+
+/profile/resume
+
+{
+    "success": true,
+    "message": "Resume URL generated",
+    "data": {
+        "url": "https://goocnepzxrpxcugnkhmd.supabase.co/storage/v1/object/sign/resumes/resumes/a970f777-14a0-4698-a2f6-89452256f2a1.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lMTY4ZjYzOC02ZmNhLTQ2ZGEtOTQ2Yy03Y2VhYjJkNmQ4ZWEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJyZXN1bWVzL3Jlc3VtZXMvYTk3MGY3NzctMTRhMC00Njk4LWEyZjYtODk0NTIyNTZmMmExLnBkZiIsImlhdCI6MTc3MzM4OTQzNCwiZXhwIjoxNzczMzg5NDk0fQ.Q3tO6IGdr2VQ9FH-jsjz5uMLBcfseh1bhCxIRVMoSts"
+    }
+}
+
+/academics/programs
+{
+    "success": true,
+    "message": "Programs fetched successfully",
+    "data": [
+        {
+            "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+            "name": "B.Tech",
+            "level": "UG",
+            "duration_years": 4
+        },
+        {
+            "id": "a8658ab8-71b7-4941-9937-848779a3c046",
+            "name": "BBA",
+            "level": "UG",
+            "duration_years": 3
+        },
+        {
+            "id": "98d785d9-6f79-429a-a2ec-05c47efccbea",
+            "name": "BCA",
+            "level": "UG",
+            "duration_years": 3
+        },
+        {
+            "id": "ab57a96a-8dca-45d1-9917-5087b88b69fe",
+            "name": "M.Tech",
+            "level": "PG",
+            "duration_years": 2
+        },
+        {
+            "id": "86f9b6b4-1516-4769-bbf3-29c5f51a6806",
+            "name": "MBA",
+            "level": "PG",
+            "duration_years": 2
+        },
+        {
+            "id": "d82804c6-5a72-4ba8-826e-159efc56754f",
+            "name": "MCA",
+            "level": "PG",
+            "duration_years": 2
+        }
+    ]
+}
+
+/academics/branches
+{
+    "success": true,
+    "message": "Branches fetched successfully",
+    "data": [
+        {
+            "id": "28728b30-cfc5-46a8-bb71-8c3606d63c70",
+            "name": "Computer Science & Communication Engineering",
+            "code": "CS&CE",
+            "program": {
+                "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+                "name": "B.Tech",
+                "level": "UG"
+            }
+        },
+        {
+            "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+            "name": "Computer Science & Engineering",
+            "code": "CSE",
+            "program": {
+                "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+                "name": "B.Tech",
+                "level": "UG"
+            }
+        },
+        {
+            "id": "2316105f-e76f-487b-b043-e69fb1df6600",
+            "name": "Computer Science & Engineering",
+            "code": "CSE",
+            "program": {
+                "id": "ab57a96a-8dca-45d1-9917-5087b88b69fe",
+                "name": "M.Tech",
+                "level": "PG"
+            }
+        },
+        {
+            "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+            "name": "Computer Science & System Engineering",
+            "code": "CS&SE",
+            "program": {
+                "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+                "name": "B.Tech",
+                "level": "UG"
+            }
+        },
+        {
+            "id": "0a40c770-9b1b-4fe6-bb7e-02cacbd6ddb1",
+            "name": "Cyber Security",
+            "code": "CS",
+            "program": {
+                "id": "ab57a96a-8dca-45d1-9917-5087b88b69fe",
+                "name": "M.Tech",
+                "level": "PG"
+            }
+        },
+        {
+            "id": "41806556-ae62-44c3-bba2-052b14b38532",
+            "name": "Information Technology",
+            "code": "IT",
+            "program": {
+                "id": "1e0e6589-cfd6-4df0-be1f-7138f9bf7dfc",
+                "name": "B.Tech",
+                "level": "UG"
+            }
+        }
+    ]
+}
+
+/academics/batches
+{
+    "success": true,
+    "message": "Batches fetched successfully",
+    "data": [
+        {
+            "id": "357d5c98-8fac-4e79-97a9-afae45b63dda",
+            "year": 2029
+        },
+        {
+            "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+            "year": 2028
+        },
+        {
+            "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+            "year": 2027
+        },
+        {
+            "id": "7b1868f9-3844-4cb8-ab7e-f592b5961dc2",
+            "year": 2026
+        },
+        {
+            "id": "81864237-1e76-4c94-8ec7-e98345272d31",
+            "year": 2025
+        },
+        {
+            "id": "2db28966-f872-44e6-9e1e-6e9b9c288f93",
+            "year": 2024
+        },
+        {
+            "id": "57478cdd-880b-4601-b73e-3478707d3bf9",
+            "year": 2023
+        }
+    ]
+}
+
+/jobs/
+{
+    "success": true,
+    "message": "Jobs fetched successfully",
+    "data": [
+        {
+            "id": "040f854b-c4e7-4416-bb01-4acb53f7ec46",
+            "circular_number": "KIIT-DU/T&P/26/213",
+            "company_name": "Infosys",
+            "role_title": "HackWithInfy",
+            "job_type": "hackathon",
+            "ctc": null,
+            "stipend": null,
+            "min_cgpa": null,
+            "deadline": "2026-03-14T09:00:00+00:00",
+            "description": null,
+            "circular_file_path": "circulars/KIIT-DU/T&P/26/213.pdf",
+            "approval_status": "approved",
+            "is_active": true,
+            "created_at": "2026-03-11T12:11:40.884537+00:00",
+            "posted_by": "8ca2bf33-f903-4364-9145-a38180743502",
+            "joining_date": null,
+            "locations": [],
+            "eligible_branches": [
+                {
+                    "id": "41806556-ae62-44c3-bba2-052b14b38532",
+                    "code": "IT",
+                    "name": "Information Technology",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+                    "code": "CS&SE",
+                    "name": "Computer Science & System Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "2316105f-e76f-487b-b043-e69fb1df6600",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "M.Tech",
+                    "program_level": "PG"
+                },
+                {
+                    "id": "0a40c770-9b1b-4fe6-bb7e-02cacbd6ddb1",
+                    "code": "CS",
+                    "name": "Cyber Security",
+                    "program_name": "M.Tech",
+                    "program_level": "PG"
+                }
+            ],
+            "eligible_batches": [
+                {
+                    "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+                    "year": 2027
+                },
+                {
+                    "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+                    "year": 2028
+                }
+            ]
+        },
+        {
+            "id": "0bd724ec-99d1-40ad-a802-12c8571b420d",
+            "circular_number": "KIIT-DU/T&P/26/214",
+            "company_name": "JP Morgan Chase",
+            "role_title": "Software Engineer Program (SEP) - Summer Internship",
+            "job_type": "internship",
+            "ctc": null,
+            "stipend": "80,000 per month",
+            "min_cgpa": 8.5,
+            "deadline": "2026-03-12T11:00:00+00:00",
+            "description": null,
+            "circular_file_path": "circulars/KIIT-DU/T&P/26/214.pdf",
+            "approval_status": "approved",
+            "is_active": true,
+            "created_at": "2026-03-11T11:46:52.599308+00:00",
+            "posted_by": "a970f777-14a0-4698-a2f6-89452256f2a1",
+            "joining_date": "May/June 2027",
+            "locations": [
+                "Bengaluru",
+                "Hyderabad",
+                "Mumbai",
+                "Pune"
+            ],
+            "eligible_branches": [
+                {
+                    "id": "41806556-ae62-44c3-bba2-052b14b38532",
+                    "code": "IT",
+                    "name": "Information Technology",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+                    "code": "CS&SE",
+                    "name": "Computer Science & System Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                }
+            ],
+            "eligible_batches": [
+                {
+                    "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+                    "year": 2027
+                },
+                {
+                    "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+                    "year": 2028
+                }
+            ]
+        }
+    ]
+}
+
+/jobs/{id}
+{
+    "success": true,
+    "message": "Job details fetched successfully",
+    "data": {
+        "id": "040f854b-c4e7-4416-bb01-4acb53f7ec46",
+        "circular_number": "KIIT-DU/T&P/26/213",
+        "company_name": "Infosys",
+        "role_title": "HackWithInfy",
+        "job_type": "hackathon",
+        "ctc": null,
+        "stipend": null,
+        "min_cgpa": null,
+        "deadline": "2026-03-14T09:00:00+00:00",
+        "description": null,
+        "circular_file_path": "circulars/KIIT-DU/T&P/26/213.pdf",
+        "approval_status": "approved",
+        "is_active": true,
+        "created_at": "2026-03-11T12:11:40.884537+00:00",
+        "posted_by": "8ca2bf33-f903-4364-9145-a38180743502",
+        "joining_date": null,
+        "locations": [],
+        "eligible_branches": [
+            {
+                "id": "41806556-ae62-44c3-bba2-052b14b38532",
+                "code": "IT",
+                "name": "Information Technology",
+                "program_name": "B.Tech",
+                "program_level": "UG"
+            },
+            {
+                "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+                "code": "CSE",
+                "name": "Computer Science & Engineering",
+                "program_name": "B.Tech",
+                "program_level": "UG"
+            },
+            {
+                "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+                "code": "CS&SE",
+                "name": "Computer Science & System Engineering",
+                "program_name": "B.Tech",
+                "program_level": "UG"
+            },
+            {
+                "id": "2316105f-e76f-487b-b043-e69fb1df6600",
+                "code": "CSE",
+                "name": "Computer Science & Engineering",
+                "program_name": "M.Tech",
+                "program_level": "PG"
+            },
+            {
+                "id": "0a40c770-9b1b-4fe6-bb7e-02cacbd6ddb1",
+                "code": "CS",
+                "name": "Cyber Security",
+                "program_name": "M.Tech",
+                "program_level": "PG"
+            }
+        ],
+        "eligible_batches": [
+            {
+                "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+                "year": 2027
+            },
+            {
+                "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+                "year": 2028
+            }
+        ]
+    }
+}
+
+/jobs/feed
+{
+    "success": true,
+    "message": "Job feed fetched successfully",
+    "data": [
+        {
+            "id": "040f854b-c4e7-4416-bb01-4acb53f7ec46",
+            "circular_number": "KIIT-DU/T&P/26/213",
+            "company_name": "Infosys",
+            "role_title": "HackWithInfy",
+            "job_type": "hackathon",
+            "ctc": null,
+            "stipend": null,
+            "min_cgpa": null,
+            "deadline": "2026-03-14T09:00:00+00:00",
+            "description": null,
+            "circular_file_path": "circulars/KIIT-DU/T&P/26/213.pdf",
+            "approval_status": "approved",
+            "is_active": true,
+            "created_at": "2026-03-11T12:11:40.884537+00:00",
+            "posted_by": "8ca2bf33-f903-4364-9145-a38180743502",
+            "joining_date": null,
+            "locations": [],
+            "eligible_branches": [
+                {
+                    "id": "41806556-ae62-44c3-bba2-052b14b38532",
+                    "code": "IT",
+                    "name": "Information Technology",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+                    "code": "CS&SE",
+                    "name": "Computer Science & System Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "2316105f-e76f-487b-b043-e69fb1df6600",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "M.Tech",
+                    "program_level": "PG"
+                },
+                {
+                    "id": "0a40c770-9b1b-4fe6-bb7e-02cacbd6ddb1",
+                    "code": "CS",
+                    "name": "Cyber Security",
+                    "program_name": "M.Tech",
+                    "program_level": "PG"
+                }
+            ],
+            "eligible_batches": [
+                {
+                    "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+                    "year": 2027
+                },
+                {
+                    "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+                    "year": 2028
+                }
+            ]
+        },
+        {
+            "id": "0bd724ec-99d1-40ad-a802-12c8571b420d",
+            "circular_number": "KIIT-DU/T&P/26/214",
+            "company_name": "JP Morgan Chase",
+            "role_title": "Software Engineer Program (SEP) - Summer Internship",
+            "job_type": "internship",
+            "ctc": null,
+            "stipend": "80,000 per month",
+            "min_cgpa": 8.5,
+            "deadline": "2026-03-15T11:00:00+00:00",
+            "description": null,
+            "circular_file_path": "circulars/KIIT-DU/T&P/26/214.pdf",
+            "approval_status": "approved",
+            "is_active": true,
+            "created_at": "2026-03-11T11:46:52.599308+00:00",
+            "posted_by": "a970f777-14a0-4698-a2f6-89452256f2a1",
+            "joining_date": "May/June 2027",
+            "locations": [
+                "Bengaluru",
+                "Hyderabad",
+                "Mumbai",
+                "Pune"
+            ],
+            "eligible_branches": [
+                {
+                    "id": "41806556-ae62-44c3-bba2-052b14b38532",
+                    "code": "IT",
+                    "name": "Information Technology",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "b9eb42ee-e467-4976-a2f9-0c33d2b0a5ec",
+                    "code": "CSE",
+                    "name": "Computer Science & Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                },
+                {
+                    "id": "ff02c5d7-8e32-49ec-9222-a19f7cc94bb3",
+                    "code": "CS&SE",
+                    "name": "Computer Science & System Engineering",
+                    "program_name": "B.Tech",
+                    "program_level": "UG"
+                }
+            ],
+            "eligible_batches": [
+                {
+                    "id": "5714af87-dac6-4665-8947-59f5f9b30e64",
+                    "year": 2027
+                },
+                {
+                    "id": "d5db0d21-01bd-4f66-8781-33695afb19a6",
+                    "year": 2028
+                }
+            ]
+        }
+    ]
+}
+
+/jobs/{id}/circular
+{
+    "success": true,
+    "message": "Circular download URL generated",
+    "data": {
+        "url": "https://goocnepzxrpxcugnkhmd.supabase.co/storage/v1/object/sign/job-circulars/circulars/KIIT-DU/T&P/26/213.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9lMTY4ZjYzOC02ZmNhLTQ2ZGEtOTQ2Yy03Y2VhYjJkNmQ4ZWEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJqb2ItY2lyY3VsYXJzL2NpcmN1bGFycy9LSUlULURVL1QmUC8yNi8yMTMucGRmIiwiaWF0IjoxNzczMzg4NTU2LCJleHAiOjE3NzMzODg2MTZ9.5xQ9YeB-PTVpJwOJsr0rV4BJmI7wL7aktJzbcZjO21A"
+    }
+}
