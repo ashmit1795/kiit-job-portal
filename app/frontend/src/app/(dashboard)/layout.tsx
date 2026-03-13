@@ -45,7 +45,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const NavLink = ({ route }: { route: typeof routes[0] }) => {
-    const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
+    const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
+    const fromAdmin = searchParams.get("from") === "admin";
+    
+    let isActive = false;
+    if (route.href === "/jobs") {
+      // "Jobs Feed" should be active on /jobs but NOT on /jobs/[id]?from=admin
+      isActive = pathname === "/jobs" || (pathname.startsWith("/jobs/") && !fromAdmin);
+    } else if (route.href === "/admin") {
+      // "Admin Panel" should be active on /admin AND on /jobs/[id]?from=admin
+      isActive = pathname === "/admin" || pathname.startsWith("/admin/") || (pathname.startsWith("/jobs/") && fromAdmin);
+    } else {
+      isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
+    }
     const Icon = route.icon;
     return (
       <Link href={route.href} onClick={() => setMobileOpen(false)}>

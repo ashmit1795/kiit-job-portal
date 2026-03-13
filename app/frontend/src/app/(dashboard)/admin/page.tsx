@@ -87,7 +87,7 @@ export default function AdminPage() {
               {pendingJobs.map((job) => (
                 <div key={job.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-border/50 rounded-xl bg-muted/10 gap-3">
                   <div className="min-w-0 flex-1">
-                    <Link href={`/jobs/${job.id}`} className="font-semibold hover:text-emerald-400 transition-colors line-clamp-1">
+                    <Link href={`/jobs/${job.id}?from=admin`} className="font-semibold hover:text-emerald-400 transition-colors line-clamp-1">
                       {job.role_title} @ {job.company_name}
                     </Link>
                     <div className="text-xs text-muted-foreground flex flex-wrap gap-2 items-center mt-1">

@@ -1,25 +1,51 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { jobService } from "@/services/job.service";
-import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@/providers/auth-provider";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon } from "lucide-react";
+import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon, CheckCircle, XCircle, ShieldCheck } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function JobDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const jobId = params.id as string;
+  const fromAdmin = searchParams.get("from") === "admin";
   const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: job, isLoading, error } = useQuery({
     queryKey: ["jobs", jobId],
     queryFn: () => jobService.fetchJobById(jobId),
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: () => jobService.approveJob(jobId),
+    onSuccess: () => {
+      toast.success("Job approved!");
+      queryClient.invalidateQueries({ queryKey: ["jobs", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+    onError: () => toast.error("Failed to approve job"),
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: () => jobService.rejectJob(jobId),
+    onSuccess: () => {
+      toast.success("Job rejected.");
+      queryClient.invalidateQueries({ queryKey: ["jobs", jobId] });
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+    },
+    onError: () => toast.error("Failed to reject job"),
   });
 
   const handleDownloadCircular = async () => {
@@ -46,44 +72,116 @@ export default function JobDetailPage() {
     return (
       <div className="text-center py-16 text-muted-foreground">
         <p className="font-medium">Job not found or failed to load.</p>
-        <Button variant="link" onClick={() => router.push("/jobs")} className="text-emerald-400 mt-2">
-          Return to Jobs
+        <Button variant="link" onClick={() => router.push(fromAdmin ? "/admin" : "/jobs")} className="text-emerald-400 mt-2">
+          {fromAdmin ? "Return to Admin Panel" : "Return to Jobs"}
         </Button>
       </div>
     );
   }
 
   const isExpired = new Date(job.deadline) < new Date();
+  const isAdmin = user?.role === "admin";
+  const isPending = job.approval_status === "pending";
+
+  // Build approval badge
+  const statusBadge = () => {
+    switch (job.approval_status) {
+      case "approved":
+        return (
+          <div className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-emerald-600/15 text-emerald-400 border border-emerald-700/30">
+            <CheckCircle className="h-4 w-4" /> Approved
+          </div>
+        );
+      case "rejected":
+        return (
+          <div className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-red-600/15 text-red-400 border border-red-700/30">
+            <XCircle className="h-4 w-4" /> Rejected
+          </div>
+        );
+      case "pending":
+        return (
+          <div className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-amber-600/15 text-amber-400 border border-amber-700/30">
+            <Clock className="h-4 w-4" /> Pending Approval
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <Button variant="ghost" onClick={() => router.push("/jobs")} className="pl-0 gap-2 hover:bg-transparent hover:text-emerald-400 text-muted-foreground">
-        <ArrowLeft className="h-4 w-4" /> Back to Feed
+      <Button
+        variant="ghost"
+        onClick={() => router.push(fromAdmin ? "/admin" : "/jobs")}
+        className="pl-0 gap-2 hover:bg-transparent hover:text-emerald-400 text-muted-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" /> {fromAdmin ? "Back to Admin Panel" : "Back to Feed"}
       </Button>
 
       {/* Hero header */}
       <div className="rounded-xl bg-gradient-to-br from-emerald-900/40 via-card to-card border border-border/50 p-6 md:p-8">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="space-y-3 flex-1 min-w-0">
-            <Badge variant="outline" className="bg-emerald-600/15 text-emerald-400 border-emerald-700/30 font-medium">
-              {job.job_type.replace(/_/g, " ").toUpperCase()}
-            </Badge>
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="outline" className="bg-emerald-600/15 text-emerald-400 border-emerald-700/30 font-medium">
+                {job.job_type.replace(/_/g, " ").toUpperCase()}
+              </Badge>
+            </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight break-words">{job.role_title}</h1>
             <div className="flex items-center gap-2 text-lg text-muted-foreground font-medium">
               <Building className="h-5 w-5 text-emerald-500 shrink-0" />
               <span className="break-words">{job.company_name}</span>
             </div>
           </div>
-          <div className={`flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full shrink-0 ${
-            isExpired
-              ? "bg-red-600/15 text-red-400 border border-red-700/30"
-              : "bg-emerald-600/15 text-emerald-400 border border-emerald-700/30"
-          }`}>
-            <Clock className="h-4 w-4" />
-            {isExpired ? "Applications Closed" : "Accepting Applications"}
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            {isAdmin && statusBadge()}
+            <div className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full ${
+              isExpired
+                ? "bg-red-600/10 text-red-400 border border-red-700/20"
+                : "bg-emerald-600/10 text-emerald-400 border border-emerald-700/20"
+            }`}>
+              <Clock className="h-3.5 w-3.5" />
+              {isExpired ? "Applications Closed" : "Accepting Applications"}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Admin Action Bar — only for admins on pending jobs */}
+      {isAdmin && isPending && (
+        <Card className="border-amber-700/30 bg-amber-900/10">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-amber-400">
+                <ShieldCheck className="h-5 w-5" />
+                <span className="font-semibold text-sm">Admin Review Required</span>
+                <span className="text-xs text-amber-400/70">— This job is awaiting your approval</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-emerald-700/30 text-emerald-400 hover:bg-emerald-600/15 font-semibold"
+                  onClick={() => approveMutation.mutate()}
+                  disabled={approveMutation.isPending || rejectMutation.isPending}
+                >
+                  {approveMutation.isPending ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-1.5" />}
+                  Approve
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-red-700/30 text-red-400 hover:bg-red-600/15 font-semibold"
+                  onClick={() => rejectMutation.mutate()}
+                  disabled={approveMutation.isPending || rejectMutation.isPending}
+                >
+                  {rejectMutation.isPending ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <XCircle className="h-4 w-4 mr-1.5" />}
+                  Reject
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
