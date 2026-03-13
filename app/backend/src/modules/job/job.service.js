@@ -118,6 +118,31 @@ class JobService {
 		return jobs.map((job) => this.formatJob(job));
 	}
 
+	async getCircularDownloadUrl(jobId) {
+		const job = await jobRepository.findById(jobId);
+
+		if (!job) {
+			throw new AppError("Job not found", 404);
+		}
+
+		if (job.approval_status !== "approved") {
+			throw new AppError("Circular not available", 403);
+		}
+
+		if (!job.circular_file_path) {
+			throw new AppError("Circular file missing", 404);
+		}
+
+		const { data, error } = await supabase.storage.from("job-circulars").createSignedUrl(job.circular_file_path, 60);
+
+		if (error) {
+			logger.error("Circular signed URL error:", error);
+			throw new AppError("Failed to generate download URL", 500);
+		}
+
+		return data.signedUrl;
+	}
+
 	formatJob(job) {
 		return {
 			id: job.id,

@@ -79,6 +79,21 @@ class JobController {
 			next(err);
 		}
 	}
+
+	async downloadCircular(req, res, next) {
+		try {
+			const { id } = req.params;
+
+			const url = await jobService.getCircularDownloadUrl(id);
+
+			return new AppResponse({
+				message: "Circular download URL generated",
+				data: { url },
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 const jobController = new JobController();

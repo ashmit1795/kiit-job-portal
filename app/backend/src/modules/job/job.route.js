@@ -29,6 +29,11 @@ router.get("/feed", jobController.getJobFeed);
 router.get("/:id", jobController.getJobById);
 
 /**
+ * Download circular
+ */
+router.get("/:id/circular", jobController.downloadCircular);
+
+/**
  * Admin approval
  */
 router.patch("/:id/approve", roleGuard("admin"), jobController.approveJob);
