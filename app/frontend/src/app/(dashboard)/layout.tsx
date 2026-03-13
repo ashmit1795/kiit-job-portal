@@ -69,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           }`}
         >
           <Icon className="h-4 w-4 shrink-0" />
-          <span className="hidden lg:inline">{route.label}</span>
+          <span className="hidden md:inline">{route.label}</span>
         </div>
       </Link>
     );
@@ -88,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className="sticky top-0 z-50 flex h-14 items-center gap-2 border-b border-border/50 bg-background/80 backdrop-blur-md px-4 md:px-6">
           {/* Mobile toggle */}
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-muted/50 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-muted/50 transition-colors"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -101,7 +101,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </Link>
 
           {/* Desktop Nav Links — inline in header */}
-          <nav className="hidden lg:flex items-center gap-1 ml-6">
+          <nav className="hidden md:flex items-center gap-1 ml-6">
             {visibleRoutes.map((route) => (
               <NavLink key={route.href} route={route} />
             ))}
@@ -173,30 +173,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Mobile nav drawer (slide-down) */}
         {mobileOpen && (
-          <div className="lg:hidden border-b border-border/50 bg-background/95 backdrop-blur-md px-4 py-3 space-y-1 animate-in slide-in-from-top duration-200">
-            {visibleRoutes.map((route) => {
-              const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
-              const Icon = route.icon;
-              return (
-                <Link key={route.href} href={route.href} onClick={() => setMobileOpen(false)}>
-                  <div
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? "bg-emerald-600/15 text-emerald-400"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    {route.label}
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+          <>
+            {/* Overlay */}
+            <div className="md:hidden fixed inset-0 top-14 bg-black/40 z-40" onClick={() => setMobileOpen(false)} />
+            <div className="md:hidden relative z-50 border-b border-border/50 bg-background/95 backdrop-blur-md px-4 py-3 space-y-1 animate-in slide-in-from-top duration-200">
+              {visibleRoutes.map((route) => {
+                const isActive = pathname === route.href || pathname.startsWith(`${route.href}/`);
+                const Icon = route.icon;
+                return (
+                  <Link key={route.href} href={route.href} onClick={() => setMobileOpen(false)}>
+                    <div
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-emerald-600/15 text-emerald-400"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      {route.label}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
         )}
 
         {/* Main content — full width, no sidebar */}
-        <main className="flex flex-1 flex-col w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 min-w-0">
+        <main className="flex flex-1 flex-col w-full max-w-7xl mx-auto p-4 md:p-6 lg:p-8 min-w-0 animate-in fade-in duration-300">
           {children}
         </main>
       </div>

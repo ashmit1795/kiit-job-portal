@@ -145,3 +145,43 @@
     background-clip: text;
   }
 }
+
+/* Custom scrollbar */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.4 0.05 155) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: oklch(0.4 0.05 155);
+    border-radius: 9999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.5 0.05 155);
+  }
+}
+
+/* MDEditor dark mode overrides */
+.dark .w-md-editor,
+.dark .w-md-editor-toolbar,
+.dark .w-md-editor-content,
+.dark .w-md-editor-text-pre,
+.dark .w-md-editor-text-input,
+.dark .w-md-editor-text {
+  background-color: oklch(0.16 0.03 155) !important;
+  color: oklch(0.95 0.01 155) !important;
+  border-color: oklch(1 0 0 / 10%) !important;
+}
+.dark .w-md-editor-toolbar li button {
+  color: oklch(0.65 0.06 155) !important;
+}
+.dark .w-md-editor-toolbar li button:hover {
+  color: oklch(0.95 0.01 155) !important;
+}

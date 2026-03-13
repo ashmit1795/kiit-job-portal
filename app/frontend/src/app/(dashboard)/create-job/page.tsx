@@ -72,6 +72,15 @@ export default function CreateJobPage() {
     setFormData({ ...formData, branches: [] });
   };
 
+  const validateStep1 = () => {
+    if (!formData.circular_number?.trim()) { toast.error("Circular number is required."); return false; }
+    if (!formData.company_name?.trim()) { toast.error("Company name is required."); return false; }
+    if (!formData.role_title?.trim()) { toast.error("Role title is required."); return false; }
+    if (!formData.job_type) { toast.error("Please select a job type."); return false; }
+    if (!formData.deadline) { toast.error("Deadline is required."); return false; }
+    return true;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!file) { toast.error("Circular PDF is required"); return; }
@@ -218,7 +227,7 @@ export default function CreateJobPage() {
                   />
                 </div>
 
-                <Button type="button" onClick={() => setStep(2)} className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold">
+                <Button type="button" onClick={() => { if (validateStep1()) setStep(2); }} className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold">
                   Next: Eligibility & Upload <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -271,7 +280,12 @@ export default function CreateJobPage() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-3 border border-border/50 rounded-xl bg-muted/10">
-                    {branches?.map((b) => (
+                    {!branches ? (
+                      <div className="w-full flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-emerald-500" />
+                        <span className="ml-2 text-sm text-muted-foreground">Loading branches...</span>
+                      </div>
+                    ) : branches.map((b) => (
                       <Badge
                         key={b.id}
                         variant={formData.branches?.includes(b.id) ? "default" : "outline"}

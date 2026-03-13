@@ -52,19 +52,32 @@ export default function AdminPage() {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statCards.map((s) => (
-          <Card key={s.label} className={`border ${s.bg}`}>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className={`h-10 w-10 rounded-lg bg-muted/30 flex items-center justify-center ${s.color} shrink-0`}>
-                <s.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
-                <p className="text-2xl font-bold">{s.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="border border-border/50">
+                <CardContent className="p-4 flex items-center gap-3 animate-pulse">
+                  <div className="h-10 w-10 rounded-lg bg-muted/50" />
+                  <div className="space-y-2 flex-1">
+                    <div className="h-3 w-16 bg-muted/50 rounded" />
+                    <div className="h-6 w-10 bg-muted/50 rounded" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          : statCards.map((s) => (
+              <Card key={s.label} className={`border ${s.bg}`}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className={`h-10 w-10 rounded-lg bg-muted/30 flex items-center justify-center ${s.color} shrink-0`}>
+                    <s.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">{s.label}</p>
+                    <p className="text-2xl font-bold">{s.value}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+        }
       </div>
 
       {/* Pending List */}
@@ -85,37 +98,39 @@ export default function AdminPage() {
           ) : (
             <div className="space-y-3">
               {pendingJobs.map((job) => (
-                <div key={job.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-border/50 rounded-xl bg-muted/10 gap-3">
-                  <div className="min-w-0 flex-1">
-                    <Link href={`/jobs/${job.id}?from=admin`} className="font-semibold hover:text-emerald-400 transition-colors line-clamp-1">
-                      {job.role_title} @ {job.company_name}
-                    </Link>
-                    <div className="text-xs text-muted-foreground flex flex-wrap gap-2 items-center mt-1">
-                      <span className="bg-muted px-2 py-0.5 rounded text-xs">Ref: {job.circular_number}</span>
-                      <span>{job.job_type.replace(/_/g, " ")}</span>
+                <Link key={job.id} href={`/jobs/${job.id}?from=admin`} className="block">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-border/50 rounded-xl bg-muted/10 gap-3 hover:bg-muted/20 hover:border-emerald-700/20 transition-all cursor-pointer">
+                    <div className="min-w-0 flex-1">
+                      <span className="font-semibold hover:text-emerald-400 transition-colors line-clamp-1">
+                        {job.role_title} @ {job.company_name}
+                      </span>
+                      <div className="text-xs text-muted-foreground flex flex-wrap gap-2 items-center mt-1">
+                        <span className="bg-muted px-2 py-0.5 rounded text-xs">Ref: {job.circular_number}</span>
+                        <span>{job.job_type.replace(/_/g, " ")}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.preventDefault()}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-emerald-700/30 text-emerald-400 hover:bg-emerald-600/15"
+                        onClick={(e) => { e.preventDefault(); approveMutation.mutate(job.id); }}
+                        disabled={approveMutation.isPending || rejectMutation.isPending}
+                      >
+                        <CheckCircle className="h-4 w-4 mr-1.5" /> Approve
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-700/30 text-red-400 hover:bg-red-600/15"
+                        onClick={(e) => { e.preventDefault(); rejectMutation.mutate(job.id); }}
+                        disabled={approveMutation.isPending || rejectMutation.isPending}
+                      >
+                        <XCircle className="h-4 w-4 mr-1.5" /> Reject
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-emerald-700/30 text-emerald-400 hover:bg-emerald-600/15"
-                      onClick={() => approveMutation.mutate(job.id)}
-                      disabled={approveMutation.isPending || rejectMutation.isPending}
-                    >
-                      <CheckCircle className="h-4 w-4 mr-1.5" /> Approve
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-700/30 text-red-400 hover:bg-red-600/15"
-                      onClick={() => rejectMutation.mutate(job.id)}
-                      disabled={approveMutation.isPending || rejectMutation.isPending}
-                    >
-                      <XCircle className="h-4 w-4 mr-1.5" /> Reject
-                    </Button>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

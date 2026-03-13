@@ -46,7 +46,7 @@ export function JobCard({ job, showStatus = false }: JobCardProps) {
   const deadlineInfo = getDeadlineInfo(job.deadline);
 
   return (
-    <Link href={`/jobs/${job.id}`} className="group block">
+    <Link href={`/jobs/${job.id}`} className="group block cursor-pointer">
       <Card className={`border-l-4 ${typeColors[job.job_type] || "border-l-emerald-500"} hover:shadow-lg hover:shadow-emerald-900/10 transition-all duration-200 hover:-translate-y-0.5 h-full flex flex-col`}>
         <CardHeader className="pb-3 space-y-3">
           <div className="flex items-start justify-between gap-2">
@@ -80,6 +80,7 @@ export function JobCard({ job, showStatus = false }: JobCardProps) {
               </span>
               <span className="line-clamp-1">{job.company_name}</span>
             </p>
+            <p className="text-xs text-muted-foreground/60 pl-7.5">Ref: {job.circular_number}</p>
           </div>
         </CardHeader>
 
