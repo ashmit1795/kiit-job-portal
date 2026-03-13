@@ -48,13 +48,19 @@ class UserRepository {
 			)
 			.eq("id", userId)
 			.single();
+		
+		const authUser = await supabase.auth.admin.getUserById(data.id);
+
+		if (authUser.error) {
+			throw new AppError("Failed to retrieve user from Supabase", 500);
+		}
 
 		if (error) {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
 		}
 
-		return data;
+		return { avatar_url: authUser.data.user.user_metadata.avatar_url, full_name: authUser.data.user.user_metadata.full_name, ...data };
 	}
 
 	/**
@@ -68,11 +74,17 @@ class UserRepository {
 	async create(userData) {
 		const { data, error } = await supabase.schema("placement").from("users").insert(userData).select().single();
 
+		const authUser = await supabase.auth.admin.getUserById(data.id);
+
+		if (authUser.error) {
+			throw new AppError("Failed to retrieve user from Supabase", 500);
+		}
+
 		if (error) {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
 		}
-		return data;
+		return { avatar_url: authUser.data.user.user_metadata.avatar_url, full_name: authUser.data.user.user_metadata.full_name, ...data };
 	}
 
 	/**
@@ -87,12 +99,18 @@ class UserRepository {
 	async update(userId, updates) {
 		const { data, error } = await supabase.schema("placement").from("users").update(updates).eq("id", userId).select().single();
 
+		const authUser = await supabase.auth.admin.getUserById(data.id);
+
+		if (authUser.error) {
+			throw new AppError("Failed to retrieve user from Supabase", 500);
+		}
+
 		if (error) {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
 		}
 
-		return data;
+		return { avatar_url: authUser.data.user.user_metadata.avatar_url, full_name: authUser.data.user.user_metadata.full_name, ...data };
 	}
 
 	/**
@@ -137,13 +155,19 @@ class UserRepository {
 			)
 			.eq("email", email)
 			.single();
+		
+		const authUser = await supabase.auth.admin.getUserById(data.id);
+
+		if (authUser.error) {
+			throw new AppError("Failed to retrieve user from Supabase", 500);
+		}
 
 		if (error) {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
 		}
 
-		return data;
+		return { avatar_url: authUser.data.user.user_metadata.avatar_url, full_name: authUser.data.user.user_metadata.full_name, ...data };
 	}
 }
 
