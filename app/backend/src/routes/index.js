@@ -7,6 +7,8 @@ import profileRoute from "../modules/users/profile.route.js";
 import healthRoute from "../modules/health/health.route.js";
 import academicRoute from "../modules/academics/academic.route.js";
 import jobRoute from "../modules/job/job.route.js";
+import adminRoutes from "../modules/admin/admin.routes.js";
+import roleGuard from "../middlewares/roleGuard.middleware.js";
 
 const router = Router();
 
@@ -27,6 +29,8 @@ router.use("/profile", authenticate, profileRoute);
 router.use(authenticate, profileGuard);
 
 router.use("/jobs", jobRoute);
+
+router.use("/admin", roleGuard("admin"), adminRoutes);
 
 
 
