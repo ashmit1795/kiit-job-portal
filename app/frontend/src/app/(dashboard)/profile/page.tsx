@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, UploadCloud, FileText, Check, GraduationCap, User } from "lucide-react";
@@ -47,14 +48,18 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <div className="rounded-xl bg-gradient-to-br from-emerald-900/40 via-card to-card border border-border/50 p-6 md:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="h-14 w-14 rounded-xl bg-emerald-600/20 flex items-center justify-center text-emerald-400 text-xl font-bold shrink-0">
-            {user.email?.charAt(0).toUpperCase()}
-          </div>
+          <Avatar className="h-14 w-14 rounded-xl">
+            {user.avatar_url && <AvatarImage src={user.avatar_url} alt={user.full_name || "User"} className="rounded-xl" />}
+            <AvatarFallback className="h-14 w-14 rounded-xl bg-emerald-600/20 text-emerald-400 text-xl font-bold">
+              {user.full_name ? user.full_name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase() : user.email?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl font-bold">{user.roll_number || user.email}</h1>
+              <h1 className="text-xl font-bold">{user.full_name || user.roll_number || user.email}</h1>
               {roleBadge()}
             </div>
+            {user.roll_number && <p className="text-sm text-muted-foreground mt-0.5">{user.roll_number}</p>}
             <p className="text-sm text-muted-foreground mt-0.5 break-all">{user.email}</p>
           </div>
         </div>

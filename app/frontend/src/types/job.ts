@@ -18,6 +18,8 @@ export interface Job {
   is_active: boolean;
   created_at: string;
   posted_by: string;
+  apply_link_1: string | null;
+  apply_link_2: string | null;
   locations: string[];
   eligible_branches: {
     id: string;

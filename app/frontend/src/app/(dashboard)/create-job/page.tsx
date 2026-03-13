@@ -6,16 +6,18 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { jobService, CreateJobPayload } from "@/services/job.service";
 import { academicService } from "@/services/academic.service";
+import dynamic from "next/dynamic";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, Upload, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { Loader2, Upload, CheckCircle, ArrowLeft, ArrowRight, Link as LinkIcon } from "lucide-react";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function CreateJobPage() {
   const { user } = useAuth();
@@ -32,6 +34,7 @@ export default function CreateJobPage() {
   const { data: batches } = useQuery({ queryKey: ["batches"], queryFn: academicService.fetchBatches });
 
   const [formData, setFormData] = useState<Partial<CreateJobPayload>>({
+    circular_number: "KIIT-DU/T&P/26/",
     branches: [],
     batches: [],
     locations: [],
@@ -39,6 +42,7 @@ export default function CreateJobPage() {
 
   const [file, setFile] = useState<File | null>(null);
   const [locationsInput, setLocationsInput] = useState("");
+  const [description, setDescription] = useState<string>("");
 
   const createJobMutation = useMutation({
     mutationFn: (payload: CreateJobPayload) => jobService.createJob(payload),
@@ -76,10 +80,13 @@ export default function CreateJobPage() {
 
     const payload = {
       ...formData,
+      description: description || undefined,
       locations: locationsInput.split(",").map((l) => l.trim()).filter((l) => l),
       circular_file: file,
       deadline: new Date(formData.deadline).toISOString(),
-      joining_date: formData.joining_date ? new Date(formData.joining_date).toISOString() : undefined,
+      joining_date: formData.joining_date || undefined,
+      apply_link_1: formData.apply_link_1 || undefined,
+      apply_link_2: formData.apply_link_2 || undefined,
     } as CreateJobPayload;
 
     createJobMutation.mutate(payload);
@@ -172,7 +179,7 @@ export default function CreateJobPage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Joining Date</Label>
-                    <Input type="date" value={formData.joining_date || ""} onChange={(e) => setFormData({ ...formData, joining_date: e.target.value })} />
+                    <Input placeholder="e.g. May/June 2027" value={formData.joining_date || ""} onChange={(e) => setFormData({ ...formData, joining_date: e.target.value })} />
                   </div>
                 </div>
 
@@ -181,9 +188,34 @@ export default function CreateJobPage() {
                   <Input placeholder="Bangalore, Hyderabad, Remote (comma separated)" value={locationsInput} onChange={(e) => setLocationsInput(e.target.value)} />
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea rows={3} placeholder="Key requirements, skills, notes..." value={formData.description || ""} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                {/* Apply Links */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1.5">
+                      <LinkIcon className="h-3.5 w-3.5 text-emerald-500" /> Apply Link 1
+                    </Label>
+                    <Input type="url" placeholder="https://..." value={formData.apply_link_1 || ""} onChange={(e) => setFormData({ ...formData, apply_link_1: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-1.5">
+                      <LinkIcon className="h-3.5 w-3.5 text-emerald-500" /> Apply Link 2
+                    </Label>
+                    <Input type="url" placeholder="https://..." value={formData.apply_link_2 || ""} onChange={(e) => setFormData({ ...formData, apply_link_2: e.target.value })} />
+                  </div>
+                </div>
+
+                {/* Markdown description editor */}
+                <div className="space-y-2" data-color-mode="dark">
+                  <Label>Description <span className="text-xs text-muted-foreground ml-1">(Markdown supported)</span></Label>
+                  <MDEditor
+                    value={description}
+                    onChange={(val) => setDescription(val || "")}
+                    height={220}
+                    preview="edit"
+                    textareaProps={{
+                      placeholder: "Write job description, requirements, skills... Markdown formatting supported.",
+                    }}
+                  />
                 </div>
 
                 <Button type="button" onClick={() => setStep(2)} className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold">
@@ -197,7 +229,7 @@ export default function CreateJobPage() {
               <div className="space-y-5">
                 <div className="space-y-2">
                   <Label>Circular PDF *</Label>
-                  <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${file ? "border-emerald-700/30 bg-emerald-900/10" : "border-border/50 hover:border-emerald-700/30"}`}>
+                  <div className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-colors ${file ? "border-emerald-700/30 bg-emerald-900/10" : "border-border/50 hover:border-emerald-700/30"}`}>
                     {file ? (
                       <div className="flex items-center justify-center gap-2 text-emerald-400">
                         <CheckCircle className="h-5 w-5" />
@@ -246,7 +278,7 @@ export default function CreateJobPage() {
                         className={`cursor-pointer font-normal transition-all ${formData.branches?.includes(b.id) ? "bg-emerald-600/20 text-emerald-400 border-emerald-700/30 hover:bg-emerald-600/30" : "hover:border-emerald-700/30"}`}
                         onClick={() => toggleArrayItem("branches", b.id)}
                       >
-                        {b.code}
+                        {b.program?.name} {b.code}
                       </Badge>
                     ))}
                   </div>

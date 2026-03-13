@@ -24,7 +24,7 @@ export function JobCardSkeleton() {
           <Skeleton className="h-5 w-12 rounded-full" />
         </div>
       </CardContent>
-      <CardFooter className="pt-0 border-t border-border/50 mt-auto">
+      <CardFooter className="pt-3 border-t border-border/50 mt-auto">
         <Skeleton className="h-4 w-24" />
       </CardFooter>
     </Card>

@@ -13,6 +13,8 @@ export interface CreateJobPayload {
   deadline: string;
   joining_date?: string;
   description?: string;
+  apply_link_1?: string;
+  apply_link_2?: string;
   branches: string[];
   batches: string[];
   locations: string[];
@@ -41,23 +43,32 @@ export const jobService = {
   },
 
   createJob: async (payload: CreateJobPayload) => {
+    console.log("[createJob] START - building FormData");
     const formData = new FormData();
     Object.entries(payload).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (key === "circular_file") {
           formData.append("circular", value as File);
+          console.log("[createJob] appended circular file:", (value as File).name);
         } else if (Array.isArray(value)) {
           value.forEach((v) => formData.append(`${key}[]`, v));
+          console.log(`[createJob] appended array ${key}[]:`, value.length, "items");
         } else {
           formData.append(key, value.toString());
+          console.log(`[createJob] appended ${key}:`, value.toString().substring(0, 50));
         }
       }
     });
 
-    const { data } = await api.post<ApiResponse<{ id: string }>>("/jobs", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return data.data;
+    console.log("[createJob] FormData built. Sending POST /jobs ...");
+    try {
+      const { data } = await api.post<ApiResponse<{ id: string }>>("/jobs", formData);
+      console.log("[createJob] SUCCESS:", data);
+      return data.data;
+    } catch (err) {
+      console.error("[createJob] ERROR:", err);
+      throw err;
+    }
   },
 
   approveJob: async (id: string) => {

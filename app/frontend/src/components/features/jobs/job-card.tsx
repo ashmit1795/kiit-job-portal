@@ -122,7 +122,7 @@ export function JobCard({ job, showStatus = false }: JobCardProps) {
           )}
         </CardContent>
 
-        <CardFooter className="pt-0 border-t border-border/50 mt-auto">
+        <CardFooter className="pt-3 border-t border-border/50 mt-auto">
           <div className={`flex items-center gap-1.5 text-xs font-medium ${deadlineInfo.color}`}>
             <Clock className="h-3.5 w-3.5" />
             {deadlineInfo.text}

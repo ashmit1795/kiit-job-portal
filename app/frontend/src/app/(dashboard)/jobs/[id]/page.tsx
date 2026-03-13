@@ -6,8 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock } from "lucide-react";
+import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon } from "lucide-react";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -131,7 +133,31 @@ export default function JobDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Description */}
+          {/* Apply Links */}
+          {(job.apply_link_1 || job.apply_link_2) && (
+            <Card className="border-emerald-700/30 bg-emerald-900/5">
+              <CardContent className="p-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {job.apply_link_1 && (
+                    <a href={job.apply_link_1} target="_blank" rel="noopener noreferrer" className="flex-1">
+                      <Button className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold gap-2">
+                        <LinkIcon className="h-4 w-4" /> Apply Link 1
+                      </Button>
+                    </a>
+                  )}
+                  {job.apply_link_2 && (
+                    <a href={job.apply_link_2} target="_blank" rel="noopener noreferrer" className="flex-1">
+                      <Button variant="outline" className="w-full border-emerald-700/30 text-emerald-400 hover:bg-emerald-600/10 font-semibold gap-2">
+                        <LinkIcon className="h-4 w-4" /> Apply Link 2
+                      </Button>
+                    </a>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Description — rendered as Markdown */}
           {job.description && (
             <Card className="border-border/50">
               <CardHeader>
@@ -140,9 +166,20 @@ export default function JobDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed text-sm">
-                  {job.description}
-                </p>
+                <div className="prose prose-sm prose-invert max-w-none text-muted-foreground
+                  prose-headings:text-foreground prose-strong:text-foreground
+                  prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+                  prose-code:text-emerald-400 prose-code:bg-muted/50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                  prose-pre:bg-muted/30 prose-pre:border prose-pre:border-border/50
+                  prose-ul:list-disc prose-ol:list-decimal
+                  prose-li:marker:text-emerald-500
+                  prose-table:border-collapse prose-th:border prose-th:border-border/50 prose-th:p-2 prose-th:bg-muted/30
+                  prose-td:border prose-td:border-border/50 prose-td:p-2
+                ">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {job.description}
+                  </ReactMarkdown>
+                </div>
               </CardContent>
             </Card>
           )}

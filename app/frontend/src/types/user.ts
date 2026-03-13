@@ -6,6 +6,8 @@ export interface User {
   roll_number: string | null;
   role: UserRole;
   profile_completed: boolean;
+  avatar_url: string | null;
+  full_name: string | null;
   cgpa: number | null;
   tenth_percentage: number | null;
   twelfth_percentage: number | null;
