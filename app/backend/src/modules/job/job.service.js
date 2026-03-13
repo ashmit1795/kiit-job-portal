@@ -104,6 +104,20 @@ class JobService {
 		return jobRepository.updateApproval(jobId, "rejected");
 	}
 
+	async getJobFeed(user) {
+		if (!user.profile_completed) {
+			throw new AppError("Complete profile to view job feed", 403);
+		}
+
+		const branchId = user.branch?.id;
+		const batchId = user.batch?.id;
+		const cgpa = user.cgpa;
+
+		const jobs = await jobRepository.getFeed(branchId, batchId, cgpa);
+
+		return jobs.map((job) => this.formatJob(job));
+	}
+
 	formatJob(job) {
 		return {
 			id: job.id,

@@ -206,6 +206,22 @@ class JobRepository {
 
 		return data;
 	}
+
+	async getFeed(branchId, batchId, cgpa) {
+		const { data, error } = await supabase.schema("placement").rpc("get_job_feed", {
+			p_branch_id: branchId,
+			p_batch_id: batchId,
+			p_cgpa: cgpa,
+		});
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data;
+	}
 }
 
 export default new JobRepository();

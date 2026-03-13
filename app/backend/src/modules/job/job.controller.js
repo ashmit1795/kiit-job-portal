@@ -66,6 +66,19 @@ class JobController {
 			next(err);
 		}
 	}
+
+	async getJobFeed(req, res, next) {
+		try {
+			const jobs = await jobService.getJobFeed(req.user);
+
+			return new AppResponse({
+				message: "Job feed fetched successfully",
+				data: jobs,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 const jobController = new JobController();
