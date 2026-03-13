@@ -55,7 +55,6 @@ class UserService {
 		------------------------------ */
 
 		let user = await userRepository.findByEmail(email);
-		logger.debug(`User lookup: ${JSON.stringify(user)}`);
 
 		/* -----------------------------
 		New User
@@ -87,11 +86,11 @@ class UserService {
 
 		const updates = {};
 
-		if (user.full_name !== fullName) {
+		if (user.full_name === null || user.full_name !== fullName) {
 			updates.full_name = fullName;
 		}
 
-		if (user.avatar_url !== avatarUrl) {
+		if (user.avatar_url === null || user.avatar_url !== avatarUrl) {
 			updates.avatar_url = avatarUrl;
 		}
 
