@@ -86,17 +86,18 @@ class UserService {
 
 		const updates = {};
 
-		if (user.full_name === null || user.full_name !== fullName) {
+		if (fullName && user.full_name !== fullName) {
 			updates.full_name = fullName;
 		}
 
-		if (user.avatar_url === null || user.avatar_url !== avatarUrl) {
+		if (avatarUrl && user.avatar_url !== avatarUrl) {
 			updates.avatar_url = avatarUrl;
 		}
 
 		if (Object.keys(updates).length > 0) {
-			await userRepository.update(user.id, updates);
+			user = await userRepository.update(user.id, updates);
 		}
+
 
 		return user;
 	}
