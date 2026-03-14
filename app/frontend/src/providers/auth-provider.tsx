@@ -1,10 +1,11 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { User, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { User as AppUser } from "@/types/user";
 import api from "@/lib/api";
+import { setAccessToken } from "@/lib/api";
 import { ApiResponse } from "@/types/api";
 import { toast } from "sonner";
 
@@ -31,7 +32,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AppUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAppUser = async () => {
+  // Prevent duplicate fetchAppUser calls
+  const fetchingRef = useRef(false);
+
+  const fetchAppUser = useCallback(async () => {
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
     try {
       const { data } = await api.get<ApiResponse<AppUser>>("/auth/me");
       if (data.success && data.data) {
@@ -45,29 +51,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error(message || "Access denied. Only @kiit.ac.in emails are allowed.");
         await supabase.auth.signOut();
       } else if (status === 401) {
-        // 401 is handled by the api interceptor — no extra action needed
+        // handled by api interceptor
       } else {
         toast.error(message || "Something went wrong. Please try again.");
       }
       console.error("Failed to fetch app user", error);
+    } finally {
+      fetchingRef.current = false;
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const initializeAuth = async () => {
-      const { data: { session: activeSession } } = await supabase.auth.getSession();
-      setSession(activeSession);
-      if (activeSession) {
-        await fetchAppUser();
-      }
-      setIsLoading(false);
-    };
-
-    initializeAuth();
-
+    // Single source of truth: onAuthStateChange handles EVERYTHING
+    // including the INITIAL_SESSION event, so no separate getSession() needed
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
+      async (event, newSession) => {
         setSession(newSession);
+        setAccessToken(newSession?.access_token ?? null);
+
         if (newSession) {
           await fetchAppUser();
         } else {
@@ -80,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchAppUser]);
 
   const signIn = async () => {
     await supabase.auth.signInWithOAuth({
