@@ -1,66 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const { refreshUser, user } = useAuth();
-  const [error, setError] = useState<string | null>(null);
+  const { user, isLoading } = useAuth();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        const { error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
+    // Wait until auth provider has finished resolving
+    if (isLoading) return;
+    if (hasRedirected.current) return;
 
-        await refreshUser();
-      } catch (err: any) {
-        console.error("Auth callback error:", err);
-        const message = err?.response?.data?.message || err.message || "Authentication failed. Please try again.";
-        setError(message);
-        toast.error(message);
-      }
-    };
+    hasRedirected.current = true;
 
-    handleAuthCallback();
-  }, [refreshUser]);
-
-  useEffect(() => {
     if (user) {
+      // Authenticated and backend-verified — go to the right page
       if (!user.profile_completed && user.role !== "admin") {
-        router.push("/onboarding");
+        router.replace("/onboarding");
       } else {
-        router.push("/jobs");
+        router.replace("/jobs");
       }
+    } else {
+      // No user after loading finished — means sign-in failed
+      // (unauthorized email, 403, signOut already called by auth-provider)
+      // Just go to login — toast was already shown by auth-provider
+      router.replace("/login");
     }
-  }, [user, router]);
-
-  if (error) {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4 p-4">
-        <div className="max-w-sm text-center space-y-4">
-          <div className="mx-auto h-12 w-12 rounded-full bg-red-600/20 flex items-center justify-center text-red-400 mb-2">
-            ✕
-          </div>
-          <h2 className="text-lg font-bold text-red-400">Authentication Failed</h2>
-          <p className="text-sm text-muted-foreground">{error}</p>
-          <Button
-            onClick={() => router.push("/login")}
-            className="bg-gradient-brand hover:opacity-90 text-white font-semibold"
-          >
-            Return to Login
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  }, [isLoading, user, router]);
 
   return (
     <div className="flex h-screen flex-col items-center justify-center space-y-4">
