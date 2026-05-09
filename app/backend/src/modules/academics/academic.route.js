@@ -24,4 +24,8 @@ router.post("/programs", authenticate, roleGuard("admin"), validate(createProgra
 router.post("/branches", authenticate, roleGuard("admin"), validate(createBranchSchema), academicController.createBranch);
 router.post("/batches", authenticate, roleGuard("admin"), validate(createBatchSchema), academicController.createBatch);
 
+router.delete("/programs/:id", authenticate, roleGuard("admin"), academicController.deleteProgram);
+router.delete("/branches/:id", authenticate, roleGuard("admin"), academicController.deleteBranch);
+router.delete("/batches/:id", authenticate, roleGuard("admin"), academicController.deleteBatch);
+
 export default router;

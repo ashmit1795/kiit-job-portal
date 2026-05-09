@@ -176,7 +176,46 @@ class AcademicRepository {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
 		}
-		return data;
+        return data;
+        }
+
+        /**
+         * Deletes an academic program by ID.
+         * @param {uuid} programId - The ID of the program to delete.
+         */
+        async deleteProgram(programId) {
+		const { error } = await supabase.schema("placement").from("programs").delete().eq("id", programId);
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+        }
+    }
+
+    /**
+     * Deletes an academic branch by ID.
+     * @param {uuid} branchId - The ID of the branch to delete.
+     */
+    async deleteBranch(branchId) {
+		const { error } = await supabase.schema("placement").from("branches").delete().eq("id", branchId);
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+        }
+    }
+
+    /**
+     * Deletes an academic batch by ID.
+     * @param {uuid} batchId - The ID of the batch to delete.
+     */
+    async deleteBatch(batchId) {
+		const { error } = await supabase.schema("placement").from("batches").delete().eq("id", batchId);
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+        }
     }
 }
 

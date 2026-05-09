@@ -65,7 +65,7 @@ class AcademicController {
      */
 	async createProgram  (req, res, next) {
 		try {
-			const program = await academicService.createProgram(req.body);
+			const program = await academicService.createProgram(req.user, req.body);
 
 			return new AppResponse({
 				message: "Program created successfully",
@@ -82,7 +82,7 @@ class AcademicController {
      */
 	async createBranch (req, res, next) {
 		try {
-			const branch = await academicService.createBranch(req.body);
+			const branch = await academicService.createBranch(req.user, req.body);
 
 			return new AppResponse({
 				message: "Branch created successfully",
@@ -99,7 +99,7 @@ class AcademicController {
      */
 	async createBatch (req, res, next) {
 		try {
-			const batch = await academicService.createBatch(req.body);
+			const batch = await academicService.createBatch(req.user, req.body);
 
 			return new AppResponse({
 				message: "Batch created successfully",
@@ -109,6 +109,51 @@ class AcademicController {
 			next(err);
 		}
 	};
+
+	/**
+	 * Handles the `DELETE /academics/programs/:id` route to remove a program.
+	 */
+	async deleteProgram(req, res, next) {
+		try {
+			await academicService.deleteProgram(req.user, req.params.id);
+
+			return new AppResponse({
+				message: "Program deleted successfully",
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	/**
+	 * Handles the `DELETE /academics/branches/:id` route to remove a branch.
+	 */
+	async deleteBranch(req, res, next) {
+		try {
+			await academicService.deleteBranch(req.user, req.params.id);
+
+			return new AppResponse({
+				message: "Branch deleted successfully",
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	/**
+	 * Handles the `DELETE /academics/batches/:id` route to remove a batch.
+	 */
+	async deleteBatch(req, res, next) {
+		try {
+			await academicService.deleteBatch(req.user, req.params.id);
+
+			return new AppResponse({
+				message: "Batch deleted successfully",
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 export default new AcademicController();
