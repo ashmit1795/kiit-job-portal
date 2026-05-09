@@ -16,6 +16,8 @@ router.get("/users", roleGuard("admin"), adminController.listUsers);
 
 router.get("/users/:id", roleGuard("admin"), adminController.getUser);
 
+router.get("/users/:id/jobs", roleGuard("admin"), adminController.getUserJobs);
+
 router.patch("/users/:id/role", roleGuard("admin"), adminController.updateUserRole);
 
 router.delete("/users/:id", roleGuard("admin"), adminController.deleteUser);
@@ -23,6 +25,13 @@ router.delete("/users/:id", roleGuard("admin"), adminController.deleteUser);
 /**
  * Analytics
  */
+router.get("/jobs", roleGuard("admin"), adminController.listAllJobs);
+
 router.get("/jobs/stats", roleGuard("admin"), adminController.jobStats);
+
+/**
+ * Logs
+ */
+router.get("/logs", roleGuard("admin"), adminController.getLogs);
 
 export default router;
