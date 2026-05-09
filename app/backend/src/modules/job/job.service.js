@@ -2,6 +2,7 @@ import jobRepository from "./job.repository.js";
 import AppError from "../../utils/AppError.js";
 import supabase from "../../config/supabase.js";
 import logger from "../../utils/logger.js";
+import adminRepository from "../admin/admin.repository.js";
 
 class JobService {
 	async createJob(user, payload, file) {
@@ -95,7 +96,25 @@ class JobService {
 			throw new AppError("Only admins can approve jobs", 403);
 		}
 
-		return jobRepository.updateApproval(jobId, "approved");
+		const job = await jobRepository.updateApproval(jobId, "approved");
+		if (!job) {
+			throw new AppError("Job not found", 404);
+		}
+
+		await adminRepository.insertLog({
+			admin_id: user.id,
+			action: "approve_job",
+			target_type: "job",
+			target_id: job.id,
+			details: {
+				company_name: job.company_name,
+				role_title: job.role_title,
+				circular_number: job.circular_number,
+				approval_status: job.approval_status,
+			},
+		});
+
+		return job;
 	}
 
 	async rejectJob(user, jobId) {
@@ -103,7 +122,25 @@ class JobService {
 			throw new AppError("Only admins can reject jobs", 403);
 		}
 
-		return jobRepository.updateApproval(jobId, "rejected");
+		const job = await jobRepository.updateApproval(jobId, "rejected");
+		if (!job) {
+			throw new AppError("Job not found", 404);
+		}
+
+		await adminRepository.insertLog({
+			admin_id: user.id,
+			action: "reject_job",
+			target_type: "job",
+			target_id: job.id,
+			details: {
+				company_name: job.company_name,
+				role_title: job.role_title,
+				circular_number: job.circular_number,
+				approval_status: job.approval_status,
+			},
+		});
+
+		return job;
 	}
 
 	async getJobFeed(user) {
