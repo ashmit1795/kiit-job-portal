@@ -22,6 +22,8 @@ class UserRepository {
 				`
 					id,
 					email,
+					full_name,
+					avatar_url,
 					roll_number,
 					role,
 					profile_completed,
@@ -110,6 +112,8 @@ class UserRepository {
 			.select(
 				`
 					id,
+					full_name,
+					avatar_url,
 					email,
 					roll_number,
 					role,

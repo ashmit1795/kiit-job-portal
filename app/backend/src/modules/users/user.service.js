@@ -32,33 +32,74 @@ class UserService {
 	 * @throws {AppError} - Throws an AppError if the email format is invalid or if any database error occurs during user creation.
 	 */
 	async syncUser(supabaseUser) {
-		let user = await userRepository.findByEmail(supabaseUser.email);
-
-		if (user) return user;
-
 		const email = supabaseUser.email;
+
+		/* -----------------------------
+		Validate email domain
+		------------------------------ */
 
 		if (!email.endsWith("@kiit.ac.in") && !env.ADMIN_EMAILS.includes(email)) {
 			throw new AppError("Unauthorized email domain", 403);
 		}
 
-		const rollNumber = this.extractRollNumber(email);
+		/* -----------------------------
+		Extract metadata
+		------------------------------ */
 
-		let role = "student";
+		const fullName = supabaseUser.user_metadata?.full_name ?? supabaseUser.user_metadata?.name ?? null;
 
-		if (env.ADMIN_EMAILS.includes(email)) {
-			role = "admin";
+		const avatarUrl = supabaseUser.user_metadata?.avatar_url ?? supabaseUser.user_metadata?.picture ?? null;
+
+		/* -----------------------------
+		Check if user exists
+		------------------------------ */
+
+		let user = await userRepository.findByEmail(email);
+
+		/* -----------------------------
+		New User
+		------------------------------ */
+
+		if (!user) {
+			const rollNumber = this.extractRollNumber(email);
+
+			let role = "student";
+
+			if (env.ADMIN_EMAILS.includes(email)) {
+				role = "admin";
+			}
+
+			return userRepository.create({
+				id: supabaseUser.id,
+				email,
+				roll_number: rollNumber,
+				role,
+				profile_completed: role === "admin",
+				full_name: fullName,
+				avatar_url: avatarUrl,
+			});
 		}
 
-		const newUser = await userRepository.create({
-			id: supabaseUser.id,
-			email,
-			roll_number: rollNumber,
-			role,
-			profile_completed: role === "admin",
-		});
+		/* -----------------------------
+			Update cached metadata
+		------------------------------ */
 
-		return newUser;
+		const updates = {};
+
+		if (fullName && user.full_name !== fullName) {
+			updates.full_name = fullName;
+		}
+
+		if (avatarUrl && user.avatar_url !== avatarUrl) {
+			updates.avatar_url = avatarUrl;
+		}
+
+		if (Object.keys(updates).length > 0) {
+			user = await userRepository.update(user.id, updates);
+		}
+
+
+		return user;
 	}
 }
 
