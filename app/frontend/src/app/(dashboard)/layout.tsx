@@ -3,6 +3,7 @@
 import { useAuth } from "@/providers/auth-provider";
 import { AuthGuard } from "@/components/features/auth/auth-guard";
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -95,10 +96,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </button>
 
           {/* Logo */}
-          <Link href="/jobs" className="flex items-center gap-2 font-bold tracking-tight text-lg">
-            <div className="h-7 w-7 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-black text-xs">A</div>
-            <span className="hidden sm:inline-block">Avsaar</span>
-          </Link>
+          <Logo href="/jobs" height={28} />
 
           {/* Desktop Nav Links — inline in header */}
           <nav className="hidden md:flex items-center gap-1 ml-6">

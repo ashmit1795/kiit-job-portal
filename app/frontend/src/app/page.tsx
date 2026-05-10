@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -93,10 +94,7 @@ export default function LandingPage() {
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <Link className="flex items-center justify-center gap-2 font-bold text-xl tracking-tight" href="/">
-          <div className="h-8 w-8 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-black text-sm">A</div>
-          <span className="hidden sm:inline-block text-foreground">Avsaar</span>
-        </Link>
+        <Logo href="/" height={36} />
         <HeaderCTA />
       </header>
 
@@ -119,7 +117,7 @@ export default function LandingPage() {
                 <span className="text-gradient-brand">top career opportunities</span>
               </h1>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl font-medium leading-relaxed">
-                Avsaar is a centralized platform for KIIT University students to discover, track, and access placements, internships, and hackathons.
+                अवSaar is a centralized platform for KIIT University students to discover, track, and access placements, internships, and hackathons.
               </p>
             </div>
 
@@ -201,7 +199,7 @@ export default function LandingPage() {
             <p className="text-muted-foreground max-w-md mx-auto">
               {isAuthenticated
                 ? "Jump back into your dashboard and check the latest postings."
-                : "Join thousands of KIIT students already using Avsaar to land their dream roles."
+                : "Join thousands of KIIT students already using अवSaar to land their dream roles."
               }
             </p>
             {isAuthenticated ? (
@@ -227,10 +225,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1 space-y-4">
-              <Link href="/" className="flex items-center gap-2 font-bold text-lg tracking-tight">
-                <div className="h-8 w-8 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-black text-sm">A</div>
-                <span>Avsaar</span>
-              </Link>
+              <Logo href="/" height={32} />
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Centralized placement portal for KIIT University — connecting students with top career opportunities.
               </p>
@@ -297,7 +292,7 @@ export default function LandingPage() {
         <div className="border-t border-border/50">
           <div className="container mx-auto px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-2">
             <p className="text-xs text-muted-foreground">
-              © {new Date().getFullYear()} Avsaar. All rights reserved.
+              © {new Date().getFullYear()} अवSaar. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground font-medium">
               Made with ♥ for KIIT University

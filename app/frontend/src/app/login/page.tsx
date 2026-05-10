@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Logo } from "@/components/ui/logo";
 
 export default function LoginPage() {
   const { session, isLoading, signIn, user } = useAuth();
@@ -36,10 +37,10 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-sm space-y-6 rounded-2xl bg-card/80 backdrop-blur-xl p-8 shadow-2xl shadow-emerald-900/20 border border-border/50">
         <div className="space-y-3 text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-gradient-brand flex items-center justify-center text-white font-black text-xl shadow-lg shadow-emerald-900/30">
-            A
+          <div className="mx-auto flex items-center justify-center">
+            <Logo href="" height={48} showText={false} />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome to Avsaar</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome to अवSaar</h1>
           <p className="text-sm text-muted-foreground">
             Sign in with your <span className="font-medium text-emerald-400">@kiit.ac.in</span> email to access opportunities.
           </p>

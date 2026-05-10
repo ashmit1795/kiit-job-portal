@@ -63,9 +63,13 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 - **Same student features** — volunteers are students with extra posting privileges
 
 ### For Admins
-- **Dashboard** — real-time stats on users, jobs, and pending approvals
-- **Job Approval** — approve or reject volunteer-submitted postings
-- **User Management** — list users, change roles (student ↔ volunteer ↔ admin), remove users
+- **Overview Dashboard** — 8-metric stats grid (users, students, volunteers, admins, total/pending/approved/expired jobs)
+- **Job Approval** — approve or reject volunteer-submitted postings inline
+- **Full Job Management** — view all jobs with status, type, and search filters; approve/reject from the table
+- **User Management** — paginated user table with search, role filter, promote/demote, delete (all with confirmation)
+- **Volunteer Management** — dedicated view showing each volunteer's posted job stats and drill-down list
+- **Academic Structure** — create and delete programs, branches, and batches directly from the UI
+- **Audit Log** — full timestamped trail of every admin action, filterable by action type
 - **Auto-approved Posts** — admin-created jobs skip the approval queue
 
 ---
@@ -156,10 +160,10 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 ```
 app/
 ├── (dashboard)/          # Auth-protected routes (wrapped in AuthGuard)
-│   ├── layout.tsx        # Sidebar navigation + mobile drawer
+│   ├── layout.tsx        # Header nav + mobile drawer
 │   ├── jobs/             # Job feed + job detail pages
 │   ├── create-job/       # Multi-step job creation form
-│   ├── admin/            # Admin dashboard
+│   ├── admin/            # Full admin dashboard (6-tab)
 │   └── profile/          # User profile page
 ├── login/                # Google OAuth sign-in
 ├── onboarding/           # Profile completion form
@@ -174,18 +178,35 @@ providers/
 services/
 ├── job.service.ts        # Job CRUD API calls
 ├── profile.service.ts    # Profile + resume API calls
-└── academic.service.ts   # Branches/batches API calls
+├── academic.service.ts   # Branches/batches API calls
+└── admin.service.ts      # All admin API calls
+
+components/features/admin/
+├── overview-tab.tsx      # Stats grid + pending approvals + recent activity
+├── users-tab.tsx         # Paginated user table with role management
+├── volunteers-tab.tsx    # Volunteer cards with job drill-down
+├── jobs-tab.tsx          # All-jobs table with filters + approve/reject
+├── academics-tab.tsx     # CRUD for programs, branches, batches
+├── logs-tab.tsx          # Admin activity timeline
+├── confirm-dialog.tsx    # Reusable confirmation modal
+└── user-role-dropdown.tsx # Role badge + change dropdown
 
 lib/
 ├── api.ts                # Axios instance with token injection + 401 interceptor
-└── supabase.ts           # Supabase browser client
+├── supabase.ts           # Supabase browser client
+└── date-utils.ts         # Zero-dependency date helpers (timeAgo, formatDate)
+
+types/
+├── admin.ts              # Admin dashboard TypeScript interfaces
+├── api.ts                # ApiResponse wrapper type
+└── academic.ts           # Program, Branch, Batch interfaces
 ```
 
 ---
 
 ## 🗄 Database Schema
 
-All tables live under the `placement` schema. Managed via 36 incremental Supabase migrations.
+All tables live under the `placement` schema. Managed via **37 incremental Supabase migrations**.
 
 ### Entity Relationship
 
@@ -267,6 +288,19 @@ batches ──────────────────────1:N─
 - **`job_eligible_batches`** — (job_id, batch_id) composite PK
 - **`job_locations`** — (job_id, location TEXT)
 
+#### `placement.admin_logs`
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | UUID (PK) | Auto-generated |
+| `admin_id` | UUID (FK → users) | Admin who performed the action |
+| `action` | TEXT | e.g. `approve_job`, `promote_user`, `delete_branch` |
+| `target_type` | TEXT | `job`, `user`, `program`, `branch`, `batch` |
+| `target_id` | UUID | ID of the affected entity |
+| `details` | JSONB | Contextual data (email, role, company name, etc.) |
+| `created_at` | TIMESTAMPTZ | Timestamp of action |
+
+Indexed on `admin_id`, `created_at DESC`, and `action` for fast log queries.
+
 ### RPC Functions
 
 | Function | Purpose |
@@ -326,21 +360,27 @@ All responses follow a standard format:
 | Method | Endpoint | Auth | Role | Description |
 |--------|----------|------|------|-------------|
 | `GET` | `/academics/programs` | ✅ | any | List all programs |
-| `GET` | `/academics/branches` | ✅ | any | List all branches (with program info) |
+| `GET` | `/academics/branches` | ✅ | any | List all branches (supports `?program_id=`) |
 | `GET` | `/academics/batches` | ✅ | any | List all batches |
 | `POST` | `/academics/programs` | ✅ | admin | Create a program |
 | `POST` | `/academics/branches` | ✅ | admin | Create a branch |
 | `POST` | `/academics/batches` | ✅ | admin | Create a batch |
+| `DELETE` | `/academics/programs/:id` | ✅ | admin | Delete a program |
+| `DELETE` | `/academics/branches/:id` | ✅ | admin | Delete a branch |
+| `DELETE` | `/academics/batches/:id` | ✅ | admin | Delete a batch |
 
 ### Admin Routes
 | Method | Endpoint | Auth | Role | Description |
 |--------|----------|------|------|-------------|
-| `GET` | `/admin/dashboard` | ✅ | admin | Dashboard stats (user + job counts) |
-| `GET` | `/admin/users` | ✅ | admin | List all users |
-| `GET` | `/admin/users/:id` | ✅ | admin | Get user details |
-| `PATCH` | `/admin/users/:id/role` | ✅ | admin | Change user role |
-| `DELETE` | `/admin/users/:id` | ✅ | admin | Deactivate user |
-| `GET` | `/admin/jobs/stats` | ✅ | admin | Job analytics |
+| `GET` | `/admin/dashboard` | ✅ | admin | Stats (8 metrics: user/job breakdown) |
+| `GET` | `/admin/users` | ✅ | admin | List users (supports `?role=`, `?search=`, `?page=`, `?limit=`) |
+| `GET` | `/admin/users/:id` | ✅ | admin | Get full user details |
+| `GET` | `/admin/users/:id/jobs` | ✅ | admin | Get jobs posted by a user + per-status stats |
+| `PATCH` | `/admin/users/:id/role` | ✅ | admin | Change user role (logs promote/demote) |
+| `DELETE` | `/admin/users/:id` | ✅ | admin | Delete user (logs action) |
+| `GET` | `/admin/jobs` | ✅ | admin | All jobs with filters (`?status=`, `?type=`, `?search=`, `?page=`) |
+| `GET` | `/admin/jobs/stats` | ✅ | admin | Job type breakdown analytics |
+| `GET` | `/admin/logs` | ✅ | admin | Paginated audit log (supports `?action=`, `?page=`) |
 
 ---
 
@@ -367,7 +407,12 @@ All responses follow a standard format:
 | `/jobs` | Job feed with "All Jobs" and "My Feed" tabs |
 | `/jobs/:id` | Job detail page with circular download |
 | `/create-job` | Multi-step job creation form (admin/volunteer only) |
-| `/admin` | Admin dashboard with stats + pending approvals |
+| `/admin` | Admin dashboard — 6 tabs: Overview, Users, Volunteers, Jobs, Academics, Logs |
+| `/admin?tab=users` | User management tab |
+| `/admin?tab=volunteers` | Volunteer management tab |
+| `/admin?tab=jobs` | All-jobs management tab |
+| `/admin?tab=academics` | Academic structure CRUD tab |
+| `/admin?tab=logs` | Admin activity audit log tab |
 | `/profile` | User profile with resume upload |
 
 ---
@@ -530,8 +575,8 @@ kiit-job-portal/
 │   │       ├── config/          # env.js, supabase.js
 │   │       ├── middlewares/     # auth, roleGuard, profileGuard, upload, validate, errorHandler
 │   │       ├── modules/
-│   │       │   ├── academics/   # Programs, branches, batches CRUD
-│   │       │   ├── admin/       # Dashboard stats, user management
+│   │       │   ├── academics/   # Programs, branches, batches CRUD + DELETE
+│   │       │   ├── admin/       # Dashboard, users, jobs, logs — full admin module
 │   │       │   ├── health/      # Health check endpoint
 │   │       │   ├── job/         # Job CRUD, approval, feed, circular download
 │   │       │   └── users/       # Auth (me), profile, resume, user sync
@@ -541,17 +586,27 @@ kiit-job-portal/
 │   │
 │   └── frontend/
 │       └── src/
-│           ├── app/             # Next.js App Router pages
+│           ├── app/(dashboard)/admin/  # Admin page (6-tab URL-synced dashboard)
 │           ├── components/
-│           │   ├── ui/          # shadcn/ui components
-│           │   └── features/    # Domain components (auth-guard, job-card, etc.)
-│           ├── lib/             # api.ts (Axios), supabase.ts, utils.ts
-│           ├── providers/       # AuthProvider, QueryProvider
-│           ├── services/        # API service layers (job, profile, academic)
-│           └── types/           # TypeScript interfaces (User, Job, API)
+│           │   ├── ui/                 # shadcn/ui + custom components
+│           │   └── features/admin/     # 8 admin tab + shared components
+│           ├── lib/
+│           │   ├── api.ts              # Axios + 401 interceptor
+│           │   ├── supabase.ts         # Supabase browser client
+│           │   └── date-utils.ts       # Zero-dep date helpers
+│           ├── providers/              # AuthProvider, QueryProvider
+│           ├── services/
+│           │   ├── admin.service.ts    # All admin API calls
+│           │   ├── job.service.ts
+│           │   ├── profile.service.ts
+│           │   └── academic.service.ts
+│           └── types/
+│               ├── admin.ts            # Admin dashboard interfaces
+│               ├── api.ts
+│               └── academic.ts
 │
 ├── supabase/
-│   └── migrations/              # 36 incremental SQL migrations
+│   └── migrations/              # 37 incremental SQL migrations
 │
 ├── PROJECT-CONTEXT.md           # Design decisions & system overview
 └── readme.md                    # This file
@@ -569,8 +624,11 @@ kiit-job-portal/
 - [x] Personalized job feed (branch + batch + CGPA filtering via Postgres RPC)
 - [x] Circular PDF download via signed URLs
 - [x] Resume upload & download
-- [x] Admin dashboard with real-time stats
-- [x] Admin user management (role changes, deactivation)
+- [x] Full admin dashboard — 6-tab UI (Overview, Users, Volunteers, Jobs, Academics, Logs)
+- [x] Admin user management — search, role filter, promote/demote with confirmation
+- [x] Volunteer management — expandable cards with per-volunteer job stats
+- [x] Academic structure CRUD — programs, branches, batches via admin UI
+- [x] Admin audit log — full trail of every admin action with action-type filtering
 - [x] Auth-aware landing page
 - [x] Toast notifications & error handling
 - [x] Mobile-responsive navigation
@@ -581,8 +639,8 @@ kiit-job-portal/
 - [ ] Search & advanced filters on job feed
 - [ ] AI circular parsing (auto-fill job form from PDF)
 - [ ] Email notifications for new approved jobs
-- [ ] Analytics dashboard with charts
-- [ ] Audit log for admin actions
+- [ ] Analytics charts on admin dashboard
+- [ ] Volunteer promotion workflow from admin UI
 
 ---
 

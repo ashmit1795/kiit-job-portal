@@ -66,6 +66,45 @@ class AdminController {
 		}
 	}
 
+	async listAllJobs(req, res, next) {
+		try {
+			const jobs = await adminService.listAllJobs(req.user, req.query);
+
+			return new AppResponse({
+				message: "Jobs fetched successfully",
+				data: jobs,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async getUserJobs(req, res, next) {
+		try {
+			const jobs = await adminService.getUserJobs(req.user, req.params.id);
+
+			return new AppResponse({
+				message: "User jobs fetched successfully",
+				data: jobs,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async getLogs(req, res, next) {
+		try {
+			const logs = await adminService.getLogs(req.user, req.query);
+
+			return new AppResponse({
+				message: "Admin logs fetched successfully",
+				data: logs,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
 	async jobStats(req, res, next) {
 		try {
 			const stats = await adminService.jobStats(req.user);
