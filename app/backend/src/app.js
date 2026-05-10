@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
+app.set("trust proxy", 1);
 
 app.use("/api", routes);
 
