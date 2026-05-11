@@ -407,7 +407,7 @@ export function welcomeTemplate(user) {
 				? `
         <div class="info-box">
           <p>
-            🔐 <strong>@kiit.ac.in only</strong> &mdash; अवSaar is exclusively open to KIIT students and staff.
+            🔐<strong>@kiit.ac.in only</strong> &mdash; अवSaar is exclusively open to KIIT students and staff.
             Sign in with your official college email to access all features.
           </p>
         </div>`
@@ -417,7 +417,7 @@ export function welcomeTemplate(user) {
         <!-- Unofficial platform notice -->
         <div class="disclaimer-strip">
           <p>
-            ⚠️ अवSaar is an independent student initiative and is <strong style="color:#9ca3af;">not affiliated with, endorsed by, or an official product of KIIT University</strong>.
+            ⚠️अवSaar is an independent student initiative and is <strong style="color:#9ca3af;">not affiliated with, endorsed by, or an official product of KIIT University</strong>.
             All trademarks and institutional names belong to their respective owners.
           </p>
         </div>
