@@ -17,6 +17,9 @@ class Env {
 		this.SMTP_USER = process.env.SMTP_USER;
 		this.SMTP_PASS = process.env.SMTP_PASS;
 		this.MAIL_FROM = process.env.MAIL_FROM;
+		this.INNGEST_EVENT_KEY = process.env.INNGEST_EVENT_KEY;
+		this.INNGEST_SIGNING_KEY = process.env.INNGEST_SIGNING_KEY;
+		this.INNGEST_DEV = process.env.INNGEST_DEV;
 
 		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
 
@@ -33,6 +36,10 @@ class Env {
 
 		if (!this.SUPABASE_SECRET_KEY) {
 			console.warn("⚠️ SUPABASE_SECRET_KEY not set");
+		}
+
+		if (!this.INNGEST_EVENT_KEY) {
+			console.warn("⚠️ INNGEST_EVENT_KEY not set");
 		}
 	}
 }
