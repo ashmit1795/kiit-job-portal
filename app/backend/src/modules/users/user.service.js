@@ -1,6 +1,7 @@
 import userRepository from "./user.repository.js";
 import AppError from "../../utils/AppError.js";
 import env from "../../config/env.js";
+import { inngest } from "../../inngest/client.js";
 
 /**
  * Service for handling user-related operations.
@@ -69,7 +70,8 @@ class UserService {
 				role = "admin";
 			}
 
-			return userRepository.create({
+
+			const createdUser = await userRepository.create({
 				id: supabaseUser.id,
 				email,
 				roll_number: rollNumber,
@@ -77,6 +79,15 @@ class UserService {
 				profile_completed: role === "admin",
 				full_name: fullName,
 				avatar_url: avatarUrl,
+			});
+
+			await inngest.send({
+				name: "user/signed_up",
+				data: {
+					id: createdUser.id,
+					email: createdUser.email,
+					full_name: createdUser.full_name,
+				},
 			});
 		}
 
