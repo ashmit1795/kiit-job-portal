@@ -12,6 +12,10 @@ class Env {
 		this.SUPABASE_URL = process.env.SUPABASE_URL;
 		this.SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 		this.DEV_AUTH_ENABLED = process.env.DEV_AUTH_ENABLED === "true";
+		this.SMTP_HOST = process.env.SMTP_HOST;
+		this.SMTP_PORT = process.env.SMTP_PORT;
+		this.SMTP_USER = process.env.SMTP_USER;
+		this.SMTP_PASS = process.env.SMTP_PASS;
 
 		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
 
