@@ -87,6 +87,7 @@ class UserService {
 					id: createdUser.id,
 					email: createdUser.email,
 					full_name: createdUser.full_name,
+					role: createdUser.role,
 				},
 			});
 		}
@@ -97,11 +98,11 @@ class UserService {
 
 		const updates = {};
 
-		if (fullName && user.full_name !== fullName) {
+		if (fullName && user?.full_name !== fullName) {
 			updates.full_name = fullName;
 		}
 
-		if (avatarUrl && user.avatar_url !== avatarUrl) {
+		if (avatarUrl && user?.avatar_url !== avatarUrl) {
 			updates.avatar_url = avatarUrl;
 		}
 
