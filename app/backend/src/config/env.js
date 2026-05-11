@@ -16,6 +16,7 @@ class Env {
 		this.SMTP_PORT = process.env.SMTP_PORT;
 		this.SMTP_USER = process.env.SMTP_USER;
 		this.SMTP_PASS = process.env.SMTP_PASS;
+		this.MAIL_FROM = process.env.MAIL_FROM;
 
 		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
 
