@@ -19,7 +19,7 @@ export const sendWelcomeEmail = inngest.createFunction(
 		await step.run("send-welcome-email", async () => {
 			await emailService.send({
 				to: event.data.email,
-				subject: "Welcome to Avsaar",
+				subject: `Welcome to अवSaar, ${event.data.full_name?.split(" ")[0] || "Student"}! 🎉`,
 				html: welcomeTemplate(event.data),
 			});
 		});
