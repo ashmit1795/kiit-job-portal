@@ -30,7 +30,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     // Admins bypass profile requirement
   }, [session, user, isLoading, router, pathname]);
 
-  if (isLoading || (!session && !isLoading)) {
+  if (isLoading || (!session && !isLoading) || (session && !user)) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-zinc-500" />

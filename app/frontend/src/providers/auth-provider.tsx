@@ -66,6 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // including the INITIAL_SESSION event, so no separate getSession() needed
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+        // Signal "resolving" immediately so consumers don't act on stale state
+        setIsLoading(true);
         setSession(newSession);
         setAccessToken(newSession?.access_token ?? null);
 

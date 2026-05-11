@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
+import { supabase } from "@/lib/supabase";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -11,25 +12,40 @@ export default function AuthCallbackPage() {
   const hasRedirected = useRef(false);
 
   useEffect(() => {
-    // Wait until auth provider has finished resolving
+    // Still resolving auth state — stay on the loading screen
     if (isLoading) return;
+    // Already acted — prevent double redirects
     if (hasRedirected.current) return;
 
-    hasRedirected.current = true;
-
     if (user) {
-      // Authenticated and backend-verified — go to the right page
+      // Backend user is loaded — route based on profile completion
+      hasRedirected.current = true;
       if (!user.profile_completed && user.role !== "admin") {
         router.replace("/onboarding");
       } else {
         router.replace("/jobs");
       }
-    } else {
-      // No user after loading finished — means sign-in failed
-      // (unauthorized email, 403, signOut already called by auth-provider)
-      // Just go to login — toast was already shown by auth-provider
-      router.replace("/login");
+      return;
     }
+
+    // isLoading is false and user is null.
+    // This can happen on the very first INITIAL_SESSION event when there is
+    // no existing session yet (Supabase fires it before the OAuth code is
+    // exchanged). Check whether Supabase actually has a session; if it does
+    // but we still have no app-user it means the backend call failed — only
+    // then redirect to login.
+    supabase.auth.getSession().then(({ data }) => {
+      if (hasRedirected.current) return;
+      if (!data.session) {
+        // No Supabase session at all → the INITIAL_SESSION null event;
+        // wait for the real SIGNED_IN event to fire (isLoading will flip again)
+        return;
+      }
+      // There IS a session but no app-user → backend refused the sign-in
+      // (403 already showed a toast and signed out via auth-provider)
+      hasRedirected.current = true;
+      router.replace("/login");
+    });
   }, [isLoading, user, router]);
 
   return (
