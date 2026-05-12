@@ -83,12 +83,7 @@ class UserService {
 
 			await inngest.send({
 				name: "user/signed_up",
-				data: {
-					id: createdUser.id,
-					email: createdUser.email,
-					full_name: createdUser.full_name,
-					role: createdUser.role,
-				},
+				data: createdUser,
 			});
 		}
 
