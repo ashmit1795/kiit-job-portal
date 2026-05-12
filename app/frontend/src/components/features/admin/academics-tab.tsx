@@ -248,8 +248,15 @@ function BranchesSection() {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Select value={filterProgram} onValueChange={(v) => setFilterProgram(v ?? "all")}>
-              <SelectTrigger className="h-7 w-[120px] text-xs bg-muted/30 border-border/50">
+            <Select
+              value={filterProgram}
+              items={[
+                { value: "all", label: "All Programs" },
+                ...programs.map((p) => ({ value: p.id, label: p.name })),
+              ]}
+              onValueChange={(v) => setFilterProgram(v ?? "all")}
+            >
+              <SelectTrigger className="h-7 w-[140px] text-xs bg-muted/30 border-border/50">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent>
@@ -276,7 +283,11 @@ function BranchesSection() {
           <div className="p-3 rounded-xl border border-amber-700/20 bg-amber-950/10 space-y-3">
             <p className="text-xs font-medium text-amber-400">New Branch</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <Select value={programId} onValueChange={(v) => setProgramId(v ?? "")}>
+              <Select
+                value={programId}
+                items={programs.map((p) => ({ value: p.id, label: p.name }))}
+                onValueChange={(v) => setProgramId(v ?? "")}
+              >
                 <SelectTrigger className="bg-muted/30 border-border/50">
                   <SelectValue placeholder="Select program" />
                 </SelectTrigger>

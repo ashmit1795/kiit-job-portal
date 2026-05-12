@@ -35,10 +35,17 @@ export function RoleBadge({ role }: { role: Role }) {
   );
 }
 
+const ROLE_ITEMS = [
+  { value: "student", label: "Student" },
+  { value: "volunteer", label: "Volunteer" },
+  { value: "admin", label: "Admin" },
+] as const;
+
 export function UserRoleDropdown({ currentRole, userId, onRoleChange, disabled }: UserRoleDropdownProps) {
   return (
     <Select
       value={currentRole}
+      items={ROLE_ITEMS}
       onValueChange={(val) => onRoleChange(userId, val as Role)}
       disabled={disabled}
     >
