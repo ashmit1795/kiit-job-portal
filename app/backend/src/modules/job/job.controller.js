@@ -30,7 +30,7 @@ class JobController {
 
 	async getJobById(req, res, next) {
 		try {
-			const job = await jobService.getJobById(req.params.id);
+			const job = await jobService.getJobById(req.user, req.params.id);
 
 			return new AppResponse({
 				message: "Job details fetched successfully",

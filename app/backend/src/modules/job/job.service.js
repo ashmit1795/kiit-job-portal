@@ -81,11 +81,18 @@ class JobService {
 		return filteredJobs.map((job) => this.formatJob(job));
 	}
 
-	async getJobById(jobId) {
+	async getJobById(user, jobId) {
 		const job = await jobRepository.findById(jobId);
 
 		if (!job) {
 			throw new AppError("Job not found", 404);
+		}
+
+		const isOwner = user?.id && job.posted_by === user.id;
+		const isAdmin = user?.role === "admin";
+
+		if (job.approval_status !== "approved" && !isAdmin && !isOwner) {
+			throw new AppError("Access denied", 403);
 		}
 
 		return this.formatJob(job);
