@@ -12,6 +12,9 @@ import { toast } from "sonner";
 interface AuthContextType {
   session: Session | null;
   user: AppUser | null;
+  /** True only during the very first cold-start resolution. Never flips back to
+   *  true after the initial session is determined — token refreshes and tab
+   *  switches are handled silently without touching this flag. */
   isLoading: boolean;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -30,10 +33,14 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<AppUser | null>(null);
+  // isLoading starts true and becomes false once the INITIAL_SESSION event
+  // resolves. It is NEVER set back to true afterwards.
   const [isLoading, setIsLoading] = useState(true);
 
   // Prevent duplicate fetchAppUser calls
   const fetchingRef = useRef(false);
+  // Track whether the first boot has already resolved
+  const hasInitializedRef = useRef(false);
 
   const fetchAppUser = useCallback(async () => {
     if (fetchingRef.current) return;
@@ -62,10 +69,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    // Single source of truth: onAuthStateChange handles EVERYTHING
-    // including the INITIAL_SESSION event, so no separate getSession() needed
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+
+        // ── Silent events ────────────────────────────────────────────────
+        // TOKEN_REFRESHED fires every ~10 min and on every tab-focus when
+        // the token needs refreshing.  USER_UPDATED fires on profile changes.
+        // Neither should cause a loading flash — just swap the token.
+        if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+          setSession(newSession);
+          setAccessToken(newSession?.access_token ?? null);
+          return;
+        }
+
+        // ── SIGNED_IN after initial boot ──────────────────────────────────
+        // A real new sign-in after the initial session has already resolved.
+        // We DON'T set isLoading here — the /auth/callback page handles its
+        // own loading spinner. We just silently fetch the app user.
+        if (event === "SIGNED_IN" && hasInitializedRef.current) {
+          setSession(newSession);
+          setAccessToken(newSession?.access_token ?? null);
+          if (newSession) await fetchAppUser();
+          return;
+        }
+
+        // ── Real auth transitions (INITIAL_SESSION, first SIGNED_IN, SIGNED_OUT)
+        // Only these use the isLoading flag.
         setSession(newSession);
         setAccessToken(newSession?.access_token ?? null);
 
@@ -74,6 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setUser(null);
         }
+
+        // Mark as initialized and clear the loading flag — permanently.
+        hasInitializedRef.current = true;
         setIsLoading(false);
       }
     );

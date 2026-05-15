@@ -25,10 +25,31 @@ export default async function authenticate(req, res, next) {
 
 			logger.warn(`⚠️ DEV AUTH: Logging in as ${devEmail}`);
 
-			const user = await userService.syncUser({
-				id: `dev-${devEmail}`,
-				email: devEmail,
-			});
+			let authUser = null;
+
+			const { data: existingUser, error: getError } = await supabase.auth.admin.getUserByEmail(devEmail);
+
+			if (getError && getError.status !== 404) {
+				throw new AppError("Failed to fetch dev auth user", 500, true, { cause: getError.message });
+			}
+
+			authUser = existingUser?.user ?? null;
+
+			if (!authUser) {
+				const { data: created, error: createError } = await supabase.auth.admin.createUser({
+					email: devEmail,
+					email_confirm: true,
+					user_metadata: { full_name: devEmail.split("@")[0] },
+				});
+
+				if (createError || !created?.user) {
+					throw new AppError("Failed to create dev auth user", 500, true, { cause: createError?.message });
+				}
+
+				authUser = created.user;
+			}
+
+			const user = await userService.syncUser(authUser);
 
 			req.user = user;
 

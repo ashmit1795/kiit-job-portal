@@ -1,6 +1,7 @@
 import userRepository from "./user.repository.js";
 import AppError from "../../utils/AppError.js";
 import env from "../../config/env.js";
+import { inngest } from "../../inngest/client.js";
 
 /**
  * Service for handling user-related operations.
@@ -55,6 +56,7 @@ class UserService {
 		------------------------------ */
 
 		let user = await userRepository.findByEmail(email);
+		let created = false;
 
 		/* -----------------------------
 		New User
@@ -69,15 +71,31 @@ class UserService {
 				role = "admin";
 			}
 
-			return userRepository.create({
-				id: supabaseUser.id,
-				email,
-				roll_number: rollNumber,
-				role,
-				profile_completed: role === "admin",
-				full_name: fullName,
-				avatar_url: avatarUrl,
-			});
+			try {
+				user = await userRepository.create({
+					id: supabaseUser.id,
+					email,
+					roll_number: rollNumber,
+					role,
+					profile_completed: role === "admin",
+					full_name: fullName,
+					avatar_url: avatarUrl,
+				});
+				created = true;
+			} catch (error) {
+				if (error?.statusCode === 409) {
+					user = await userRepository.findByEmail(email);
+				} else {
+					throw error;
+				}
+			}
+
+			if (created && user) {
+				await inngest.send({
+					name: "user/signed_up",
+					data: user,
+				});
+			}
 		}
 
 		/* -----------------------------
@@ -86,18 +104,17 @@ class UserService {
 
 		const updates = {};
 
-		if (fullName && user.full_name !== fullName) {
+		if (fullName && user?.full_name !== fullName) {
 			updates.full_name = fullName;
 		}
 
-		if (avatarUrl && user.avatar_url !== avatarUrl) {
+		if (avatarUrl && user?.avatar_url !== avatarUrl) {
 			updates.avatar_url = avatarUrl;
 		}
 
-		if (Object.keys(updates).length > 0) {
+		if (user && Object.keys(updates).length > 0) {
 			user = await userRepository.update(user.id, updates);
 		}
-
 
 		return user;
 	}
