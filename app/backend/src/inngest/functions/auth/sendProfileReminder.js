@@ -6,6 +6,12 @@ import { profileReminderTemplate } from "../../../emails/templates/profileRemind
 export const sendProfileReminder = inngest.createFunction(
 	{
 		id: "send-profile-reminder",
+		cancelOn: [
+			{
+				event: "user/profile_completed",
+				if: "async.data.id == event.data.id",
+			},
+		],
 
 		triggers: [
 			{
