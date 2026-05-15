@@ -17,6 +17,7 @@ class Env {
 		this.SMTP_USER = process.env.SMTP_USER;
 		this.SMTP_PASS = process.env.SMTP_PASS;
 		this.MAIL_FROM = process.env.MAIL_FROM;
+		this.BREVO_API_KEY = process.env.BREVO_API_KEY;
 		this.INNGEST_EVENT_KEY = process.env.INNGEST_EVENT_KEY;
 		this.INNGEST_SIGNING_KEY = process.env.INNGEST_SIGNING_KEY;
 		this.INNGEST_DEV = process.env.INNGEST_DEV;
@@ -40,6 +41,10 @@ class Env {
 
 		if (!this.INNGEST_EVENT_KEY) {
 			console.warn("⚠️ INNGEST_EVENT_KEY not set");
+		}
+
+		if (!this.BREVO_API_KEY) {
+			console.warn("⚠️ BREVO_API_KEY not set");
 		}
 	}
 }
