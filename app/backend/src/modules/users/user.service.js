@@ -56,6 +56,7 @@ class UserService {
 		------------------------------ */
 
 		let user = await userRepository.findByEmail(email);
+		let created = false;
 
 		/* -----------------------------
 		New User
@@ -70,21 +71,31 @@ class UserService {
 				role = "admin";
 			}
 
+			try {
+				user = await userRepository.create({
+					id: supabaseUser.id,
+					email,
+					roll_number: rollNumber,
+					role,
+					profile_completed: role === "admin",
+					full_name: fullName,
+					avatar_url: avatarUrl,
+				});
+				created = true;
+			} catch (error) {
+				if (error?.statusCode === 409) {
+					user = await userRepository.findByEmail(email);
+				} else {
+					throw error;
+				}
+			}
 
-			const createdUser = await userRepository.create({
-				id: supabaseUser.id,
-				email,
-				roll_number: rollNumber,
-				role,
-				profile_completed: role === "admin",
-				full_name: fullName,
-				avatar_url: avatarUrl,
-			});
-
-			await inngest.send({
-				name: "user/signed_up",
-				data: createdUser,
-			});
+			if (created && user) {
+				await inngest.send({
+					name: "user/signed_up",
+					data: user,
+				});
+			}
 		}
 
 		/* -----------------------------
@@ -101,10 +112,9 @@ class UserService {
 			updates.avatar_url = avatarUrl;
 		}
 
-		if (Object.keys(updates).length > 0) {
+		if (user && Object.keys(updates).length > 0) {
 			user = await userRepository.update(user.id, updates);
 		}
-
 
 		return user;
 	}
