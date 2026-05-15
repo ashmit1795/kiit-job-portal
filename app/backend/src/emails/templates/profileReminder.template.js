@@ -3,6 +3,7 @@
 // If you import BASE_URL from a shared constants file, remove this line.
 // ─────────────────────────────────────────────────────────────────────────────
 const BASE_URL = "https://avsaar.kiit.ac.in";
+const LOGO_URL = "https://ibb.co/4ZtnvnYC";
 
 /**
  * Profile completion reminder email for अवSaar — Student-run KIIT Placement Portal
@@ -141,19 +142,13 @@ export function profileReminderTemplate(user) {
       text-align: center;
       padding-bottom: 32px;
     }
-    .logo-mark {
+    .logo-img {
       display: inline-block;
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border-radius: 14px;
-      background: linear-gradient(135deg, #10b981 0%, #059669 50%, #065f46 100%);
-      line-height: 52px;
-      font-size: 26px;
-      font-weight: 900;
-      color: #ffffff;
-      text-align: center;
       margin-bottom: 14px;
-      box-shadow: 0 0 32px rgba(16,185,129,0.35);
+      object-fit: contain;
     }
     .brand-name {
       font-size: 22px;
@@ -201,6 +196,14 @@ export function profileReminderTemplate(user) {
       border-radius: 0 20px 0 100%;
       pointer-events: none;
     }
+    .hero-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+    }
     .urgency-badge {
       display: inline-block;
       padding: 4px 12px;
@@ -208,8 +211,29 @@ export function profileReminderTemplate(user) {
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.5px;
-      margin-bottom: 18px;
       border: 1px solid;
+    }
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(245,158,11,0.25);
+      object-fit: cover;
+      background: rgba(245,158,11,0.05);
+    }
+    .user-avatar-fallback {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(245,158,11,0.1);
+      border: 2px solid rgba(245,158,11,0.25);
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
     }
     .greeting {
       font-size: 28px;
@@ -330,6 +354,8 @@ export function profileReminderTemplate(user) {
       font-weight: 600;
       letter-spacing: 0.4px;
       text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .check-status.done    { color: #10b981; }
     .check-status.pending { color: #f59e0b; }
@@ -411,7 +437,7 @@ export function profileReminderTemplate(user) {
       .hero-subtext   { font-size: 14px; }
 
       .brand-name     { font-size: 20px; }
-      .logo-mark      { width: 46px; height: 46px; line-height: 46px; font-size: 22px; }
+      .logo-img       { width: 48px; height: 48px; }
 
       .cta-button     { font-size: 14px; padding: 14px 20px; }
 
@@ -430,7 +456,7 @@ export function profileReminderTemplate(user) {
 
       <!-- ══ HEADER ══ -->
       <div class="header">
-        <div class="logo-mark">अ</div>
+        <img src="${LOGO_URL}" alt="अवSaar Logo" class="logo-img" />
         <div class="brand-name">अव<span>Saar</span></div>
         <div class="brand-tagline">Opportunities &bull; Growth &bull; Future</div>
         <div class="unofficial-badge">Student Initiative &bull; Not an official KIIT platform</div>
@@ -440,10 +466,16 @@ export function profileReminderTemplate(user) {
       <div class="hero-card">
         <div class="hero-glow"></div>
 
-        <span class="urgency-badge"
-              style="color:${urgencyColor}; border-color:${urgencyColor}40; background:${urgencyColor}12;">
-          ${urgencyLabel}
-        </span>
+        <div class="hero-top-row">
+          <span class="urgency-badge"
+                style="color:${urgencyColor}; border-color:${urgencyColor}40; background:${urgencyColor}12;">
+            ${urgencyLabel}
+          </span>
+          ${user.avatar_url ? 
+            `<img src="${user.avatar_url}" alt="${firstName}" class="user-avatar" />` : 
+            `<div class="user-avatar-fallback">${firstName.charAt(0)}</div>`
+          }
+        </div>
 
         <div class="greeting">
           ${heroHeadline}<br>
