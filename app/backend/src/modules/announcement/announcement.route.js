@@ -29,9 +29,9 @@ router.get("/:id", announcementController.getAnnouncementById);
 router.patch("/:id", roleGuard("admin", "volunteer"), uploadCircular, announcementController.updateAnnouncement);
 
 /**
- * Delete announcement (soft) - admin only
+ * Delete announcement (soft) - admin + volunteer
  */
-router.delete("/:id", roleGuard("admin"), announcementController.deleteAnnouncement);
+router.delete("/:id", roleGuard("admin", "volunteer"), announcementController.deleteAnnouncement);
 
 /**
  * Download announcement circular

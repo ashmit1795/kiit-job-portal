@@ -98,12 +98,17 @@ class AnnouncementService {
 	async updateAnnouncement(user, announcementId, payload, file) {
 		const existing = await announcementRepository.getAnnouncementById(announcementId);
 		if (!existing) throw new AppError("Announcement not found", 404);
+		// Force nodemon restart
+
+		if (user.role === "volunteer" && existing.created_by !== user.id) {
+			throw new AppError("You can only update your own announcements", 403);
+		}
 
 		let updates = {
 			subject: payload.subject ?? existing.subject,
 			description: payload.description ?? existing.description,
 			announcement_type: payload.announcement_type ?? existing.announcement_type,
-			is_pinned: typeof payload.is_pinned === "boolean" ? payload.is_pinned : existing.is_pinned,
+			is_pinned: payload.is_pinned !== undefined ? (payload.is_pinned === "true" || payload.is_pinned === true) : existing.is_pinned,
 			announcement_priority: payload.announcement_priority ?? existing.announcement_priority,
 		};
 
@@ -151,6 +156,10 @@ class AnnouncementService {
 	async deleteAnnouncement(user, announcementId) {
 		const existing = await announcementRepository.getAnnouncementById(announcementId);
 		if (!existing) throw new AppError("Announcement not found", 404);
+
+		if (user.role === "volunteer" && existing.created_by !== user.id) {
+			throw new AppError("You can only delete your own announcements", 403);
+		}
 
 		const deleted = await announcementRepository.softDeleteAnnouncement(announcementId);
 

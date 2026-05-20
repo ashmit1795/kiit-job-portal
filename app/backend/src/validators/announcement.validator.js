@@ -20,5 +20,9 @@ export const createAnnouncementSchema = z.object({
 		.optional()
 		.default("general"),
 
-	is_pinned: z.coerce.boolean().optional().default(false),
+	is_pinned: z
+		.union([z.boolean(), z.literal("true"), z.literal("false")])
+		.transform((val) => val === true || val === "true")
+		.optional()
+		.default(false),
 });
