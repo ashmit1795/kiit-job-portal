@@ -17,12 +17,41 @@ class AnnouncementController {
 
 	async getAnnouncements(req, res, next) {
 		try {
-			const { job_id: jobId } = req.query;
-			const announcements = await announcementService.getAnnouncements(jobId);
+			const { announcements, total } = await announcementService.getAnnouncements(req.query);
 
 			return new AppResponse({
 				message: "Announcements fetched successfully",
-				data: announcements,
+				data: {
+					announcements,
+					total,
+				},
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async getAnnouncementById(req, res, next) {
+		try {
+			const announcement = await announcementService.getAnnouncementById(req.params.id);
+
+			return new AppResponse({
+				message: "Announcement fetched successfully",
+				data: announcement,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async downloadCircular(req, res, next) {
+		try {
+			const { id } = req.params;
+			const url = await announcementService.getCircularDownloadUrl(id);
+
+			return new AppResponse({
+				message: "Announcement circular URL generated",
+				data: { url },
 			}).send(res);
 		} catch (err) {
 			next(err);

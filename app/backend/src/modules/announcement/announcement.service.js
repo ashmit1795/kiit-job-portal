@@ -45,8 +45,39 @@ class AnnouncementService {
 		return { id: announcement.id };
 	}
 
-	async getAnnouncements(jobId) {
-		return announcementRepository.listAnnouncements({ jobId });
+	async getAnnouncements({ job_id: jobId, page, limit }) {
+		return announcementRepository.listAnnouncements({ jobId, page, limit });
+	}
+
+	async getAnnouncementById(announcementId) {
+		const announcement = await announcementRepository.getAnnouncementById(announcementId);
+
+		if (!announcement) {
+			throw new AppError("Announcement not found", 404);
+		}
+
+		return announcement;
+	}
+
+	async getCircularDownloadUrl(announcementId) {
+		const announcement = await announcementRepository.getAnnouncementById(announcementId);
+
+		if (!announcement) {
+			throw new AppError("Announcement not found", 404);
+		}
+
+		if (!announcement.circular_file_path) {
+			throw new AppError("Circular file missing", 404);
+		}
+
+		const { data, error } = await supabase.storage.from("job-circulars").createSignedUrl(announcement.circular_file_path, 60);
+
+		if (error) {
+			logger.error("Announcement circular signed URL error:", error);
+			throw new AppError("Failed to generate download URL", 500);
+		}
+
+		return data.signedUrl;
 	}
 }
 

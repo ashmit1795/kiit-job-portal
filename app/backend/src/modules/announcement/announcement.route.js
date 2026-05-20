@@ -18,4 +18,14 @@ router.post("/", roleGuard("admin", "volunteer"), uploadCircular, validate(creat
  */
 router.get("/", announcementController.getAnnouncements);
 
+/**
+ * Announcement details
+ */
+router.get("/:id", announcementController.getAnnouncementById);
+
+/**
+ * Download announcement circular
+ */
+router.get("/:id/circular", announcementController.downloadCircular);
+
 export default router;
