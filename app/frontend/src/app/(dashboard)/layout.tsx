@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Briefcase, User, FilePlus, Settings, LogOut, Menu, X } from "lucide-react";
+import { Briefcase, User, FilePlus, Settings, LogOut, Menu, X, Megaphone } from "lucide-react";
 import { useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const routes = [
     { href: "/jobs", label: "Jobs Feed", icon: Briefcase, roles: ["student", "volunteer", "admin"] },
+    { href: "/announcements", label: "Announcements", icon: Megaphone, roles: ["student", "volunteer", "admin"] },
     { href: "/profile", label: "My Profile", icon: User, roles: ["student", "volunteer", "admin"] },
     { href: "/create-job", label: "Post Job", icon: FilePlus, roles: ["volunteer", "admin"] },
     { href: "/admin", label: "Admin Panel", icon: Settings, roles: ["admin"] },

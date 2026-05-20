@@ -57,13 +57,13 @@ export default function JobsFeedPage() {
             <SelectValue placeholder="Job Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="placement">Placement</SelectItem>
-            <SelectItem value="internship">Internship</SelectItem>
-            <SelectItem value="internship_fulltime">Internship + PPO</SelectItem>
-            <SelectItem value="hackathon">Hackathon</SelectItem>
-            <SelectItem value="webinar">Webinar</SelectItem>
-            <SelectItem value="talk">Talk</SelectItem>
+            <SelectItem value="all" label="All Types">All Types</SelectItem>
+            <SelectItem value="placement" label="Placement">Placement</SelectItem>
+            <SelectItem value="internship" label="Internship">Internship</SelectItem>
+            <SelectItem value="internship_fulltime" label="Internship + PPO">Internship + PPO</SelectItem>
+            <SelectItem value="hackathon" label="Hackathon">Hackathon</SelectItem>
+            <SelectItem value="webinar" label="Webinar">Webinar</SelectItem>
+            <SelectItem value="talk" label="Talk">Talk</SelectItem>
           </SelectContent>
         </Select>
       </div>

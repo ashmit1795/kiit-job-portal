@@ -11,8 +11,9 @@ import { VolunteersTab } from "@/components/features/admin/volunteers-tab";
 import { JobsTab } from "@/components/features/admin/jobs-tab";
 import { AcademicsTab } from "@/components/features/admin/academics-tab";
 import { LogsTab } from "@/components/features/admin/logs-tab";
+import { AnnouncementsTab } from "@/components/features/admin/announcements-tab";
 import {
-  LayoutDashboard, Users, UserCheck, Briefcase, BookOpen, Activity,
+  LayoutDashboard, Users, UserCheck, Briefcase, BookOpen, Activity, Megaphone
 } from "lucide-react";
 
 const TABS = [
@@ -20,6 +21,7 @@ const TABS = [
   { value: "users", label: "Users", icon: Users },
   { value: "volunteers", label: "Volunteers", icon: UserCheck },
   { value: "jobs", label: "Jobs", icon: Briefcase },
+  { value: "announcements", label: "Announcements", icon: Megaphone },
   { value: "academics", label: "Academics", icon: BookOpen },
   { value: "logs", label: "Logs", icon: Activity },
 ];
@@ -84,6 +86,10 @@ function AdminContent() {
 
         <TabsContent value="jobs" className="mt-0">
           <JobsTab />
+        </TabsContent>
+
+        <TabsContent value="announcements" className="mt-0">
+          <AnnouncementsTab />
         </TabsContent>
 
         <TabsContent value="academics" className="mt-0">
