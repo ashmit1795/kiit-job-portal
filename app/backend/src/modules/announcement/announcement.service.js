@@ -98,7 +98,6 @@ class AnnouncementService {
 	async updateAnnouncement(user, announcementId, payload, file) {
 		const existing = await announcementRepository.getAnnouncementById(announcementId);
 		if (!existing) throw new AppError("Announcement not found", 404);
-		// Force nodemon restart
 
 		if (user.role === "volunteer" && existing.created_by !== user.id) {
 			throw new AppError("You can only update your own announcements", 403);

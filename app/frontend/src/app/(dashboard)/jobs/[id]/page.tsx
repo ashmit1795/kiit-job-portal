@@ -19,6 +19,7 @@ import { DeleteAnnouncementDialog } from "@/components/features/announcements/de
 import { Announcement } from "@/types/announcement";
 import { announcementService } from "@/services/announcement.service";
 import { Megaphone, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import type { AxiosError } from "axios";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -42,7 +43,7 @@ export default function JobDetailPage() {
       toast.success("Pin status updated");
       queryClient.invalidateQueries({ queryKey: ["announcements", { jobId }] });
     },
-    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to update pin status"),
+    onError: (err: AxiosError<{ message?: string }>) => toast.error(err.response?.data?.message || "Failed to update pin status"),
   });
 
   const { data: job, isLoading, error } = useQuery({
@@ -75,8 +76,9 @@ export default function JobDetailPage() {
     try {
       const url = await jobService.downloadCircular(jobId);
       if (url) window.open(url, "_blank");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to download circular.");
+    } catch (err) {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      toast.error(axiosErr?.response?.data?.message || "Failed to download circular.");
     } finally {
       setIsDownloading(false);
     }
@@ -145,7 +147,14 @@ export default function JobDetailPage() {
           <div className="space-y-3 flex-1 min-w-0">
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="bg-emerald-600/15 text-emerald-400 border-emerald-700/30 font-medium">
-                {job.job_type.replace(/_/g, " ").toUpperCase()}
+                {({
+                  placement: "Placement",
+                  internship: "Internship",
+                  internship_fulltime: "Internship + PPO",
+                  hackathon: "Hackathon",
+                  webinar: "Webinar",
+                  talk: "Talk",
+                } as Record<string, string>)[job.job_type] || job.job_type.replace(/_/g, " ").toUpperCase()}
               </Badge>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight break-words">{job.role_title}</h1>
