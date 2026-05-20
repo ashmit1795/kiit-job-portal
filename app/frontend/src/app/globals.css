@@ -179,6 +179,10 @@
   color: oklch(0.95 0.01 155) !important;
   border-color: oklch(1 0 0 / 10%) !important;
 }
+.w-md-editor-text-input {
+  color: oklch(0.95 0.01 155) !important;
+  -webkit-text-fill-color: oklch(0.95 0.01 155) !important;
+}
 .dark .w-md-editor-toolbar li button {
   color: oklch(0.65 0.06 155) !important;
 }

@@ -109,7 +109,7 @@ class AdminService {
 	}
 
 	async listAllJobs(user, query) {
-		if (user.role !== "admin") {
+		if (user.role !== "admin" && user.role !== "volunteer") {
 			throw new AppError("Admin access required", 403);
 		}
 

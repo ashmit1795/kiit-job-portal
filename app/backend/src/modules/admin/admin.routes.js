@@ -25,7 +25,7 @@ router.delete("/users/:id", roleGuard("admin"), adminController.deleteUser);
 /**
  * Analytics
  */
-router.get("/jobs", roleGuard("admin"), adminController.listAllJobs);
+router.get("/jobs", roleGuard("admin", "volunteer"), adminController.listAllJobs);
 
 router.get("/jobs/stats", roleGuard("admin"), adminController.jobStats);
 

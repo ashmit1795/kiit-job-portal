@@ -7,6 +7,7 @@ import profileRoute from "../modules/users/profile.route.js";
 import healthRoute from "../modules/health/health.route.js";
 import academicRoute from "../modules/academics/academic.route.js";
 import jobRoute from "../modules/job/job.route.js";
+import announcementRoute from "../modules/announcement/announcement.route.js";
 import adminRoutes from "../modules/admin/admin.routes.js";
 import roleGuard from "../middlewares/roleGuard.middleware.js";
 
@@ -24,14 +25,12 @@ router.use("/auth", authenticate, authRoute);
 // Profile route (needs authentication but not profile guard)
 router.use("/profile", authenticate, profileRoute);
 
-
 // Apply authentication + profile guard globally for protected routes
 router.use(authenticate, profileGuard);
 
 router.use("/jobs", jobRoute);
+router.use("/announcements", announcementRoute);
 
-router.use("/admin", roleGuard("admin"), adminRoutes);
-
-
+router.use("/admin", roleGuard("admin", "volunteer"), adminRoutes);
 
 export default router;

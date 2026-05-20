@@ -12,6 +12,14 @@ import { useState } from "react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { AnnouncementFeed } from "@/components/features/announcements/announcement-feed";
+import { CreateAnnouncementModal } from "@/components/features/announcements/create-announcement-modal";
+import { EditAnnouncementModal } from "@/components/features/announcements/edit-announcement-modal";
+import { DeleteAnnouncementDialog } from "@/components/features/announcements/delete-announcement-dialog";
+import { Announcement } from "@/types/announcement";
+import { announcementService } from "@/services/announcement.service";
+import { Megaphone, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import type { AxiosError } from "axios";
 
 export default function JobDetailPage() {
   const params = useParams();
@@ -22,6 +30,21 @@ export default function JobDetailPage() {
   const jobId = params.id as string;
   const fromAdmin = searchParams.get("from") === "admin";
   const [isDownloading, setIsDownloading] = useState(false);
+
+  const [isUpdatesExpanded, setIsUpdatesExpanded] = useState(true);
+  const [isCreateUpdateOpen, setIsCreateUpdateOpen] = useState(false);
+  const [updateToEdit, setUpdateToEdit] = useState<Announcement | null>(null);
+  const [updateToDelete, setUpdateToDelete] = useState<Announcement | null>(null);
+
+  const togglePinMutation = useMutation({
+    mutationFn: (announcement: Announcement) => 
+      announcementService.updateAnnouncement(announcement.id, { is_pinned: !announcement.is_pinned }),
+    onSuccess: () => {
+      toast.success("Pin status updated");
+      queryClient.invalidateQueries({ queryKey: ["announcements", { jobId }] });
+    },
+    onError: (err: AxiosError<{ message?: string }>) => toast.error(err.response?.data?.message || "Failed to update pin status"),
+  });
 
   const { data: job, isLoading, error } = useQuery({
     queryKey: ["jobs", jobId],
@@ -53,8 +76,9 @@ export default function JobDetailPage() {
     try {
       const url = await jobService.downloadCircular(jobId);
       if (url) window.open(url, "_blank");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to download circular.");
+    } catch (err) {
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      toast.error(axiosErr?.response?.data?.message || "Failed to download circular.");
     } finally {
       setIsDownloading(false);
     }
@@ -123,7 +147,14 @@ export default function JobDetailPage() {
           <div className="space-y-3 flex-1 min-w-0">
             <div className="flex flex-wrap gap-2">
               <Badge variant="outline" className="bg-emerald-600/15 text-emerald-400 border-emerald-700/30 font-medium">
-                {job.job_type.replace(/_/g, " ").toUpperCase()}
+                {({
+                  placement: "Placement",
+                  internship: "Internship",
+                  internship_fulltime: "Internship + PPO",
+                  hackathon: "Hackathon",
+                  webinar: "Webinar",
+                  talk: "Talk",
+                } as Record<string, string>)[job.job_type] || job.job_type.replace(/_/g, " ").toUpperCase()}
               </Badge>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight break-words">{job.role_title}</h1>
@@ -281,6 +312,49 @@ export default function JobDetailPage() {
               </CardContent>
             </Card>
           )}
+          
+          {/* Announcements / Updates Section */}
+          <div className="space-y-4">
+            <div 
+              className="flex items-center justify-between cursor-pointer group"
+              onClick={() => setIsUpdatesExpanded(!isUpdatesExpanded)}
+            >
+              <div className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-emerald-500" />
+                <h2 className="text-xl font-semibold tracking-tight">Placement Updates</h2>
+              </div>
+              <div className="flex items-center gap-3">
+                {user?.role === "admin" || user?.role === "volunteer" ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-900/20 px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsCreateUpdateOpen(true);
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Post Update
+                  </Button>
+                ) : null}
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground group-hover:text-foreground">
+                  {isUpdatesExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+
+            {isUpdatesExpanded && (
+              <div className="pt-2">
+                <AnnouncementFeed 
+                  jobId={jobId}
+                  onEdit={(a) => setUpdateToEdit(a)}
+                  onDelete={(a) => setUpdateToDelete(a)}
+                  onTogglePin={(a) => togglePinMutation.mutate(a)}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Sidebar */}
@@ -343,6 +417,31 @@ export default function JobDetailPage() {
           </Card>
         </div>
       </div>
+
+      {(user?.role === "admin" || user?.role === "volunteer") && (
+        <>
+          <CreateAnnouncementModal
+            isOpen={isCreateUpdateOpen}
+            onClose={() => setIsCreateUpdateOpen(false)}
+          />
+
+          {updateToEdit && (
+            <EditAnnouncementModal
+              isOpen={true}
+              onClose={() => setUpdateToEdit(null)}
+              announcement={updateToEdit}
+            />
+          )}
+
+          {updateToDelete && (
+            <DeleteAnnouncementDialog
+              isOpen={true}
+              onClose={() => setUpdateToDelete(null)}
+              announcement={updateToDelete}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 }

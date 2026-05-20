@@ -54,16 +54,29 @@ export default function JobsFeedPage() {
       <div className="w-full sm:w-[180px]">
         <Select value={typeFilter} onValueChange={(val) => setTypeFilter(val as string)}>
           <SelectTrigger className="bg-muted/30 border-border/50">
-            <SelectValue placeholder="Job Type" />
+            <SelectValue placeholder="Job Type">
+              {(val: string | null) => {
+                const labels: Record<string, string> = {
+                  all: "All Types",
+                  placement: "Placement",
+                  internship: "Internship",
+                  internship_fulltime: "Internship + PPO",
+                  hackathon: "Hackathon",
+                  webinar: "Webinar",
+                  talk: "Talk",
+                };
+                return val ? (labels[val] || val) : "Job Type";
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="placement">Placement</SelectItem>
-            <SelectItem value="internship">Internship</SelectItem>
-            <SelectItem value="internship_fulltime">Internship + PPO</SelectItem>
-            <SelectItem value="hackathon">Hackathon</SelectItem>
-            <SelectItem value="webinar">Webinar</SelectItem>
-            <SelectItem value="talk">Talk</SelectItem>
+            <SelectItem value="all" label="All Types">All Types</SelectItem>
+            <SelectItem value="placement" label="Placement">Placement</SelectItem>
+            <SelectItem value="internship" label="Internship">Internship</SelectItem>
+            <SelectItem value="internship_fulltime" label="Internship + PPO">Internship + PPO</SelectItem>
+            <SelectItem value="hackathon" label="Hackathon">Hackathon</SelectItem>
+            <SelectItem value="webinar" label="Webinar">Webinar</SelectItem>
+            <SelectItem value="talk" label="Talk">Talk</SelectItem>
           </SelectContent>
         </Select>
       </div>
