@@ -140,3 +140,15 @@ class AnnouncementRepository {
 			.update({ is_active: false })
 			.eq("id", announcementId)
 			.select("id");
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data;
+	}
+}
+
+export default new AnnouncementRepository();
