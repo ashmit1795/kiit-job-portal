@@ -28,6 +28,15 @@ const typeBadgeColors: Record<string, string> = {
   talk: "bg-cyan-600/15 text-cyan-400 border-cyan-700/30",
 };
 
+const jobTypeLabels: Record<string, string> = {
+  placement: "Placement",
+  internship: "Internship",
+  internship_fulltime: "Internship + PPO",
+  hackathon: "Hackathon",
+  webinar: "Webinar",
+  talk: "Talk",
+};
+
 function getDeadlineInfo(deadline: string) {
   const now = new Date();
   const dl = new Date(deadline);
@@ -51,7 +60,7 @@ export function JobCard({ job, showStatus = false }: JobCardProps) {
         <CardHeader className="pb-3 space-y-3">
           <div className="flex items-start justify-between gap-2">
             <Badge variant="outline" className={`${typeBadgeColors[job.job_type] || typeBadgeColors.placement} text-xs font-medium`}>
-              {job.job_type.replace(/_/g, " ")}
+              {jobTypeLabels[job.job_type] || job.job_type.replace(/_/g, " ")}
             </Badge>
             {showStatus && (
               <Badge

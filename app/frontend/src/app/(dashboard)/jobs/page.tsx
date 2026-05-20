@@ -54,7 +54,20 @@ export default function JobsFeedPage() {
       <div className="w-full sm:w-[180px]">
         <Select value={typeFilter} onValueChange={(val) => setTypeFilter(val as string)}>
           <SelectTrigger className="bg-muted/30 border-border/50">
-            <SelectValue placeholder="Job Type" />
+            <SelectValue placeholder="Job Type">
+              {(val: string | null) => {
+                const labels: Record<string, string> = {
+                  all: "All Types",
+                  placement: "Placement",
+                  internship: "Internship",
+                  internship_fulltime: "Internship + PPO",
+                  hackathon: "Hackathon",
+                  webinar: "Webinar",
+                  talk: "Talk",
+                };
+                return val ? (labels[val] || val) : "Job Type";
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all" label="All Types">All Types</SelectItem>

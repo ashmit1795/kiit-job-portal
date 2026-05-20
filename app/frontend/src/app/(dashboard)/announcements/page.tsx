@@ -62,7 +62,21 @@ export default function AnnouncementsPage() {
             <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={typeFilter} onValueChange={(val: any) => setTypeFilter(val)}>
               <SelectTrigger className="h-8 border-0 bg-transparent shadow-none focus:ring-0 px-0 min-w-[120px] text-sm font-medium">
-                <SelectValue placeholder="All Updates" />
+                <SelectValue placeholder="All Updates">
+                  {(val: string | null) => {
+                    if (!val || val === "all") return "All Updates";
+                    const config = announcementTypeConfig[val as keyof typeof announcementTypeConfig];
+                    if (config) {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <config.icon className="h-3.5 w-3.5" />
+                          <span>{config.label}</span>
+                        </div>
+                      );
+                    }
+                    return val;
+                  }}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent align="end">
                 <SelectItem value="all" label="All Updates">All Updates</SelectItem>

@@ -89,7 +89,21 @@ export function AnnouncementForm({
             onValueChange={(val: any) => setFormData({ ...formData, announcement_type: val })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select type" />
+              <SelectValue placeholder="Select type">
+                {(val: string | null) => {
+                  if (!val) return "Select type";
+                  const config = announcementTypeConfig[val as keyof typeof announcementTypeConfig];
+                  if (config) {
+                    return (
+                      <div className="flex items-center gap-2">
+                        <config.icon className="h-3.5 w-3.5" />
+                        <span>{config.label}</span>
+                      </div>
+                    );
+                  }
+                  return val;
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {Object.entries(announcementTypeConfig).map(([key, config]) => (
@@ -111,7 +125,16 @@ export function AnnouncementForm({
             onValueChange={(val) => setFormData({ ...formData, job_id: val })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select a job" />
+              <SelectValue placeholder="Select a job">
+                {(val: string | null) => {
+                  if (!val || val === "global") return <span className="font-medium">Global (All Users)</span>;
+                  const selectedJob = jobsData?.jobs.find((j) => j.id === val);
+                  if (selectedJob) {
+                    return `${selectedJob.company_name} - ${selectedJob.role_title}`;
+                  }
+                  return val;
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="global" label="Global (All Users)">
