@@ -1,3 +1,15 @@
+create type placement.announcement_type as enum (
+    'general',
+    'deadline_extension',
+    'shortlist',
+    'test_link',
+    'venue_update',
+    'eligibility_update',
+    'joining_update',
+    'result',
+    'warning'
+);
+
 create table placement.job_announcements (
     id uuid primary key default gen_random_uuid(),
 
@@ -9,7 +21,7 @@ create table placement.job_announcements (
 
     circular_file_path text null,
 
-    announcement_type text not null default 'general',
+    announcement_type placement.announcement_type not null default 'general',
 
     is_pinned boolean not null default false,
 
