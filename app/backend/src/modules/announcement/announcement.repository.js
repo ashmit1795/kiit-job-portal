@@ -26,18 +26,34 @@ class AnnouncementRepository {
 				circular_file_path,
 				announcement_type,
 				is_pinned,
-				created_by,
-				created_at,
-				updated_at
-			`,
+					announcement_priority,
+					created_by,
+					created_at,
+					updated_at,
+					created_by_user:users(
+						id,
+						full_name,
+						avatar_url,
+						role
+					),
+					job:jobs(
+						id,
+						company_name,
+						role_title,
+						circular_number
+					)
+				`,
 				{ count: "exact" },
 			)
 			.order("is_pinned", { ascending: false })
+			.order("announcement_priority", { ascending: false })
 			.order("created_at", { ascending: false });
 
 		if (jobId) {
 			query = query.eq("job_id", jobId);
 		}
+
+		query = query.eq("is_active", true);
 
 		const from = (page - 1) * limit;
 		const to = from + limit - 1;
@@ -50,7 +66,10 @@ class AnnouncementRepository {
 			throw error;
 		}
 
-		return { announcements: data, total: count ?? 0 };
+		const total = count ?? 0;
+		const totalPages = Math.ceil(total / limit);
+
+		return { announcements: data, total, page, limit, totalPages };
 	}
 
 	async getAnnouncementById(announcementId) {
@@ -59,17 +78,30 @@ class AnnouncementRepository {
 			.from("job_announcements")
 			.select(
 				`
-				id,
-				subject,
-				description,
-				job_id,
-				circular_file_path,
-				announcement_type,
-				is_pinned,
-				created_by,
-				created_at,
-				updated_at
-			`,
+					id,
+					subject,
+					description,
+					job_id,
+					circular_file_path,
+					announcement_type,
+					is_pinned,
+					announcement_priority,
+					created_by,
+					created_at,
+					updated_at,
+					created_by_user:users(
+						id,
+						full_name,
+						avatar_url,
+						role
+					),
+					job:jobs(
+						id,
+						company_name,
+						role_title,
+						circular_number
+					)
+				`,
 			)
 			.eq("id", announcementId)
 			.single();
@@ -82,6 +114,29 @@ class AnnouncementRepository {
 
 		return data;
 	}
-}
 
-export default new AnnouncementRepository();
+	async updateAnnouncement(announcementId, updates) {
+		const { data, error } = await supabase
+			.schema("placement")
+			.from("job_announcements")
+			.update(updates)
+			.eq("id", announcementId)
+			.select("id, subject, description, job_id, circular_file_path, announcement_type, is_pinned, announcement_priority, created_by, created_at, updated_at")
+			.single();
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data;
+	}
+
+	async softDeleteAnnouncement(announcementId) {
+		const { data, error } = await supabase
+			.schema("placement")
+			.from("job_announcements")
+			.update({ is_active: false })
+			.eq("id", announcementId)
+			.select("id");

@@ -17,13 +17,18 @@ class AnnouncementController {
 
 	async getAnnouncements(req, res, next) {
 		try {
-			const { announcements, total } = await announcementService.getAnnouncements(req.query);
+			const { announcements, total, page, limit, totalPages } = await announcementService.getAnnouncements(req.query);
 
 			return new AppResponse({
 				message: "Announcements fetched successfully",
 				data: {
 					announcements,
+				},
+				meta: {
+					page,
+					limit,
 					total,
+					totalPages,
 				},
 			}).send(res);
 		} catch (err) {
@@ -38,6 +43,31 @@ class AnnouncementController {
 			return new AppResponse({
 				message: "Announcement fetched successfully",
 				data: announcement,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async updateAnnouncement(req, res, next) {
+		try {
+			const updated = await announcementService.updateAnnouncement(req.user, req.params.id, req.body, req.file);
+
+			return new AppResponse({
+				message: "Announcement updated successfully",
+				data: updated,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async deleteAnnouncement(req, res, next) {
+		try {
+			await announcementService.deleteAnnouncement(req.user, req.params.id);
+
+			return new AppResponse({
+				message: "Announcement deleted (soft) successfully",
 			}).send(res);
 		} catch (err) {
 			next(err);
