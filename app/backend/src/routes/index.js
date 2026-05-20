@@ -31,6 +31,6 @@ router.use(authenticate, profileGuard);
 router.use("/jobs", jobRoute);
 router.use("/announcements", announcementRoute);
 
-router.use("/admin", roleGuard("admin"), adminRoutes);
+router.use("/admin", roleGuard("admin", "volunteer"), adminRoutes);
 
 export default router;
