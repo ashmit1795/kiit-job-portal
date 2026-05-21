@@ -45,5 +45,20 @@ export const updateProfileSchema = z
 		tenth_percentage: z.number().min(0).max(100).optional(),
 
 		twelfth_percentage: z.number().min(0).max(100).optional(),
+
+		phone_number: z
+			.string()
+			.trim()
+			.min(7, "Phone number must be at least 7 characters")
+			.max(20, "Phone number must be 20 characters or less")
+			.regex(/^[0-9+()\-\s]+$/, "Invalid phone number")
+			.nullable()
+			.optional(),
+
+		personal_email: z.string().email("Personal email must be valid").nullable().optional(),
+
+		linkedin_url: z.string().url("LinkedIn URL must be valid").nullable().optional(),
+		github_url: z.string().url("GitHub URL must be valid").nullable().optional(),
+		portfolio_url: z.string().url("Portfolio URL must be valid").nullable().optional(),
 	})
 	.refine((data) => Object.keys(data).length > 0, { message: "At least one field must be updated" });
