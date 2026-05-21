@@ -19,7 +19,7 @@ export default function ProfilePage() {
       <ProfileHeroCard user={user} />
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="bg-muted/30 border border-border/50 mb-6 flex flex-wrap gap-2 h-auto p-1 justify-start">
+        <TabsList className="bg-muted/30 border border-border/50 mb-6 flex w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] gap-2 h-auto p-1 justify-start">
           <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
             <User className="h-4 w-4" />
             Overview
