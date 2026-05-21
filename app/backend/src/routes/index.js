@@ -11,10 +11,13 @@ import announcementRoute from "../modules/announcement/announcement.route.js";
 import adminRoutes from "../modules/admin/admin.routes.js";
 import roleGuard from "../middlewares/roleGuard.middleware.js";
 
+import contactRoute from "../modules/contact/contact.route.js";
+
 const router = Router();
 
 // Public routes (if any in future)
 router.use("/academics", academicRoute);
+router.use("/contact", contactRoute);
 
 // Health check route (public)
 router.use("/health", healthRoute);
