@@ -1,13 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { contactService } from "@/services/contact.service";
+import { toast } from "sonner";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, Phone, Loader2 } from "lucide-react";
+
+import { AxiosError } from "axios";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+
+  const mutation = useMutation({
+    mutationFn: contactService.sendMessage,
+    onSuccess: () => {
+      toast.success("Message sent successfully! We'll get back to you soon.");
+      setFormData({ name: "", email: "", message: "" });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(error.response?.data?.message || "Failed to send message. Please try again.");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+    mutation.mutate(formData);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="px-4 lg:px-6 h-16 flex items-center border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
@@ -30,14 +58,14 @@ export default function ContactPage() {
               <Mail className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
               <div>
                 <h3 className="font-semibold text-sm">Email</h3>
-                <p className="text-sm text-muted-foreground">placement@kiit.ac.in</p>
+                <p className="text-sm text-muted-foreground">avsaar.careers@gmail.com</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-xl border border-border/50 bg-card/50">
               <Phone className="h-5 w-5 text-emerald-400 mt-0.5 shrink-0" />
               <div>
                 <h3 className="font-semibold text-sm">Phone</h3>
-                <p className="text-sm text-muted-foreground">+91 674 272 5113</p>
+                <p className="text-sm text-muted-foreground">+91 8480476322</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-xl border border-border/50 bg-card/50">
@@ -51,23 +79,51 @@ export default function ContactPage() {
 
           <div className="p-6 rounded-xl border border-border/50 bg-card/50 space-y-4">
             <h2 className="text-lg font-semibold">Send a Message</h2>
-            <div className="space-y-3">
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Name</Label>
-                <Input placeholder="Your name" />
+                <Input 
+                  placeholder="Your name" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  disabled={mutation.isPending}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Email</Label>
-                <Input type="email" placeholder="you@kiit.ac.in" />
+                <Input 
+                  type="email" 
+                  placeholder="you@kiit.ac.in" 
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  disabled={mutation.isPending}
+                />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Message</Label>
-                <textarea className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" placeholder="How can we help?" />
+                <textarea 
+                  className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" 
+                  placeholder="How can we help?" 
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  disabled={mutation.isPending}
+                />
               </div>
-              <Button className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold">
-                Send Message
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-brand hover:opacity-90 text-white font-semibold"
+                disabled={mutation.isPending}
+              >
+                {mutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
               </Button>
-            </div>
+            </form>
           </div>
         </div>
       </main>
