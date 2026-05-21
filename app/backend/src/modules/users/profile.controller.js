@@ -122,6 +122,38 @@ class ProfileController {
 		}
 	}
 
+	/**
+	 * Handles the `GET /profile/notifications` route to fetch notification preferences.
+	 */
+	async getNotificationPrefs(req, res, next) {
+		try {
+			const prefs = await profileService.getNotificationPrefs(req.user.id);
+
+			return new AppResponse({
+				message: "Notification preferences fetched successfully",
+				data: prefs,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	/**
+	 * Handles the `PATCH /profile/notifications` route to update notification preferences.
+	 */
+	async updateNotificationPrefs(req, res, next) {
+		try {
+			const updated = await profileService.updateNotificationPrefs(req.user.id, req.body);
+
+			return new AppResponse({
+				message: "Notification preferences updated successfully",
+				data: updated,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
 }
 
 export default new ProfileController();
