@@ -3,6 +3,7 @@ import AppError from "../../utils/AppError.js";
 import supabase from "../../config/supabase.js";
 import logger from "../../utils/logger.js";
 import adminRepository from "../admin/admin.repository.js";
+import { inngest } from "../../inngest/client.js";
 
 class JobService {
 	async createJob(user, payload, file) {
@@ -66,6 +67,16 @@ class JobService {
 			p_locations: payload.locations ?? [],
 		});
 
+		if (approvalStatus === "approved") {
+			const job = await jobRepository.findById(jobId);
+			if (job) {
+				await inngest.send({
+					name: "job/posted",
+					data: this.buildJobPostedPayload(job),
+				});
+			}
+		}
+
 		return { id: jobId };
 	}
 
@@ -120,6 +131,14 @@ class JobService {
 				approval_status: job.approval_status,
 			},
 		});
+
+		const fullJob = await jobRepository.findById(job.id);
+		if (fullJob) {
+			await inngest.send({
+				name: "job/posted",
+				data: this.buildJobPostedPayload(fullJob),
+			});
+		}
 
 		return job;
 	}
@@ -226,6 +245,22 @@ class JobService {
 					id: b.batch.id,
 					year: b.batch.year,
 				})) ?? [],
+		};
+	}
+
+	buildJobPostedPayload(job) {
+		return {
+			job_id: job.id,
+			company_name: job.company_name,
+			role_title: job.role_title,
+			job_type: job.job_type,
+			deadline: job.deadline,
+			ctc: job.ctc,
+			stipend: job.stipend,
+			min_cgpa: job.min_cgpa,
+			apply_link_1: job.apply_link_1,
+			branch_ids: job.eligible_branches?.map((b) => b.branch?.id).filter(Boolean) ?? [],
+			batch_ids: job.eligible_batches?.map((b) => b.batch?.id).filter(Boolean) ?? [],
 		};
 	}
 }
