@@ -8,6 +8,7 @@ export interface CompleteProfilePayload {
   cgpa: number;
   tenth_percentage: number;
   twelfth_percentage: number;
+  subscribe_to_alerts?: boolean;
 }
 
 export interface UpdateProfilePayload {
@@ -21,6 +22,13 @@ export interface UpdateProfilePayload {
   linkedin_url?: string | null;
   github_url?: string | null;
   portfolio_url?: string | null;
+}
+
+export interface NotificationPrefs {
+  user_id: string;
+  email_alerts: boolean;
+  telegram_alerts: boolean;
+  created_at: string;
 }
 
 export const profileService = {
@@ -44,5 +52,15 @@ export const profileService = {
   getResumeUrl: async () => {
     const { data } = await api.get<ApiResponse<{ url: string }>>("/profile/resume");
     return data.data?.url || null;
+  },
+
+  getNotificationPrefs: async () => {
+    const { data } = await api.get<ApiResponse<NotificationPrefs>>("/profile/notifications");
+    return data.data;
+  },
+
+  updateNotificationPrefs: async (prefs: { email_alerts: boolean }) => {
+    const { data } = await api.patch<ApiResponse<NotificationPrefs>>("/profile/notifications", prefs);
+    return data.data;
   },
 };
