@@ -17,6 +17,8 @@ class Env {
 		this.INNGEST_EVENT_KEY = process.env.INNGEST_EVENT_KEY;
 		this.INNGEST_SIGNING_KEY = process.env.INNGEST_SIGNING_KEY;
 		this.INNGEST_DEV = process.env.INNGEST_DEV;
+		this.FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL;
+		this.LOGO_URL = process.env.LOGO_URL;
 
 		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
 

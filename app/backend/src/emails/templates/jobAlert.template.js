@@ -1,8 +1,10 @@
+import env from "../../config/env.js";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Base URL — change once to update every link in the template.
 // ─────────────────────────────────────────────────────────────────────────────
-const BASE_URL = "https://avsaar.kiit.ac.in";
-const LOGO_URL = "https://i.ibb.co/4ZtnvnYC/avsaar-logo.jpg";
+const BASE_URL = env.FRONTEND_BASE_URL;
+const LOGO_URL = env.LOGO_URL;
 
 function formatValue(value, fallback = "Not specified") {
 	if (value === null || value === undefined || value === "") return fallback;

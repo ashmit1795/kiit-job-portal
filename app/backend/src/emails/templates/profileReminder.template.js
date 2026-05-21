@@ -1,9 +1,12 @@
+import env from "../../config/env.js";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Base URL — change once to update every link in the template.
 // If you import BASE_URL from a shared constants file, remove this line.
 // ─────────────────────────────────────────────────────────────────────────────
-const BASE_URL = "https://avsaar.kiit.ac.in";
-const LOGO_URL = "https://ibb.co/4ZtnvnYC";
+
+const BASE_URL = env.FRONTEND_BASE_URL;
+const LOGO_URL = env.LOGO_URL || "https://ibb.co/4ZtnvnYC/avsaar-logo.jpg";
 
 /**
  * Profile completion reminder email for अवSaar — Student-run KIIT Placement Portal
