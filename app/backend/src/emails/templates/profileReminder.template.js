@@ -189,24 +189,11 @@ export function profileReminderTemplate(user) {
       position: relative;
       overflow: hidden;
     }
-    .hero-glow {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at top right, rgba(245,158,11,0.1) 0%, transparent 70%);
-      border-radius: 0 20px 0 100%;
-      pointer-events: none;
-    }
-    .hero-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .hero-top-table {
+      width: 100%;
       margin-bottom: 18px;
-      position: relative;
-      z-index: 2;
     }
+    /* Replaced flex hero-top-row with table layout */
     .urgency-badge {
       display: inline-block;
       padding: 4px 12px;
@@ -257,9 +244,7 @@ export function profileReminderTemplate(user) {
 
     /* ── Progress section ── */
     .progress-label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      width: 100%;
       margin-bottom: 8px;
     }
     .progress-label {
@@ -324,9 +309,7 @@ export function profileReminderTemplate(user) {
       margin-bottom: 20px;
     }
     .checklist-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: block;
       padding: 12px 16px;
       border-radius: 12px;
       margin-bottom: 8px;
@@ -340,8 +323,8 @@ export function profileReminderTemplate(user) {
       background: rgba(245,158,11,0.04);
       border-color: rgba(245,158,11,0.12);
     }
-    .check-icon     { width: 28px; height: 28px; min-width: 28px; font-size: 24px; line-height: 28px; text-align: center; flex-shrink: 0; }
-    .check-body     { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .check-icon     { font-size: 24px; line-height: 28px; text-align: center; }
+    .check-body     { padding: 0 10px; }
     .check-label {
       font-size: 14px;
       font-weight: 600;
@@ -378,9 +361,7 @@ export function profileReminderTemplate(user) {
       margin-bottom: 10px;
     }
     .why-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
+      width: 100%;
       margin-bottom: 8px;
     }
     .why-row:last-child { margin-bottom: 0; }
@@ -467,18 +448,23 @@ export function profileReminderTemplate(user) {
 
       <!-- ══ HERO CARD ══ -->
       <div class="hero-card">
-        <div class="hero-glow"></div>
 
-        <div class="hero-top-row">
-          <span class="urgency-badge"
-                style="color:${urgencyColor}; border-color:${urgencyColor}40; background:${urgencyColor}12;">
-            ${urgencyLabel}
-          </span>
-          ${user.avatar_url ? 
-            `<img src="${user.avatar_url}" alt="${firstName}" class="user-avatar" />` : 
-            `<div class="user-avatar-fallback">${firstName.charAt(0)}</div>`
-          }
-        </div>
+        <table class="hero-top-table" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td align="left" valign="middle">
+              <span class="urgency-badge"
+                    style="color:${urgencyColor}; border-color:${urgencyColor}40; background:${urgencyColor}12;">
+                ${urgencyLabel}
+              </span>
+            </td>
+            <td align="right" valign="middle" width="44">
+              ${user.avatar_url ? 
+                `<img src="${user.avatar_url}" alt="${firstName}" class="user-avatar" />` : 
+                `<div class="user-avatar-fallback">${firstName.charAt(0)}</div>`
+              }
+            </td>
+          </tr>
+        </table>
 
         <div class="greeting">
           ${heroHeadline}<br>
@@ -488,16 +474,22 @@ export function profileReminderTemplate(user) {
         <p class="hero-subtext">${heroSubtext}</p>
 
         <!-- Progress bar -->
-        <div class="progress-label-row">
-          <span class="progress-label">Profile completion</span>
-          <span class="progress-pct" style="color:${barColor};">${pct}%</span>
-        </div>
+        <table class="progress-label-row" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td align="left">
+              <span class="progress-label">Profile completion</span>
+            </td>
+            <td align="right">
+              <span class="progress-pct" style="color:${barColor};">${pct}%</span>
+            </td>
+          </tr>
+        </table>
         <div class="progress-track">
           <div class="progress-fill"
-               style="width:${pct}%; background: linear-gradient(90deg, ${barColor} 0%, ${barColor}cc 100%);"></div>
+              style="width:${pct}%; background: linear-gradient(90deg, ${barColor} 0%, ${barColor}cc 100%);"></div>
         </div>
 
-        <a href="${BASE_URL}/profile/edit" class="cta-button">Complete My Profile →</a>
+        <a href="${BASE_URL}/onboarding" class="cta-button">Complete My Profile →</a>
         <p class="cta-note">Takes less than 3 minutes &bull; Unlocks your full feed instantly</p>
       </div>
 
@@ -511,30 +503,56 @@ export function profileReminderTemplate(user) {
 			.map(
 				(s) => `
         <div class="checklist-item ${s.done ? "done" : "pending"}">
-          <div class="check-icon ${s.done ? "done" : "pending"}">${s.done ? "✅" : s.icon}</div>
-          <div class="check-body">
-            <span class="check-label ${s.done ? "done" : "pending"}">${s.label}</span>
-            <span class="check-hint">${s.hint}</span>
-          </div>
-          <span class="check-status ${s.done ? "done" : "pending"}">${s.done ? "Done" : "Missing"}</span>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="36" valign="middle" align="center">
+                <div class="check-icon ${s.done ? "done" : "pending"}">${s.done ? "✅" : s.icon}</div>
+              </td>
+              <td valign="middle" class="check-body">
+                <span class="check-label ${s.done ? "done" : "pending"}">${s.label}</span><br>
+                <span class="check-hint">${s.hint}</span>
+              </td>
+              <td width="65" align="right" valign="middle">
+                <span class="check-status ${s.done ? "done" : "pending"}">${s.done ? "Done" : "Missing"}</span>
+              </td>
+            </tr>
+          </table>
         </div>`,
 			)
 			.join("")}
 
         <div class="why-box">
           <div class="why-box-title">💡 Why your profile matters</div>
-          <div class="why-row">
-            <div class="why-dot"></div>
-            <span class="why-text"><strong style="color:#fde68a;">Branch, batch & CGPA</strong> are used to filter which job circulars and placement drives you're eligible for. Without them, you see everything — or nothing relevant.</span>
-          </div>
-          <div class="why-row">
-            <div class="why-dot"></div>
-            <span class="why-text"><strong style="color:#fde68a;">10th & 12th percentages</strong> are required by most companies as minimum eligibility criteria. They need to be on file before you can apply.</span>
-          </div>
-          <div class="why-row">
-            <div class="why-dot"></div>
-            <span class="why-text"><strong style="color:#fde68a;">Your resume</strong> can be directly referenced by volunteers sharing relevant circulars, and by placement coordinators reviewing applicants.</span>
-          </div>
+          <table class="why-row" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="15" valign="top">
+                <div class="why-dot"></div>
+              </td>
+              <td valign="top">
+                <span class="why-text"><strong style="color:#fde68a;">Branch, batch & CGPA</strong> are used to filter which job circulars and placement drives you're eligible for. Without them, you see everything — or nothing relevant.</span>
+              </td>
+            </tr>
+          </table>
+          <table class="why-row" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="15" valign="top">
+                <div class="why-dot"></div>
+              </td>
+              <td valign="top">
+                <span class="why-text"><strong style="color:#fde68a;">10th & 12th percentages</strong> are required by most companies as minimum eligibility criteria. They need to be on file before you can apply.</span>
+              </td>
+            </tr>
+          </table>
+          <table class="why-row" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="15" valign="top">
+                <div class="why-dot"></div>
+              </td>
+              <td valign="top">
+                <span class="why-text"><strong style="color:#fde68a;">Your resume</strong> can be directly referenced by volunteers sharing relevant circulars, and by placement coordinators reviewing applicants.</span>
+              </td>
+            </tr>
+          </table>
         </div>
 
         <!-- Unofficial platform notice -->

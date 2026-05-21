@@ -155,24 +155,11 @@ export function welcomeTemplate(user) {
       position: relative;
       overflow: hidden;
     }
-    .hero-glow {
-      position: absolute;
-      top: 0;           /* anchored to card top — no negative offset that can push layout */
-      right: 0;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at top right, rgba(16,185,129,0.13) 0%, transparent 70%);
-      border-radius: 0 20px 0 100%;  /* follow card corner */
-      pointer-events: none;
-    }
-    .hero-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .hero-top-table {
+      width: 100%;
       margin-bottom: 18px;
-      position: relative;
-      z-index: 2;
     }
+    /* Replaced flexbox hero-top-row with table layout */
     .role-badge {
       display: inline-block;
       padding: 4px 12px;
@@ -259,12 +246,7 @@ export function welcomeTemplate(user) {
       color: #10b981;
       margin-bottom: 20px;
     }
-    .feature-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
+    /* Replaced flex feature-row with table layout */
     .feature-icon {
       width: 40px;
       height: 40px;
@@ -375,19 +357,23 @@ export function welcomeTemplate(user) {
         <div class="unofficial-badge">Student Initiative &bull; Not an official KIIT platform</div>
       </div>
 
-      <!-- ══ HERO CARD ══ -->
       <div class="hero-card">
-        <div class="hero-glow"></div>
 
-        <div class="hero-top-row">
-          <span class="role-badge" style="color:${roleColor}; border-color:${roleColor}40; background:${roleColor}12;">
-            ${roleTag}
-          </span>
-          ${user.avatar_url ? 
-            `<img src="${user.avatar_url}" alt="${firstName}" class="user-avatar" />` : 
-            `<div class="user-avatar-fallback">${firstName.charAt(0)}</div>`
-          }
-        </div>
+        <table class="hero-top-table" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td align="left" valign="middle">
+              <span class="role-badge" style="color:${roleColor}; border-color:${roleColor}40; background:${roleColor}12;">
+                ${roleTag}
+              </span>
+            </td>
+            <td align="right" valign="middle" width="44">
+              ${user.avatar_url ? 
+                `<img src="${user.avatar_url}" alt="${firstName}" class="user-avatar" />` : 
+                `<div class="user-avatar-fallback">${firstName.charAt(0)}</div>`
+              }
+            </td>
+          </tr>
+        </table>
 
         <div class="greeting">
           Welcome aboard,<br>
@@ -424,13 +410,17 @@ export function welcomeTemplate(user) {
         ${features
 			.map(
 				(f) => `
-        <div class="feature-row">
-          <div class="feature-icon">${f.icon}</div>
-          <div>
-            <div class="feature-title">${f.title}</div>
-            <div class="feature-desc">${f.desc}</div>
-          </div>
-        </div>`,
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+          <tr>
+            <td width="54" valign="top">
+              <div class="feature-icon">${f.icon}</div>
+            </td>
+            <td valign="top">
+              <div class="feature-title">${f.title}</div>
+              <div class="feature-desc">${f.desc}</div>
+            </td>
+          </tr>
+        </table>`,
 			)
 			.join("")}
 
