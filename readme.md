@@ -1,16 +1,14 @@
 
-# 🎯 Avsaar — KIIT Placement Portal
+# अवSaar — Student Placement Platform
 
-**A centralized placement opportunity aggregator for KIIT University**
-
-Built by **Team UdaanX 🚀**
+> **An independent, student-built platform centralizing placement information for the KIIT community.**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![Express](https://img.shields.io/badge/Express-5-000?logo=express)](https://expressjs.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase)](https://supabase.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 
-</div>
+> ⚠️ **Important:** अवSaar is an **independent student initiative** and is **not affiliated with, endorsed by, or operated by KIIT University**. All institutional names and trademarks belong to their respective owners.
 
 ---
 
@@ -29,22 +27,25 @@ Built by **Team UdaanX 🚀**
 - [Environment Variables](#-environment-variables)
 - [Project Structure](#-project-structure)
 - [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Disclaimer](#-disclaimer)
 
 ---
 
 ## 💡 Why Avsaar?
 
-KIIT University's Training & Placement (T&P) Cell shares job circulars through WhatsApp and Telegram groups. This creates real problems:
+Placement information at KIIT arrives through fragmented, unreliable channels. Students face a daily problem:
 
 | Problem | Impact |
 |---------|--------|
-| Circulars buried in chat history | Students miss opportunities |
+| Circulars buried in WhatsApp chat history | Students miss opportunities |
 | No eligibility filtering | Manual checking wastes time |
 | Scattered across multiple groups | No single source of truth |
 | No deadline tracking | Students forget to apply |
 | No searchable archive | Past opportunities are lost |
+| Misinformation from forwarded messages | Confusion and missed deadlines |
 
-**Avsaar solves this** by providing a centralized, searchable, eligibility-aware portal where every circular is catalogued with metadata, deadlines, and PDF downloads.
+**Avsaar is our answer to that chaos** — a centralized, searchable, eligibility-aware platform where every circular is catalogued with metadata, deadlines, and PDF downloads. Built by students who experienced this problem firsthand.
 
 > **Key principle:** Avsaar is NOT a job application platform. It is a **placement opportunity aggregator** — students discover opportunities here, then apply through the company's own process.
 
@@ -55,22 +56,23 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 ### For Students
 - **Personalized Feed** — see only jobs matching your branch, batch, and CGPA
 - **All Jobs View** — browse every approved opportunity with search & filters
-- **Circular Downloads** — download official T&P circular PDFs directly
+- **Circular Downloads** — download placement circular PDFs directly
+- **Deadline Visibility** — never miss an application window
 - **Profile Management** — maintain academic details and upload resume
 
 ### For Volunteers
-- **Post Opportunities** — create job postings with circular uploads (requires admin approval)
-- **Same student features** — volunteers are students with extra posting privileges
+- **Post Opportunities** — create job postings with circular uploads (requires admin review before publishing)
+- **Community contribution** — help keep the platform current for fellow students
 
 ### For Admins
 - **Overview Dashboard** — 8-metric stats grid (users, students, volunteers, admins, total/pending/approved/expired jobs)
-- **Job Approval** — approve or reject volunteer-submitted postings inline
-- **Full Job Management** — view all jobs with status, type, and search filters; approve/reject from the table
-- **User Management** — paginated user table with search, role filter, promote/demote, delete (all with confirmation)
-- **Volunteer Management** — dedicated view showing each volunteer's posted job stats and drill-down list
-- **Academic Structure** — create and delete programs, branches, and batches directly from the UI
+- **Job Approval** — review and approve or reject volunteer-submitted postings
+- **Full Job Management** — view all jobs with status, type, and search filters
+- **User Management** — paginated user table with search, role filter, promote/demote, delete
+- **Volunteer Management** — dedicated view showing each volunteer's posting stats
+- **Academic Structure** — create and delete programs, branches, and batches
 - **Audit Log** — full timestamped trail of every admin action, filterable by action type
-- **Auto-approved Posts** — admin-created jobs skip the approval queue
+- **Auto-approved Posts** — admin-created jobs skip the review queue
 
 ---
 
@@ -82,7 +84,7 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 | **Next.js 16** (App Router) | React framework with SSR/SSG |
 | **TypeScript** | Type safety |
 | **Tailwind CSS 4** | Utility-first styling |
-| **shadcn/ui** | Component library (Button, Input, Avatar, etc.) |
+| **shadcn/ui** | Component library |
 | **TanStack Query** | Server state management & caching |
 | **Axios** | HTTP client with interceptors |
 | **Supabase JS** | Client-side auth (Google OAuth) |
@@ -98,9 +100,10 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 | **Supabase JS** (service role) | DB queries, storage, auth verification |
 | **Zod** | Request validation schemas |
 | **Multer** | File upload handling (circulars, resumes) |
+| **Inngest** | Background job scheduling (email workflows) |
+| **Brevo (SMTP)** | Transactional email delivery |
 | **Helmet** | Security headers |
 | **Morgan** | HTTP request logging |
-| **Chalk** | Colored console output |
 
 ### Database & Infrastructure
 | Technology | Purpose |
@@ -130,6 +133,12 @@ KIIT University's Training & Placement (T&P) Cell shares job circulars through W
 │  │  (OAuth) │  │ (Buckets)  │  │  users, jobs, branches… │  │
 │  └──────────┘  └────────────┘  └─────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
+                            │
+                    ┌───────┴──────┐
+                    │   Inngest    │  Background jobs
+                    │  (Email      │  (welcome, reminders,
+                    │   workflows) │   job alerts)
+                    └──────────────┘
 ```
 
 ### Backend Layered Architecture
@@ -164,11 +173,11 @@ app/
 │   ├── jobs/             # Job feed + job detail pages
 │   ├── create-job/       # Multi-step job creation form
 │   ├── admin/            # Full admin dashboard (6-tab)
-│   └── profile/          # User profile page
+│   └── profile/          # User profile page (with notification prefs)
 ├── login/                # Google OAuth sign-in
 ├── onboarding/           # Profile completion form
 ├── auth/callback/        # OAuth redirect handler
-├── about/, blog/, etc.   # Static informational pages
+├── about/, faqs/, etc.   # Public informational pages
 └── page.tsx              # Landing page (auth-aware)
 
 providers/
@@ -180,33 +189,13 @@ services/
 ├── profile.service.ts    # Profile + resume API calls
 ├── academic.service.ts   # Branches/batches API calls
 └── admin.service.ts      # All admin API calls
-
-components/features/admin/
-├── overview-tab.tsx      # Stats grid + pending approvals + recent activity
-├── users-tab.tsx         # Paginated user table with role management
-├── volunteers-tab.tsx    # Volunteer cards with job drill-down
-├── jobs-tab.tsx          # All-jobs table with filters + approve/reject
-├── academics-tab.tsx     # CRUD for programs, branches, batches
-├── logs-tab.tsx          # Admin activity timeline
-├── confirm-dialog.tsx    # Reusable confirmation modal
-└── user-role-dropdown.tsx # Role badge + change dropdown
-
-lib/
-├── api.ts                # Axios instance with token injection + 401 interceptor
-├── supabase.ts           # Supabase browser client
-└── date-utils.ts         # Zero-dependency date helpers (timeAgo, formatDate)
-
-types/
-├── admin.ts              # Admin dashboard TypeScript interfaces
-├── api.ts                # ApiResponse wrapper type
-└── academic.ts           # Program, Branch, Batch interfaces
 ```
 
 ---
 
 ## 🗄 Database Schema
 
-All tables live under the `placement` schema. Managed via **37 incremental Supabase migrations**.
+All tables live under the `placement` schema. Managed via incremental Supabase migrations.
 
 ### Entity Relationship
 
@@ -223,6 +212,8 @@ batches ──────────────────────1:N─
               job_eligible_branches │  job_eligible_batches
                                     │
                                job_locations
+
+users ──1:1──▶ job_alert_subscriptions
 ```
 
 ### Core Tables
@@ -248,7 +239,7 @@ batches ──────────────────────1:N─
 | Column | Type | Notes |
 |--------|------|-------|
 | `id` | UUID (PK) | Auto-generated |
-| `circular_number` | TEXT | T&P circular reference (e.g., `KIIT-DU/T&P/26/219`) |
+| `circular_number` | TEXT | Circular reference number |
 | `company_name` | TEXT | |
 | `role_title` | TEXT | |
 | `job_type` | ENUM | `placement` / `internship` / `internship_fulltime` / `hackathon` / `webinar` / `talk` |
@@ -259,62 +250,49 @@ batches ──────────────────────1:N─
 | `joining_date` | TEXT | Expected joining date |
 | `description` | TEXT | Markdown-supported |
 | `circular_file_path` | TEXT | Path in `job-circulars` bucket |
-| `apply_link_1` | TEXT | Primary application URL |
-| `apply_link_2` | TEXT | Secondary application URL |
-| `posted_by` | UUID (FK) | → `users.id` |
 | `approval_status` | ENUM | `pending` / `approved` / `rejected` |
 | `is_active` | BOOLEAN | Soft-delete flag |
 
-**Uniqueness:** `(circular_number, role_title)` — one circular can have multiple roles (e.g., SDE + Data Analyst).
+**Uniqueness:** `(circular_number, role_title)` — one circular can have multiple roles.
 
-#### `placement.programs`
+#### `placement.job_alert_subscriptions`
 | Column | Type | Notes |
 |--------|------|-------|
 | `id` | UUID (PK) | |
-| `name` | TEXT (UNIQUE) | e.g., "B.Tech", "M.Tech" |
-| `level` | TEXT | `UG` or `PG` |
-| `duration_years` | INTEGER | |
-
-#### `placement.branches`
-| Column | Type | Notes |
-|--------|------|-------|
-| `id` | UUID (PK) | |
-| `program_id` | UUID (FK) | → `programs.id` |
-| `name` | TEXT | e.g., "Computer Science and Engineering" |
-| `code` | TEXT | e.g., "CSE" |
+| `user_id` | UUID (FK) | → `users.id` |
+| `email_alerts` | BOOLEAN | Opt-in for job notification emails |
 
 #### Junction Tables
-- **`job_eligible_branches`** — (job_id, branch_id) composite PK
-- **`job_eligible_batches`** — (job_id, batch_id) composite PK
-- **`job_locations`** — (job_id, location TEXT)
+- **`job_eligible_branches`** — `(job_id, branch_id)` composite PK
+- **`job_eligible_batches`** — `(job_id, batch_id)` composite PK
+- **`job_locations`** — `(job_id, location TEXT)`
 
 #### `placement.admin_logs`
 | Column | Type | Notes |
 |--------|------|-------|
 | `id` | UUID (PK) | Auto-generated |
 | `admin_id` | UUID (FK → users) | Admin who performed the action |
-| `action` | TEXT | e.g. `approve_job`, `promote_user`, `delete_branch` |
+| `action` | TEXT | e.g. `approve_job`, `promote_user` |
 | `target_type` | TEXT | `job`, `user`, `program`, `branch`, `batch` |
 | `target_id` | UUID | ID of the affected entity |
-| `details` | JSONB | Contextual data (email, role, company name, etc.) |
+| `details` | JSONB | Contextual data |
 | `created_at` | TIMESTAMPTZ | Timestamp of action |
-
-Indexed on `admin_id`, `created_at DESC`, and `action` for fast log queries.
 
 ### RPC Functions
 
 | Function | Purpose |
 |----------|---------|
 | `placement.create_job_v3(...)` | Creates job + inserts branches, batches, locations in one transaction |
-| `placement.get_job_feed(branch_id, batch_id, cgpa)` | Returns personalized feed filtered by eligibility |
+| `placement.get_job_feed(branch_id, batch_id, cgpa)` | Personalized feed filtered by eligibility (handles "ALL" branches) |
+| `placement.get_eligible_subscribers(branch_ids, batch_ids)` | Returns opted-in users eligible for a specific job (for email alerts) |
 | `placement.admin_dashboard_stats()` | Aggregated user + job counts for admin dashboard |
 | `placement.get_job_stats()` | Job type breakdown statistics |
 
 ### Storage Buckets
 
 | Bucket | Path Pattern | Purpose |
-|--------|-------------|---------|
-| `job-circulars` | `circulars/{circular_number}.pdf` | Official T&P circular PDFs |
+|--------|------------|---------|
+| `job-circulars` | `circulars/{circular_number}.pdf` | Placement circular PDFs |
 | `resumes` | `resumes/{user_id}.pdf` | Student resume uploads |
 
 ---
@@ -344,6 +322,8 @@ All responses follow a standard format:
 | `PATCH` | `/profile/update` | ✅ | Update profile fields |
 | `POST` | `/profile/resume` | ✅ | Upload resume PDF (multipart) |
 | `GET` | `/profile/resume` | ✅ | Get signed download URL for resume |
+| `GET` | `/profile/notification-preferences` | ✅ | Get email alert subscription status |
+| `PATCH` | `/profile/notification-preferences` | ✅ | Update email alert opt-in/out |
 
 ### Job Routes
 | Method | Endpoint | Auth | Role | Description |
@@ -389,12 +369,12 @@ All responses follow a standard format:
 ### Public Pages
 | Route | Description |
 |-------|-------------|
-| `/` | Landing page — auth-aware (shows Dashboard/Profile for logged-in users) |
+| `/` | Landing page — auth-aware |
 | `/login` | Google OAuth sign-in |
-| `/about` | About Avsaar |
-| `/contact` | Contact information + form |
+| `/about` | About the project |
+| `/contact` | Contact form |
 | `/faqs` | Accordion FAQ section |
-| `/blog` | Placement tips & news |
+| `/blog` | Placement tips & updates |
 | `/privacy` | Privacy policy |
 | `/terms` | Terms of service |
 | `/cookies` | Cookie policy |
@@ -402,18 +382,13 @@ All responses follow a standard format:
 ### Auth-Protected Pages
 | Route | Description |
 |-------|-------------|
-| `/auth/callback` | OAuth redirect handler (routes to jobs/onboarding/login) |
-| `/onboarding` | Profile completion form (branch, batch, CGPA, etc.) |
+| `/auth/callback` | OAuth redirect handler |
+| `/onboarding` | Profile completion form |
 | `/jobs` | Job feed with "All Jobs" and "My Feed" tabs |
 | `/jobs/:id` | Job detail page with circular download |
 | `/create-job` | Multi-step job creation form (admin/volunteer only) |
-| `/admin` | Admin dashboard — 6 tabs: Overview, Users, Volunteers, Jobs, Academics, Logs |
-| `/admin?tab=users` | User management tab |
-| `/admin?tab=volunteers` | Volunteer management tab |
-| `/admin?tab=jobs` | All-jobs management tab |
-| `/admin?tab=academics` | Academic structure CRUD tab |
-| `/admin?tab=logs` | Admin activity audit log tab |
-| `/profile` | User profile with resume upload |
+| `/admin` | Admin dashboard — 6 tabs |
+| `/profile` | User profile + notification preferences |
 
 ---
 
@@ -439,9 +414,9 @@ All responses follow a standard format:
          │
          ├── ❌ Invalid token → 401 → redirect to /login
          │
-         ├── ❌ Non-KIIT email → 403 → toast + signOut → /login
+         ├── ❌ Non-@kiit.ac.in email → 403 → signOut → /login
          │
-         └── ✅ Valid KIIT email
+         └── ✅ Valid email
               │
               ├── New user → INSERT into placement.users
               │
@@ -473,7 +448,7 @@ All responses follow a standard format:
 | Role | Create Jobs | Auto-Approve | Approve/Reject | User Management | View Feed |
 |------|:-----------:|:------------:|:--------------:|:---------------:|:---------:|
 | **Student** | ❌ | — | ❌ | ❌ | ✅ |
-| **Volunteer** | ✅ | ❌ (pending) | ❌ | ❌ | ✅ |
+| **Volunteer** | ✅ | ❌ (pending review) | ❌ | ❌ | ✅ |
 | **Admin** | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 Admins are defined via the `ADMIN_EMAILS` environment variable. Volunteers are promoted from students by admins.
@@ -486,12 +461,14 @@ Admins are defined via the `ADMIN_EMAILS` environment variable. Volunteers are p
 - Node.js 18+
 - npm
 - A Supabase project with Google OAuth configured
+- Inngest account (for background email jobs)
+- Brevo (formerly Sendinblue) account (for transactional email)
 
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/kiit-job-portal.git
-cd kiit-job-portal
+git clone https://github.com/your-username/avsaar.git
+cd avsaar
 
 # Install backend dependencies
 cd app/backend && npm install
@@ -508,7 +485,14 @@ PORT=5000
 NODE_ENV=development
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SECRET_KEY=your-service-role-key
-ADMIN_EMAILS=admin@kiit.ac.in,admin2@kiit.ac.in
+ADMIN_EMAILS=youremail@kiit.ac.in
+FRONTEND_BASE_URL=http://localhost:5500
+INNGEST_EVENT_KEY=your-inngest-event-key
+INNGEST_SIGNING_KEY=your-inngest-signing-key
+BREVO_API_KEY=your-brevo-api-key
+BREVO_SENDER_EMAIL=noreply@yourdomain.com
+BREVO_SENDER_NAME=अवSaar
+LOGO_URL=https://your-logo-url.jpg
 ```
 
 Create `app/frontend/.env`:
@@ -522,12 +506,12 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
 ```bash
 cd supabase
-supabase db push
+npx supabase db push
 ```
 
 ### 4. Seed Academic Data
 
-Use the admin API or Supabase dashboard to create programs, branches, and batches.
+Use the admin dashboard (`/admin?tab=academics`) or the admin API to create programs, branches, and batches.
 
 ### 5. Start Development Servers
 
@@ -540,7 +524,8 @@ cd app/frontend && npm run dev
 ```
 
 - Frontend: `http://localhost:5500`
-- Backend: `http://localhost:5000`
+- Backend API: `http://localhost:5000`
+- Inngest Dev Server: `http://localhost:8288` (run `npx inngest-cli@latest dev`)
 
 ---
 
@@ -555,6 +540,13 @@ cd app/frontend && npm run dev
 | `SUPABASE_SECRET_KEY` | ✅ | Supabase service role key (NOT anon key) |
 | `ADMIN_EMAILS` | No | Comma-separated admin emails |
 | `DEV_AUTH_ENABLED` | No | Enable dev auth mode (skips OAuth) |
+| `FRONTEND_BASE_URL` | ✅ | Frontend URL (used in email templates) |
+| `INNGEST_EVENT_KEY` | ✅ | Inngest event signing key |
+| `INNGEST_SIGNING_KEY` | ✅ | Inngest webhook signing key |
+| `BREVO_API_KEY` | ✅ | Brevo transactional email API key |
+| `BREVO_SENDER_EMAIL` | ✅ | From address for platform emails |
+| `BREVO_SENDER_NAME` | No | Sender display name (default: अवSaar) |
+| `LOGO_URL` | No | Logo image URL for email templates |
 
 ### Frontend (`app/frontend/.env`)
 | Variable | Required | Description |
@@ -568,45 +560,44 @@ cd app/frontend && npm run dev
 ## 📁 Project Structure
 
 ```
-kiit-job-portal/
+avsaar/
 ├── app/
 │   ├── backend/
 │   │   └── src/
 │   │       ├── config/          # env.js, supabase.js
-│   │       ├── middlewares/     # auth, roleGuard, profileGuard, upload, validate, errorHandler
+│   │       ├── emails/          # Email templates (welcome, reminder, job alert)
+│   │       ├── inngest/         # Inngest client + background functions
+│   │       │   └── functions/jobs/  # sendJobAlertEmails function
+│   │       ├── middlewares/     # auth, roleGuard, profileGuard, upload, validate
 │   │       ├── modules/
-│   │       │   ├── academics/   # Programs, branches, batches CRUD + DELETE
-│   │       │   ├── admin/       # Dashboard, users, jobs, logs — full admin module
-│   │       │   ├── health/      # Health check endpoint
+│   │       │   ├── academics/   # Programs, branches, batches CRUD
+│   │       │   ├── admin/       # Dashboard, users, jobs, logs
 │   │       │   ├── job/         # Job CRUD, approval, feed, circular download
-│   │       │   └── users/       # Auth (me), profile, resume, user sync
+│   │       │   └── users/       # Auth (me), profile, resume, subscription
 │   │       ├── routes/          # Central route registration
-│   │       ├── utils/           # AppError, AppResponse, logger, mapSupabaseError
-│   │       └── validators/      # Zod schemas (job, profile, academic)
+│   │       └── utils/           # AppError, AppResponse, logger
 │   │
 │   └── frontend/
 │       └── src/
-│           ├── app/(dashboard)/admin/  # Admin page (6-tab URL-synced dashboard)
+│           ├── app/
+│           │   ├── (dashboard)/ # Auth-protected pages
+│           │   ├── about/       # About page
+│           │   ├── faqs/        # FAQ accordion
+│           │   ├── login/       # Sign-in page
+│           │   ├── onboarding/  # Profile setup
+│           │   ├── privacy/     # Privacy policy
+│           │   └── terms/       # Terms of service
 │           ├── components/
-│           │   ├── ui/                 # shadcn/ui + custom components
-│           │   └── features/admin/     # 8 admin tab + shared components
+│           │   ├── ui/          # shadcn/ui + custom components
+│           │   └── features/    # Domain-specific feature components
 │           ├── lib/
-│           │   ├── api.ts              # Axios + 401 interceptor
-│           │   ├── supabase.ts         # Supabase browser client
-│           │   └── date-utils.ts       # Zero-dep date helpers
-│           ├── providers/              # AuthProvider, QueryProvider
-│           ├── services/
-│           │   ├── admin.service.ts    # All admin API calls
-│           │   ├── job.service.ts
-│           │   ├── profile.service.ts
-│           │   └── academic.service.ts
-│           └── types/
-│               ├── admin.ts            # Admin dashboard interfaces
-│               ├── api.ts
-│               └── academic.ts
+│           │   ├── api.ts       # Axios + 401 interceptor
+│           │   └── supabase.ts  # Supabase browser client
+│           ├── providers/       # AuthProvider, QueryProvider
+│           └── services/        # API call layer
 │
 ├── supabase/
-│   └── migrations/              # 37 incremental SQL migrations
+│   └── migrations/              # Incremental SQL migrations
 │
 ├── PROJECT-CONTEXT.md           # Design decisions & system overview
 └── readme.md                    # This file
@@ -620,32 +611,64 @@ kiit-job-portal/
 - [x] Google OAuth with `@kiit.ac.in` domain restriction
 - [x] User sync & profile completion flow
 - [x] Multi-step job creation with circular upload
-- [x] Job approval workflow (admin approves volunteer posts)
+- [x] Job approval workflow (admin reviews volunteer posts)
 - [x] Personalized job feed (branch + batch + CGPA filtering via Postgres RPC)
+- [x] "ALL" branch support — jobs targeting all branches of a program reach all eligible students
 - [x] Circular PDF download via signed URLs
 - [x] Resume upload & download
 - [x] Full admin dashboard — 6-tab UI (Overview, Users, Volunteers, Jobs, Academics, Logs)
 - [x] Admin user management — search, role filter, promote/demote with confirmation
 - [x] Volunteer management — expandable cards with per-volunteer job stats
 - [x] Academic structure CRUD — programs, branches, batches via admin UI
-- [x] Admin audit log — full trail of every admin action with action-type filtering
-- [x] Auth-aware landing page
-- [x] Toast notifications & error handling
+- [x] Admin audit log — full trail of every admin action
+- [x] Email notifications via Inngest + Brevo — welcome emails, profile reminders, job alerts
+- [x] Job alert subscription system — opt-in on onboarding, manageable from profile
 - [x] Mobile-responsive navigation
 
 ### 🔜 Planned
-- [ ] Deadline reminder system (push notifications / email)
+- [ ] Push notifications (web push via service workers)
 - [ ] Job bookmarking / save for later
 - [ ] Search & advanced filters on job feed
-- [ ] AI circular parsing (auto-fill job form from PDF)
-- [ ] Email notifications for new approved jobs
+- [ ] AI circular parsing (auto-fill job form from PDF upload)
 - [ ] Analytics charts on admin dashboard
-- [ ] Volunteer promotion workflow from admin UI
+- [ ] Announcements board (general updates, not tied to job postings)
+- [ ] Email digest mode (weekly summary instead of per-posting alerts)
+
+### 🌱 Long-term Vision
+The goal is a smoother, more organized placement experience for the entire KIIT community. We hope this initiative contributes positively to that ecosystem, and we remain open to collaboration with stakeholders who share that vision.
 
 ---
 
-< align="center">
+## 🤝 Contributing
 
-Crafted with ❤️ by **Team UdaanX 🚀**
+Contributions are welcome! If you're a KIIT student and want to help improve the platform:
 
-*KIIT University — Training & Placement Portal*
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Make your changes with clear commit messages
+4. Open a pull request with a description of what you've changed and why
+
+For larger changes, open an issue first to discuss the approach.
+
+---
+
+## ⚠️ Disclaimer
+
+**अवSaar is an independent student initiative.**
+
+This platform is **not** affiliated with, endorsed by, or officially operated by KIIT University or its Training & Placement department. It is built and maintained voluntarily by students.
+
+- All institutional names and trademarks belong to their respective owners.
+- Placement information on this platform is community-contributed and best-effort.
+- Always verify important details through official KIIT T&P channels.
+- We make no guarantees about placement outcomes or the accuracy of information posted here.
+
+---
+
+<div align="center">
+
+Crafted with ❤️ by students, for students.
+
+*An independent community initiative for the KIIT placement ecosystem.*
+
+</div>
