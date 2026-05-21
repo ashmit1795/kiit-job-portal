@@ -250,16 +250,10 @@ export function welcomeTemplate(user) {
     .feature-icon {
       width: 40px;
       height: 40px;
-      min-width: 40px;                          /* prevent shrinking on mobile */
       background: rgba(16,185,129,0.1);
       border: 1px solid rgba(16,185,129,0.2);
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 18px;
-      flex-shrink: 0;
-      line-height: 40px;
       text-align: center;
     }
     .feature-title {
@@ -336,8 +330,7 @@ export function welcomeTemplate(user) {
       .cta-button     { font-size: 14px; padding: 14px 20px; }
 
       /* Keep features aligned on small screens */
-      .feature-row    { gap: 10px; }
-      .feature-icon   { width: 36px; height: 36px; min-width: 36px; line-height: 36px; font-size: 16px; }
+      .feature-icon   { width: 36px; height: 36px; font-size: 16px; }
 
       .footer-links a { margin: 0 5px; }
 
@@ -413,7 +406,11 @@ export function welcomeTemplate(user) {
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
           <tr>
             <td width="54" valign="top">
-              <div class="feature-icon">${f.icon}</div>
+              <table width="40" height="40" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="feature-icon" align="center" valign="middle">${f.icon}</td>
+                </tr>
+              </table>
             </td>
             <td valign="top">
               <div class="feature-title">${f.title}</div>
