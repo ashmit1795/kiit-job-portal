@@ -13,10 +13,13 @@ function formatDeadline(value) {
 	if (!value) return "Not specified";
 	const date = new Date(value);
 	if (Number.isNaN(date.getTime())) return String(value);
-	return date.toLocaleDateString("en-IN", {
+	return date.toLocaleString("en-IN", {
 		year: "numeric",
 		month: "short",
 		day: "numeric",
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true,
 	});
 }
 
@@ -28,6 +31,20 @@ function formatMoney(value) {
 
 function buildCtaLink(job) {
 	return job.apply_link_1 || `${BASE_URL}/jobs`;
+}
+
+const JOB_TYPE_MAP = {
+	placement: "Full-Time Placement",
+	internship: "Internship",
+	internship_fulltime: "Internship + FTE",
+	webinar: "Webinar",
+	hackathon: "Hackathon",
+	talk: "Expert Talk",
+};
+
+export function getJobTypeLabel(type) {
+	if (!type) return "Opportunity";
+	return JOB_TYPE_MAP[type] || type.charAt(0).toUpperCase() + type.slice(1);
 }
 
 /**
@@ -42,7 +59,7 @@ export function jobAlertTemplate(job, user) {
 	const firstName = token.length > 0 ? token.charAt(0).toUpperCase() + token.slice(1).toLowerCase() : "Student";
 
 	const ctaLink = buildCtaLink(job);
-	const jobType = formatValue(job.job_type, "Job");
+	const jobType = getJobTypeLabel(job.job_type);
 
 	return `
 <!DOCTYPE html>
@@ -120,16 +137,6 @@ export function jobAlertTemplate(job, user) {
       overflow: hidden;
       margin-bottom: 20px;
     }
-    .hero-glow {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle at top right, rgba(16,185,129,0.13) 0%, transparent 70%);
-      border-radius: 0 20px 0 100%;
-      pointer-events: none;
-    }
     .hero-title {
       font-size: 22px;
       font-weight: 800;
@@ -178,20 +185,27 @@ export function jobAlertTemplate(job, user) {
       padding: 18px 18px 6px;
       margin-bottom: 18px;
     }
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding-bottom: 12px;
-      font-size: 13px;
-      color: #cbd5f5;
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .detail-row span {
+    .detail-label {
       color: #94a3b8;
       font-weight: 600;
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.6px;
+      padding-bottom: 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+    .detail-value {
+      color: #cbd5f5;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: right;
+      padding-bottom: 12px;
+      vertical-align: top;
     }
     .footer {
       text-align: center;
@@ -207,29 +221,30 @@ export function jobAlertTemplate(job, user) {
     <div class="email-container">
       <div class="header">
         <img src="${LOGO_URL}" alt="Avsaar" class="logo-img" />
-        <div class="brand-name">Av<span>saar</span></div>
+        <div class="brand-name">अव<span>Saar</span></div>
         <div class="brand-tagline">Placement Alerts</div>
       </div>
 
       <div class="hero-card">
-        <div class="hero-glow"></div>
-        <div class="hero-title">Hi ${firstName}, new opportunity is live</div>
-        <div class="hero-subtitle">${formatValue(job.company_name)} is hiring for ${formatValue(job.role_title)}.</div>
+        <div class="hero-title">Hey ${firstName}, new opportunity is live 🚀</div>
+        <div class="hero-subtitle"><strong>${formatValue(job.company_name)}</strong> is hiring for <strong>${formatValue(job.role_title)}</strong>.</div>
         <div class="job-badge">${jobType}</div>
 
         <div class="details-card">
-          <div class="detail-row">
-            <span>CTC / Stipend</span>
-            <strong>${formatMoney(job.ctc || job.stipend)}</strong>
-          </div>
-          <div class="detail-row">
-            <span>Deadline</span>
-            <strong>${formatDeadline(job.deadline)}</strong>
-          </div>
-          <div class="detail-row">
-            <span>Min CGPA</span>
-            <strong>${formatValue(job.min_cgpa)}</strong>
-          </div>
+          <table class="detail-table" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="detail-label">CTC / Stipend</td>
+              <td class="detail-value">${formatMoney(job.ctc || job.stipend)}</td>
+            </tr>
+            <tr>
+              <td class="detail-label">Deadline</td>
+              <td class="detail-value">${formatDeadline(job.deadline)}</td>
+            </tr>
+            <tr>
+              <td class="detail-label" style="padding-bottom: 0;">Min CGPA</td>
+              <td class="detail-value" style="padding-bottom: 0;">${formatValue(job.min_cgpa)}</td>
+            </tr>
+          </table>
         </div>
 
         <a class="cta-button" href="${ctaLink}">View & Apply →</a>

@@ -2,7 +2,7 @@ import { inngest } from "../../client.js";
 import env from "../../../config/env.js";
 import subscriptionRepository from "../../../modules/users/subscription.repository.js";
 import emailService from "../../../emails/email.service.js";
-import { jobAlertTemplate } from "../../../emails/templates/jobAlert.template.js";
+import { jobAlertTemplate, getJobTypeLabel } from "../../../emails/templates/jobAlert.template.js";
 
 const CHUNK_SIZE = 50;
 
@@ -42,9 +42,10 @@ export const sendJobAlertEmails = inngest.createFunction(
 		for (let i = 0; i < chunks.length; i += 1) {
 			await step.run(`send-chunk-${i}`, async () => {
 				for (const user of chunks[i]) {
+					const jobTypeLabel = getJobTypeLabel(event.data.job_type);
 					await emailService.send({
 						to: user.email,
-						subject: `New ${event.data.job_type || "Job"} Opportunity — ${event.data.company_name}`,
+						subject: `🚀 New ${jobTypeLabel} at ${event.data.company_name} | अवSaar Alert`,
 						html: jobAlertTemplate(event.data, user),
 					});
 				}
