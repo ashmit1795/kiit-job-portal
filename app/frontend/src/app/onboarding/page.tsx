@@ -62,10 +62,12 @@ export default function OnboardingPage() {
     label: `${p.name} (${p.level})`,
   }));
 
-  const branchItems = (branches ?? []).map((b) => ({
-    value: b.id,
-    label: `${b.name} (${b.code})`,
-  }));
+  const branchItems = (branches ?? [])
+    .filter((b) => b.code !== "ALL")
+    .map((b) => ({
+      value: b.id,
+      label: b.code === "N/A" ? b.name : `${b.name} (${b.code})`,
+    }));
 
   const batchItems = (batches ?? []).map((b) => ({
     value: b.id,

@@ -250,7 +250,7 @@ export default function JobDetailPage() {
                   <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Deadline</span>
                   <span className="font-semibold flex items-center gap-1.5">
                     <CalendarDays className="h-4 w-4 text-emerald-500" />
-                    {new Date(job.deadline).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                    {new Date(job.deadline).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
                   </span>
                 </div>
                 {job.joining_date && (

@@ -27,4 +27,9 @@ export interface User {
     year: number;
   } | null;
   resume_url: string | null;
+  personal_email?: string | null;
+  phone_number?: string | null;
+  linkedin_url?: string | null;
+  github_url?: string | null;
+  portfolio_url?: string | null;
 }

@@ -88,6 +88,40 @@ class ProfileController {
 			next(err);
 		}
 	}
+
+	/**
+	 * Handles the `DELETE /profile/resume` route to remove the user's resume.
+	 * It calls the profileService to delete the resume file and clear the resume URL.
+	 */
+	async deleteResume(req, res, next) {
+		try {
+			const updatedUser = await profileService.deleteResume(req.user.id);
+
+			return new AppResponse({
+				message: "Resume deleted successfully",
+				data: updatedUser,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	/**
+	 * Handles the `GET /profile/stats` route to fetch profile stats.
+	 */
+	async getStats(req, res, next) {
+		try {
+			const stats = await profileService.getProfileStats(req.user);
+
+			return new AppResponse({
+				message: "Profile stats fetched successfully",
+				data: stats,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
 }
 
 export default new ProfileController();
