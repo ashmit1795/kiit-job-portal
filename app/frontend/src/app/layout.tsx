@@ -10,13 +10,14 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "अवSaar — Placement Portal",
-  description: "A centralized platform for KIIT University students to discover and track placement opportunities.",
+  title: "अवSaar — Student Placement Platform",
+  description: "A student-driven platform centralizing placement circulars, internship notices, and career updates for the KIIT community. Independent. Community-built. Not an official KIIT portal.",
   icons: {
     icon: "/favicon.png",
     apple: "/favicon.png",
   },
 };
+
 
 export default function RootLayout({
   children,

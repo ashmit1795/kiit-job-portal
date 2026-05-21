@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/logo";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowRight, Briefcase, Building, ShieldCheck, Sparkles, Users, BarChart3, ChevronRight } from "lucide-react";
+import { ArrowRight, Briefcase, Bell, Search, Users, BookOpen, ChevronRight } from "lucide-react";
 
 export default function LandingPage() {
   const { session, user, isLoading } = useAuth();
@@ -18,7 +18,6 @@ export default function LandingPage() {
   // CTA buttons — optimistic rendering with no blocking spinner
   const renderHeaderCTA = () => {
     if (isLoading) {
-      // Shimmer placeholder — same size as final buttons so there's no layout shift
       return (
         <div className="flex items-center gap-3">
           <div className="h-9 w-20 rounded-lg bg-muted/30 animate-pulse" />
@@ -83,7 +82,7 @@ export default function LandingPage() {
       <div className="flex flex-col sm:flex-row justify-center gap-4">
         <Link href="/login">
           <Button className="w-full sm:w-auto h-12 px-8 rounded-full bg-gradient-brand hover:opacity-90 text-white font-semibold shadow-lg shadow-emerald-900/30 transition-all hover:-translate-y-0.5">
-            Access Portal <ArrowRight className="ml-2 h-4 w-4" />
+            Explore Opportunities <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -109,13 +108,13 @@ export default function LandingPage() {
             <div className="mx-auto max-w-[800px] space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="inline-flex items-center rounded-full border border-emerald-700/30 bg-emerald-950/50 px-4 py-1.5 text-sm font-medium text-emerald-400 transition-all hover:scale-105 cursor-default">
                 <span className="flex h-2 w-2 rounded-full bg-emerald-400 mr-2 animate-pulse" />
-                Official placement tracking for KIIT students
+                Built by students, for students — KIIT community
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                One Portal for all your <span className="text-gradient-brand">Placement</span> Needs.
+                Stop hunting for <span className="text-gradient-brand">placement</span> circulars.
               </h1>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-                Stay updated with circulars, test links, shortlists, and more. Exclusively for KIIT University.
+              <p className="mx-auto max-w-[620px] text-muted-foreground md:text-xl leading-relaxed">
+                Placements, internships, hackathons — all in one place. No more digging through WhatsApp groups and forwarded PDFs.
               </p>
               <div className="pt-4">
                 {renderHeroCTA()}
@@ -145,16 +144,28 @@ export default function LandingPage() {
         <section className="w-full py-16 md:py-24 border-t border-border/50">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-3xl font-bold text-center mb-4 tracking-tight">
-              Streamlined Placement Process
+              Everything placement. One place.
             </h2>
             <p className="text-center text-muted-foreground max-w-lg mx-auto mb-12">
-              Everything you need to stay on top of your career opportunities, curated for KIIT students.
+              Circulars get buried. Deadlines get missed. We built अवSaar so that doesn&apos;t happen to you.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {[
-                { icon: ShieldCheck, title: "Secure Access", desc: "Sign in exclusively with your official @kiit.ac.in credentials to access verified opportunities." },
-                { icon: Briefcase, title: "Latest Circulars", desc: "Get instant access to official placement circulars, internship postings, and webinar details." },
-                { icon: Building, title: "Smart Tracking", desc: "Filter opportunities by your eligibility criteria, track deadlines, and download official PDFs." },
+                {
+                  icon: Bell,
+                  title: "Centralized Updates",
+                  desc: "Placement circulars, internship notices, hackathons, and webinars — pulled from scattered sources into one clean feed.",
+                },
+                {
+                  icon: Search,
+                  title: "Your Personalized Feed",
+                  desc: "Set your branch, batch, and CGPA once. Your feed automatically shows only the opportunities you're eligible for.",
+                },
+                {
+                  icon: BookOpen,
+                  title: "Instant Circular Access",
+                  desc: "Every posting includes the original circular PDF. Download it directly — no redirects, no searching.",
+                },
               ].map((feature) => (
                 <div key={feature.title} className="flex flex-col items-center text-center p-6 space-y-4 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm hover:border-emerald-700/40 transition-all hover:shadow-lg hover:shadow-emerald-900/10 group">
                   <div className="h-14 w-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
@@ -168,23 +179,52 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Stats section */}
+        {/* Why section */}
         <section className="w-full py-16 md:py-20 border-t border-border/50 bg-card/30">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 text-center">
-              {[
-                { icon: Briefcase, value: "500+", label: "Opportunities Posted" },
-                { icon: Users, value: "10,000+", label: "Students Served" },
-                { icon: Building, value: "200+", label: "Companies" },
-                { icon: BarChart3, value: "95%", label: "Placement Rate" },
-              ].map((stat) => (
-                <div key={stat.label} className="space-y-2 p-4">
-                  <stat.icon className="h-6 w-6 text-emerald-400 mx-auto mb-2" />
-                  <p className="text-3xl md:text-4xl font-extrabold text-gradient-brand">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground font-medium">{stat.label}</p>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-4xl mx-auto">
+              <div className="space-y-5">
+                <div className="inline-block text-xs font-semibold tracking-widest uppercase text-emerald-400">The problem we&apos;re solving</div>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+                  Placement info is scattered everywhere.
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Circulars land in multiple WhatsApp groups. Deadlines are buried in forwarded PDFs. Critical updates get lost in chat history. Students miss opportunities not because they&apos;re unqualified — but because they couldn&apos;t find them in time.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  अवSaar is our answer to that chaos. A clean, searchable, eligibility-aware platform where every opportunity is catalogued and accessible — built entirely by students who faced this problem.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: "1 place", label: "For all circulars" },
+                  { value: "Auto", label: "Eligibility filtering" },
+                  { value: "Instant", label: "PDF downloads" },
+                  { value: "Always", label: "Deadline visibility" },
+                ].map((stat) => (
+                  <div key={stat.label} className="space-y-1.5 p-5 rounded-xl border border-border/50 bg-card/50 text-center">
+                    <p className="text-2xl md:text-3xl font-extrabold text-gradient-brand">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground font-medium">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+          </div>
+        </section>
+
+        {/* Community section */}
+        <section className="w-full py-16 md:py-20 border-t border-border/50">
+          <div className="container mx-auto px-4 md:px-6 text-center space-y-6 max-w-2xl">
+            <div className="h-14 w-14 rounded-xl bg-emerald-900/30 flex items-center justify-center text-emerald-400 mx-auto">
+              <Users className="h-7 w-7" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">A community, not a corporation.</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              अवSaar is an independent, student-driven initiative. We&apos;re not affiliated with KIIT University — we&apos;re students who experienced the same frustrations and decided to build something better. Volunteers from the community help keep information current and accurate.
+            </p>
+            <p className="text-xs text-muted-foreground/60 max-w-md mx-auto">
+              अवSaar is not an official KIIT University product. All institutional names and trademarks belong to their respective owners.
+            </p>
           </div>
         </section>
 
@@ -193,12 +233,12 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/40 via-transparent to-transparent pointer-events-none" />
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10 space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Ready to explore your next opportunity?
+              Ready to cut through the noise?
             </h2>
             <p className="text-muted-foreground max-w-md mx-auto">
               {isAuthenticated
-                ? "Jump back into your dashboard and check the latest postings."
-                : "Join thousands of KIIT students already using अवSaar to land their dream roles."
+                ? "Jump back in and check what's new. Your personalized feed is waiting."
+                : "Join students from the KIIT community who are already tracking opportunities in one place."
               }
             </p>
             {isAuthenticated ? (
@@ -210,7 +250,7 @@ export default function LandingPage() {
             ) : (
               <Link href="/login">
                 <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-90 text-white font-semibold shadow-lg shadow-emerald-900/30 transition-all hover:-translate-y-0.5">
-                  Get Started Free <Sparkles className="ml-2 h-4 w-4" />
+                  Get Started — It&apos;s Free
                 </Button>
               </Link>
             )}
@@ -226,7 +266,10 @@ export default function LandingPage() {
             <div className="col-span-2 md:col-span-1 space-y-4">
               <Logo href="/" height={32} />
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Centralized placement portal for KIIT University — connecting students with top career opportunities.
+                Independent student-driven platform centralizing placement information for the KIIT community.
+              </p>
+              <p className="text-xs text-muted-foreground/50">
+                Not an official KIIT University product.
               </p>
             </div>
 
@@ -235,7 +278,7 @@ export default function LandingPage() {
               <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground">Quick Links</h4>
               <ul className="space-y-2.5">
                 {[
-                  { href: "/about", label: "About Us" },
+                  { href: "/about", label: "About" },
                   { href: "/contact", label: "Contact" },
                   { href: "/faqs", label: "FAQs" },
                   { href: "/blog", label: "Blog" },
@@ -294,7 +337,7 @@ export default function LandingPage() {
               © {new Date().getFullYear()} अवSaar. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground font-medium">
-              Made with ♥ for KIIT University
+              An independent student initiative · Not affiliated with KIIT University
             </p>
           </div>
         </div>

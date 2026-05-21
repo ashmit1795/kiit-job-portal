@@ -42,7 +42,10 @@ export default function LoginPage() {
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Welcome to अवSaar</h1>
           <p className="text-sm text-muted-foreground">
-            Sign in with your <span className="font-medium text-emerald-400">@kiit.ac.in</span> email to access opportunities.
+            Sign in with your <span className="font-medium text-emerald-400">@kiit.ac.in</span> email to access your placement feed.
+          </p>
+          <p className="text-xs text-muted-foreground/50 leading-relaxed">
+            Independent student platform · Not an official KIIT portal
           </p>
         </div>
         <Button
