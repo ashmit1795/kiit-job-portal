@@ -6,6 +6,7 @@ import { CreateAnnouncementPayload } from "@/types/announcement";
 import { AnnouncementForm } from "./announcement-form";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import type { AxiosError } from "axios";
 
 interface CreateAnnouncementModalProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ export function CreateAnnouncementModal({ isOpen, onClose }: CreateAnnouncementM
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to post update");
     },
   });

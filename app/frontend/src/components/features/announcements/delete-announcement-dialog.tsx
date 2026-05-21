@@ -6,6 +6,7 @@ import { Announcement } from "@/types/announcement";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { AlertTriangle, Loader2 } from "lucide-react";
+import type { AxiosError } from "axios";
 
 interface DeleteAnnouncementDialogProps {
   isOpen: boolean;
@@ -23,7 +24,7 @@ export function DeleteAnnouncementDialog({ isOpen, onClose, announcement }: Dele
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to delete update");
     },
   });

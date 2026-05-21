@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Loader2 } from "lucide-react";
 import { announcementService } from "@/services/announcement.service";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 interface CircularAttachmentCardProps {
   announcementId: string;
@@ -18,8 +19,9 @@ export function CircularAttachmentCard({ announcementId }: CircularAttachmentCar
     try {
       const url = await announcementService.downloadCircular(announcementId);
       if (url) window.open(url, "_blank");
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to download circular.");
+    } catch (error) {
+      const axiosErr = error as AxiosError<{ message?: string }>;
+      toast.error(axiosErr?.response?.data?.message || "Failed to download circular.");
     } finally {
       setIsDownloading(false);
     }

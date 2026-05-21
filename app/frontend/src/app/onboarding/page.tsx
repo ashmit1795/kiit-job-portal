@@ -21,6 +21,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Loader2, GraduationCap } from "lucide-react";
 
+import type { AxiosError } from "axios";
+
 export default function OnboardingPage() {
   const router = useRouter();
   const { user, refreshUser, isLoading: isAuthLoading } = useAuth();
@@ -77,7 +79,7 @@ export default function OnboardingPage() {
       toast.success("Profile completed!");
       router.push("/jobs");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to complete profile.");
     },
   });

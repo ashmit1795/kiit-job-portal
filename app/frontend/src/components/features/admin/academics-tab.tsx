@@ -21,6 +21,7 @@ import {
 import { ConfirmDialog } from "./confirm-dialog";
 import { toast } from "sonner";
 import { Trash2, Plus, BookOpen, GitBranch, Calendar, Loader2, AlertTriangle } from "lucide-react";
+import type { AxiosError } from "axios";
 
 // ── Programs Section ──────────────────────────────────────────────────
 function ProgramsSection() {
@@ -51,7 +52,7 @@ function ProgramsSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setName(""); setShowForm(false);
     },
-    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to create program"),
+    onError: (err: AxiosError<{ message?: string }>) => toast.error(err.response?.data?.message || "Failed to create program"),
   });
 
   const deleteMutation = useMutation({
@@ -62,7 +63,7 @@ function ProgramsSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setPendingDelete(null);
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Cannot delete — branches may depend on it");
       setPendingDelete(null);
     },
@@ -219,7 +220,7 @@ function BranchesSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setName(""); setCode(""); setShowForm(false);
     },
-    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to create branch"),
+    onError: (err: AxiosError<{ message?: string }>) => toast.error(err.response?.data?.message || "Failed to create branch"),
   });
 
   const deleteMutation = useMutation({
@@ -230,7 +231,7 @@ function BranchesSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setPendingDelete(null);
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Cannot delete — students may be enrolled");
       setPendingDelete(null);
     },
@@ -400,7 +401,7 @@ function BatchesSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setYear(""); setShowForm(false);
     },
-    onError: (err: any) => toast.error(err.response?.data?.message || "Failed to create batch"),
+    onError: (err: AxiosError<{ message?: string }>) => toast.error(err.response?.data?.message || "Failed to create batch"),
   });
 
   const deleteMutation = useMutation({
@@ -411,7 +412,7 @@ function BatchesSection() {
       queryClient.invalidateQueries({ queryKey: ["admin"] });
       setPendingDelete(null);
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Cannot delete — students may belong to this batch");
       setPendingDelete(null);
     },

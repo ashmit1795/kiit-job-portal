@@ -4,7 +4,7 @@ import { Pin } from "lucide-react";
 
 interface PinnedAnnouncementsProps {
   announcements: Announcement[];
-  currentUser?: any;
+  currentUser?: { id: string; role: string; [key: string]: unknown } | null;
   onEdit?: (announcement: Announcement) => void;
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;
