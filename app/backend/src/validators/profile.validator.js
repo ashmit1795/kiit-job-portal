@@ -21,6 +21,8 @@ export const completeProfileSchema = z.object({
 	tenth_percentage: z.number("10th % is required").min(0, "10th % must be >= 0").max(100, "10th % must be <= 100"),
 
 	twelfth_percentage: z.number("12th % is required").min(0, "12th % must be >= 0").max(100, "12th % must be <= 100"),
+
+	subscribe_to_alerts: z.boolean().optional().default(true),
 });
 
 /* =============================
@@ -62,3 +64,10 @@ export const updateProfileSchema = z
 		portfolio_url: z.string().url("Portfolio URL must be valid").nullable().optional(),
 	})
 	.refine((data) => Object.keys(data).length > 0, { message: "At least one field must be updated" });
+
+/* =============================
+Update Notification Prefs Schema
+============================= */
+export const updateNotificationPrefsSchema = z.object({
+	email_alerts: z.boolean(),
+});

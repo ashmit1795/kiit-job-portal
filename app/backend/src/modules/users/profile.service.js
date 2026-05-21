@@ -3,6 +3,7 @@ import AppError from "../../utils/AppError.js";
 import userRepository from "./user.repository.js";
 import academicRepository from "../academics/academic.repository.js";
 import jobRepository from "../job/job.repository.js";
+import subscriptionRepository from "./subscription.repository.js";
 
 /**
  * Service for handling user profile-related operations.
@@ -19,6 +20,7 @@ class ProfileService {
 	 * @throws {AppError} - Throws an AppError if the user is not found, if the profile is already completed, or if the provided branch or batch IDs are invalid.
 	 */
 	async completeProfile(userId, payload) {
+		const { subscribe_to_alerts, ...profilePayload } = payload;
 		const user = await userRepository.findById(userId);
 
 		if (!user) {
@@ -36,8 +38,12 @@ class ProfileService {
 		if (!batch) throw new AppError("Batch not found", 404);
 
 		const updated = await userRepository.update(userId, {
-			...payload,
+			...profilePayload,
 			profile_completed: true,
+		});
+
+		await subscriptionRepository.upsert(userId, {
+			email_alerts: subscribe_to_alerts !== false,
 		});
 
 		return updated;
@@ -188,6 +194,50 @@ class ProfileService {
 			resume_uploaded: !!user.resume_url,
 			profile_completed: !!user.profile_completed,
 		};
+	}
+
+	/**
+	 * Fetch notification preferences for the current user.
+	 * @param {uuid} userId - The ID of the user.
+	 * @returns {Object} - The notification preferences.
+	 */
+	async getNotificationPrefs(userId) {
+		const user = await userRepository.findById(userId);
+
+		if (!user) {
+			throw new AppError("User not found", 404);
+		}
+
+		const prefs = await subscriptionRepository.findByUserId(userId);
+
+		if (!prefs) {
+			return {
+				user_id: userId,
+				email_alerts: true,
+				telegram_alerts: false,
+				created_at: null,
+			};
+		}
+
+		return prefs;
+	}
+
+	/**
+	 * Update notification preferences for the current user.
+	 * @param {uuid} userId - The ID of the user.
+	 * @param {Object} payload - The notification preferences payload.
+	 * @returns {Object} - The updated notification preferences.
+	 */
+	async updateNotificationPrefs(userId, payload) {
+		const user = await userRepository.findById(userId);
+
+		if (!user) {
+			throw new AppError("User not found", 404);
+		}
+
+		return subscriptionRepository.upsert(userId, {
+			email_alerts: payload.email_alerts,
+		});
 	}
 
 }

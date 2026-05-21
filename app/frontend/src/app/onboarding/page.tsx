@@ -10,6 +10,7 @@ import { profileService, CompleteProfilePayload } from "@/services/profile.servi
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -34,6 +35,7 @@ export default function OnboardingPage() {
     cgpa: 0,
     tenth_percentage: 0,
     twelfth_percentage: 0,
+    subscribe_to_alerts: true,
   });
 
   useEffect(() => {
@@ -224,6 +226,25 @@ export default function OnboardingPage() {
                     placeholder="e.g. 88.0"
                     onChange={(e) => setFormData({ ...formData, twelfth_percentage: parseFloat(e.target.value) })}
                   />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-border/50">
+              <div className="flex items-center space-x-2 bg-emerald-500/5 p-3 rounded-lg border border-emerald-500/20">
+                <Checkbox 
+                  id="subscribe_alerts" 
+                  checked={formData.subscribe_to_alerts}
+                  onCheckedChange={(checked) => setFormData({ ...formData, subscribe_to_alerts: checked === true })}
+                  className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                />
+                <div className="space-y-0.5">
+                  <Label htmlFor="subscribe_alerts" className="text-sm font-medium cursor-pointer">
+                    Notify me about new job postings via email
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    You can always change this later in your profile settings.
+                  </p>
                 </div>
               </div>
             </div>
