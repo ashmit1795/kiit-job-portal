@@ -11,7 +11,7 @@ import remarkGfm from "remark-gfm";
 
 interface AnnouncementCardProps {
   announcement: Announcement;
-  currentUser?: { id: string; role: string; [key: string]: unknown } | null;
+  currentUser?: { id: string; role: string } | null;
   onEdit?: (announcement: Announcement) => void;
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;
