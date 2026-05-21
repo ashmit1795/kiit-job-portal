@@ -21,6 +21,7 @@ import { Announcement } from "@/types/announcement";
 import { announcementService } from "@/services/announcement.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 export default function AnnouncementsPage() {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ export default function AnnouncementsPage() {
       toast.success("Pin status updated");
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Failed to update pin status");
     }
   });
@@ -60,7 +61,7 @@ export default function AnnouncementsPage() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-muted/30 border border-border/50 rounded-md px-3 py-1">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={typeFilter} onValueChange={(val: any) => setTypeFilter(val)}>
+            <Select value={typeFilter} onValueChange={(val) => setTypeFilter((val as AnnouncementType | "all") ?? "all")}>
               <SelectTrigger className="h-8 border-0 bg-transparent shadow-none focus:ring-0 px-0 min-w-[120px] text-sm font-medium">
                 <SelectValue placeholder="All Updates">
                   {(val: string | null) => {

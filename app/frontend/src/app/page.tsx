@@ -16,7 +16,7 @@ export default function LandingPage() {
     : user?.email?.charAt(0).toUpperCase() || "U";
 
   // CTA buttons — optimistic rendering with no blocking spinner
-  const HeaderCTA = () => {
+  const renderHeaderCTA = () => {
     if (isLoading) {
       // Shimmer placeholder — same size as final buttons so there's no layout shift
       return (
@@ -59,7 +59,7 @@ export default function LandingPage() {
     );
   };
 
-  const HeroCTA = () => {
+  const renderHeroCTA = () => {
     if (isLoading) {
       return <div className="h-12 w-48 rounded-full bg-muted/30 animate-pulse mx-auto sm:mx-0" />;
     }
@@ -95,7 +95,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <Logo href="/" height={36} />
-        <HeaderCTA />
+        {renderHeaderCTA()}
       </header>
 
       {/* Hero */}
@@ -111,14 +111,15 @@ export default function LandingPage() {
                 <span className="flex h-2 w-2 rounded-full bg-emerald-400 mr-2 animate-pulse" />
                 Official placement tracking for KIIT students
               </div>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-tight">
-                Your gateway to{" "}
-                <br className="hidden sm:block" />
-                <span className="text-gradient-brand">top career opportunities</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight">
+                One Portal for all your <span className="text-gradient-brand">Placement</span> Needs.
               </h1>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl font-medium leading-relaxed">
-                अवSaar is a centralized platform for KIIT University students to discover, track, and access placements, internships, and hackathons.
+              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
+                Stay updated with circulars, test links, shortlists, and more. Exclusively for KIIT University.
               </p>
+              <div className="pt-4">
+                {renderHeroCTA()}
+              </div>
             </div>
 
             {/* Personalized greeting for authenticated users */}
@@ -137,8 +138,6 @@ export default function LandingPage() {
                 </div>
               </div>
             )}
-
-            <HeroCTA />
           </div>
         </section>
 

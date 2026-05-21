@@ -6,6 +6,7 @@ import { Announcement, CreateAnnouncementPayload } from "@/types/announcement";
 import { AnnouncementForm } from "./announcement-form";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import type { AxiosError } from "axios";
 
 interface EditAnnouncementModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ export function EditAnnouncementModal({ isOpen, onClose, announcement }: EditAnn
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
       onClose();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to save update");
     },
   });

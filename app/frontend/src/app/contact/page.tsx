@@ -21,7 +21,7 @@ export default function ContactPage() {
         </Link>
         <div className="space-y-4">
           <h1 className="text-3xl font-bold tracking-tight">Contact Us</h1>
-          <p className="text-muted-foreground">Have questions or feedback? We'd love to hear from you.</p>
+          <p className="text-muted-foreground">Have questions or feedback? We&apos;d love to hear from you.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

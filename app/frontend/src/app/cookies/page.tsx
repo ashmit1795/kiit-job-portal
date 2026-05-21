@@ -31,7 +31,7 @@ export default function CookiesPage() {
           </section>
           <section className="space-y-2">
             <h2 className="text-xl font-semibold text-foreground">3. Third-Party Cookies</h2>
-            <p>We use Google OAuth for authentication, which may set its own cookies. Please refer to Google's privacy policy for more information.</p>
+            <p>We use Google OAuth for authentication, which may set its own cookies. Please refer to Google&apos;s privacy policy for more information.</p>
           </section>
           <section className="space-y-2">
             <h2 className="text-xl font-semibold text-foreground">4. Managing Cookies</h2>

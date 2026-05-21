@@ -86,7 +86,7 @@ export function AnnouncementForm({
           <Label>Update Type *</Label>
           <Select
             value={formData.announcement_type}
-            onValueChange={(val: any) => setFormData({ ...formData, announcement_type: val })}
+            onValueChange={(val) => setFormData({ ...formData, announcement_type: val as AnnouncementType })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select type">

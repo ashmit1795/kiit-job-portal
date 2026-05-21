@@ -11,7 +11,7 @@ import remarkGfm from "remark-gfm";
 
 interface AnnouncementCardProps {
   announcement: Announcement;
-  currentUser?: any; // Replace any with your user type if available
+  currentUser?: { id: string; role: string; [key: string]: unknown } | null;
   onEdit?: (announcement: Announcement) => void;
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;

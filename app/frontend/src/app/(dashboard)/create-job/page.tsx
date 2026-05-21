@@ -17,6 +17,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Loader2, Upload, CheckCircle, ArrowLeft, ArrowRight, Link as LinkIcon } from "lucide-react";
 
+import type { AxiosError } from "axios";
+
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function CreateJobPage() {
@@ -50,7 +52,7 @@ export default function CreateJobPage() {
       toast.success(user?.role === "admin" ? "Job posted & approved!" : "Job submitted for review.");
       router.push("/jobs");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       toast.error(error.response?.data?.message || "Failed to create job.");
     },
   });

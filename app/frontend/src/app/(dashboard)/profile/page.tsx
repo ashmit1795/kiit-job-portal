@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, UploadCloud, FileText, Check, GraduationCap, User } from "lucide-react";
 import { toast } from "sonner";
+import type { AxiosError } from "axios";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
@@ -30,7 +31,7 @@ export default function ProfilePage() {
       setResumeFile(null);
       await refreshUser();
     },
-    onError: (err: any) => {
+    onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Upload failed.");
     },
   });

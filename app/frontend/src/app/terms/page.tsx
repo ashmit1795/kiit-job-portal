@@ -37,8 +37,8 @@ export default function TermsPage() {
             <p>Job circulars and official documents posted on अवSaar remain the property of KIIT University and the respective companies. They are shared for informational purposes only.</p>
           </section>
           <section className="space-y-2">
-            <h2 className="text-xl font-semibold text-foreground">5. Limitation of Liability</h2>
-            <p>अवSaar is provided "as is" without warranty. We are not responsible for the accuracy of job postings or the outcome of any application process.</p>
+            <h2 className="text-xl font-semibold text-foreground">5. Disclaimer</h2>
+            <p>The platform is provided on an &quot;as-is&quot; basis. We do not guarantee placement or specific outcomes from using the portal. The university reserves the right to modify or terminate access to the platform at any time.</p>
           </section>
         </div>
       </main>
