@@ -150,16 +150,18 @@ export default function JobsFeedPage() {
   return (
     <div className="space-y-5">
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="bg-muted/30 border border-border/50">
-          <TabsTrigger value="all" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
-            <Briefcase className="h-4 w-4" />
-            All Jobs
-          </TabsTrigger>
-          <TabsTrigger value="feed" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
-            <Sparkles className="h-4 w-4" />
-            My Feed
-          </TabsTrigger>
-        </TabsList>
+        {user?.role !== "admin" && (
+          <TabsList className="bg-muted/30 border border-border/50">
+            <TabsTrigger value="all" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
+              <Briefcase className="h-4 w-4" />
+              All Jobs
+            </TabsTrigger>
+            <TabsTrigger value="feed" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
+              <Sparkles className="h-4 w-4" />
+              My Feed
+            </TabsTrigger>
+          </TabsList>
+        )}
 
         <div className="mt-4">
           <FilterBar
@@ -182,25 +184,27 @@ export default function JobsFeedPage() {
           />
         </TabsContent>
 
-        <TabsContent value="feed" className="mt-4">
-          {!user?.profile_completed ? (
-            <div className="text-center py-16 text-muted-foreground bg-card rounded-xl border border-border/50">
-              <Sparkles className="h-10 w-10 mx-auto mb-3 text-emerald-500 opacity-50" />
-              <p className="font-medium">Complete your profile</p>
-              <p className="text-sm mt-1">Personalized feed requires your academic details.</p>
-            </div>
-          ) : (
-            <JobGrid
-              jobs={feedJobs}
-              loading={isFeedLoading}
-              error={feedJobsError}
-              onRetry={() => refetchFeedJobs()}
-              showStatus={showStatus}
-              search={search}
-              typeFilter={typeFilter}
-            />
-          )}
-        </TabsContent>
+        {user?.role !== "admin" && (
+          <TabsContent value="feed" className="mt-4">
+            {!user?.profile_completed ? (
+              <div className="text-center py-16 text-muted-foreground bg-card rounded-xl border border-border/50">
+                <Sparkles className="h-10 w-10 mx-auto mb-3 text-emerald-500 opacity-50" />
+                <p className="font-medium">Complete your profile</p>
+                <p className="text-sm mt-1">Personalized feed requires your academic details.</p>
+              </div>
+            ) : (
+              <JobGrid
+                jobs={feedJobs}
+                loading={isFeedLoading}
+                error={feedJobsError}
+                onRetry={() => refetchFeedJobs()}
+                showStatus={showStatus}
+                search={search}
+                typeFilter={typeFilter}
+              />
+            )}
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
