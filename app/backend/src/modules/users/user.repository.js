@@ -45,7 +45,12 @@ class UserRepository {
 					),
 					tenth_percentage,
 					twelfth_percentage,
-					resume_url
+					resume_url,
+					personal_email,
+					phone_number,
+					linkedin_url,
+					github_url,
+					portfolio_url
 				`,
 			)
 			.eq("id", userId)
@@ -62,7 +67,7 @@ class UserRepository {
 	/**
 	 * Creates a new user in the database with the provided data.
 	 * This method inserts a new user record into the database using the provided user data. It returns the created user's data, including their ID and email. If any database error occurs during the insertion, it maps the error to a standardized application error and throws it.
-	 * 
+	 *
 	 * @param {Object} userData - The data for the new user to be created.
 	 * @returns {Object} - The created user's data.
 	 * @throws {AppError} - Throws an AppError if a database error occurs that can be mapped to a known error type.
@@ -80,7 +85,7 @@ class UserRepository {
 	/**
 	 * Updates an existing user's data in the database.
 	 * This method updates a user record in the database based on the provided user ID and update data. It returns the updated user's data. If any database error occurs during the update, it maps the error to a standardized application error and throws it.
-	 * 
+	 *
 	 * @param {uuid} userId - The ID of the user to be updated.
 	 * @param {Object} updates - An object containing the fields to be updated and their new values.
 	 * @returns {Object} - The updated user's data.
@@ -136,7 +141,12 @@ class UserRepository {
 					),
 					tenth_percentage,
 					twelfth_percentage,
-					resume_url
+					resume_url,
+					personal_email,
+					phone_number,
+					linkedin_url,
+					github_url,
+					portfolio_url
 				`,
 			)
 			.eq("email", email)
