@@ -12,6 +12,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import { AnnouncementFeed } from "@/components/features/announcements/announcement-feed";
 import { CreateAnnouncementModal } from "@/components/features/announcements/create-announcement-modal";
 import { EditAnnouncementModal } from "@/components/features/announcements/edit-announcement-modal";
@@ -305,7 +306,7 @@ export default function JobDetailPage() {
                   prose-table:border-collapse prose-th:border prose-th:border-border/50 prose-th:p-2 prose-th:bg-muted/30
                   prose-td:border prose-td:border-border/50 prose-td:p-2
                 ">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
                     {job.description}
                   </ReactMarkdown>
                 </div>
