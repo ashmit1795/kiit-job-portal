@@ -8,6 +8,7 @@ interface PinnedAnnouncementsProps {
   onEdit?: (announcement: Announcement) => void;
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;
+  onCardClick?: (announcement: Announcement) => void;
 }
 
 export function PinnedAnnouncements({
@@ -16,6 +17,7 @@ export function PinnedAnnouncements({
   onEdit,
   onDelete,
   onTogglePin,
+  onCardClick,
 }: PinnedAnnouncementsProps) {
   if (!announcements.length) return null;
 
@@ -38,6 +40,7 @@ export function PinnedAnnouncements({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 onTogglePin={onTogglePin}
+                onCardClick={onCardClick}
               />
             </div>
           ))}

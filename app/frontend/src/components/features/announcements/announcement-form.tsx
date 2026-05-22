@@ -35,6 +35,7 @@ export function AnnouncementForm({
     announcement_type: initialValues?.announcement_type || "general",
     job_id: initialValues?.job_id || "global", // using 'global' as empty state for Select
     is_pinned: initialValues?.is_pinned || false,
+    circular_number: initialValues?.circular_number || "KIIT-DU/T&P/26/",
   });
 
   const [description, setDescription] = useState(initialValues?.description || "");
@@ -64,6 +65,7 @@ export function AnnouncementForm({
       job_id: formData.job_id === "global" ? null : formData.job_id,
       is_pinned: formData.is_pinned,
       circular: file,
+      circular_number: formData.circular_number || null,
     };
 
     onSubmit(payload);
@@ -152,6 +154,15 @@ export function AnnouncementForm({
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Circular Reference No. <span className="text-muted-foreground font-normal text-xs">(Optional)</span></Label>
+        <Input
+          placeholder="e.g. KIIT-DU/T&P/26/403"
+          value={formData.circular_number || ""}
+          onChange={(e) => setFormData({ ...formData, circular_number: e.target.value })}
+        />
       </div>
 
       <div className="space-y-2" data-color-mode="dark">

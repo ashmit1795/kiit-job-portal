@@ -12,9 +12,10 @@ interface DeleteAnnouncementDialogProps {
   isOpen: boolean;
   onClose: () => void;
   announcement: Announcement;
+  onSuccess?: () => void;
 }
 
-export function DeleteAnnouncementDialog({ isOpen, onClose, announcement }: DeleteAnnouncementDialogProps) {
+export function DeleteAnnouncementDialog({ isOpen, onClose, announcement, onSuccess }: DeleteAnnouncementDialogProps) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
@@ -22,6 +23,7 @@ export function DeleteAnnouncementDialog({ isOpen, onClose, announcement }: Dele
     onSuccess: () => {
       toast.success("Update deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["announcements"] });
+      onSuccess?.();
       onClose();
     },
     onError: (error: AxiosError<{ message?: string }>) => {

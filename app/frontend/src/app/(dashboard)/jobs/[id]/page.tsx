@@ -352,6 +352,7 @@ export default function JobDetailPage() {
                   onEdit={(a) => setUpdateToEdit(a)}
                   onDelete={(a) => setUpdateToDelete(a)}
                   onTogglePin={(a) => togglePinMutation.mutate(a)}
+                  onCardClick={(a) => router.push(`/announcements/${a.id}?from=job&jobId=${jobId}`)}
                 />
               </div>
             )}

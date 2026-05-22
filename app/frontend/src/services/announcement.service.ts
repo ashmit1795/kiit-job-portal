@@ -43,6 +43,7 @@ export const announcementService = {
     if (payload.announcement_type) formData.append("announcement_type", payload.announcement_type);
     formData.append("is_pinned", String(payload.is_pinned ?? false));
     if (payload.circular) formData.append("circular", payload.circular);
+    if (payload.circular_number) formData.append("circular_number", payload.circular_number);
 
     const { data } = await api.post<ApiResponse<{ id: string }>>("/announcements", formData);
     return data.data!;
@@ -57,6 +58,7 @@ export const announcementService = {
     if (payload.announcement_priority !== undefined) formData.append("announcement_priority", String(payload.announcement_priority));
     if (payload.job_id !== undefined) formData.append("job_id", payload.job_id ?? "");
     if (payload.circular) formData.append("circular", payload.circular);
+    if (payload.circular_number !== undefined) formData.append("circular_number", payload.circular_number ?? "");
 
     const { data } = await api.patch<ApiResponse<Announcement>>(`/announcements/${id}`, formData);
     return data.data!;
