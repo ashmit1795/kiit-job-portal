@@ -206,11 +206,14 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <main className="flex-1 z-10 relative">
-        <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 lg:pt-28 lg:pb-16 flex flex-col justify-center items-center text-center px-4 overflow-hidden relative">
+        <section className="w-full pt-16 pb-4 md:pt-24 md:pb-6 lg:pt-28 lg:pb-8 flex flex-col justify-center items-center text-center px-4 overflow-hidden relative">
           
           {/* Ambient Lighting Orbs */}
           <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] md:blur-[130px] animate-drift-slow pointer-events-none z-0" />
           <div className="absolute bottom-10 left-1/3 w-[250px] md:w-[450px] h-[250px] md:h-[450px] bg-green-500/5 rounded-full blur-[90px] md:blur-[120px] animate-drift-fast pointer-events-none z-0" />
+          
+          {/* Bottom Connector Glow to bridge layout gap */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[120px] bg-emerald-500/[0.04] rounded-full blur-[60px] md:blur-[90px] pointer-events-none z-0" />
 
           <div className="container max-w-5xl px-4 md:px-6 space-y-10 relative z-10">
             <div className="mx-auto max-w-[850px] space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -258,7 +261,12 @@ export default function LandingPage() {
             {/* Interactive UX Mockup Preview (Aesthetic Asset matching the screenshot) */}
             <div className="w-full max-w-5xl mx-auto pt-8 animate-in fade-in zoom-in-95 duration-1000 delay-300 select-none animate-float">
               <div className="rounded-2xl border border-emerald-500/10 bg-[#020604] p-4 sm:p-6 shadow-2xl shadow-black/60 relative overflow-hidden transition-premium hover:border-emerald-500/20 group">
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+                {/* Cyber-Grid Pattern Overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.015)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-40" />
+                
+                {/* Visual Top Glow */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/35 to-transparent group-hover:via-emerald-400/60 transition-all duration-700 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent opacity-50 pointer-events-none" />
                 
                 {/* Browser Header Bar */}
                 <div className="flex items-center justify-between border-b border-emerald-950/40 pb-4 mb-5 text-left select-none">
@@ -298,7 +306,9 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
                   
                   {/* Card 1: Sales Development Representative */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#7c3aed] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card1">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#7c3aed] border-y border-r border-[#0e1712] bg-gradient-to-br from-[#040906] to-[#010402] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card1 relative overflow-hidden">
+                    {/* Glowing outline layer */}
+                    <div className="absolute -inset-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 rounded-xl opacity-0 group-hover/card1:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#a78bfa] bg-[#7c3aed]/10 border border-[#7c3aed]/15 rounded px-2.5 py-0.5">
@@ -366,7 +376,9 @@ export default function LandingPage() {
                   </div>
 
                   {/* Card 2: Apprenticeship Programme */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#2563eb] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card2">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#2563eb] border-y border-r border-[#0e1712] bg-gradient-to-br from-[#040906] to-[#010402] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card2 relative overflow-hidden">
+                    {/* Glowing outline layer */}
+                    <div className="absolute -inset-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 rounded-xl opacity-0 group-hover/card2:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#60a5fa] bg-[#2563eb]/10 border border-[#2563eb]/15 rounded px-2.5 py-0.5">
@@ -429,7 +441,9 @@ export default function LandingPage() {
                   </div>
 
                   {/* Card 3: Software Engineer (variety: FTE Job and Deadline Today) */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#db2777] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card3">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#db2777] border-y border-r border-[#0e1712] bg-gradient-to-br from-[#040906] to-[#010402] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card3 relative overflow-hidden">
+                    {/* Glowing outline layer */}
+                    <div className="absolute -inset-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 rounded-xl opacity-0 group-hover/card3:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#f472b6] bg-[#db2777]/10 border border-[#db2777]/15 rounded px-2.5 py-0.5">
@@ -501,7 +515,7 @@ export default function LandingPage() {
         </section>
 
         {/* Frustration Comparison Section (Sleek UX Layout) */}
-        <section className="w-full py-12 md:py-16 border-t border-white/[0.04] relative overflow-hidden bg-background/30">
+        <section className="w-full pt-10 pb-12 md:pt-14 md:pb-16 border-t border-white/[0.04] relative overflow-hidden bg-background/30">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/[0.02] rounded-full blur-[120px] pointer-events-none z-0" />
           <div className="container mx-auto px-4 md:px-6 max-w-5xl relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
@@ -517,8 +531,9 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               
               {/* WhatsApp Chaos Card */}
-              <div className="p-6 md:p-8 rounded-2xl border border-red-500/10 bg-red-950/5 flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-red-500/20 hover:bg-red-950/8 hover:shadow-2xl hover:shadow-red-950/25 group/chaos">
+              <div className="p-6 md:p-8 rounded-2xl border border-red-500/10 bg-gradient-to-br from-red-950/[0.03] to-[#020604] flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-red-500/20 hover:bg-red-950/8 hover:shadow-2xl hover:shadow-red-950/25 group/chaos">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-[40px] pointer-events-none group-hover/chaos:scale-125 transition-transform duration-700" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-red-500/20 to-transparent group-hover/chaos:via-red-400/40 transition-all duration-700 pointer-events-none" />
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-red-950/30 border border-red-900/20 flex items-center justify-center text-red-400 group-hover/chaos:scale-110 group-hover/chaos:rotate-[-6deg] transition-premium">
@@ -556,8 +571,9 @@ export default function LandingPage() {
               </div>
 
               {/* Avsaar Calm Card */}
-              <div className="p-6 md:p-8 rounded-2xl border border-emerald-500/20 bg-emerald-950/5 flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-emerald-500/35 hover:bg-emerald-950/8 hover:shadow-2xl hover:shadow-emerald-950/25 group/calm">
+              <div className="p-6 md:p-8 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/[0.04] to-[#020604] flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-emerald-500/35 hover:bg-emerald-950/8 hover:shadow-2xl hover:shadow-emerald-950/25 group/calm">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none group-hover/calm:scale-125 transition-transform duration-700" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent group-hover/calm:via-emerald-400/50 transition-all duration-700 pointer-events-none" />
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-emerald-900/40 border border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover/calm:scale-110 group-hover/calm:rotate-[6deg] transition-premium">
@@ -599,8 +615,9 @@ export default function LandingPage() {
         </section>
 
         {/* Feature Grid with Modern Cards */}
-        <section className="w-full py-12 md:py-16 border-t border-white/[0.04] bg-card/15">
-          <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+        <section className="w-full py-12 md:py-16 border-t border-white/[0.04] bg-card/15 relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/[0.015] rounded-full blur-[120px] pointer-events-none z-0" />
+          <div className="container mx-auto px-4 md:px-6 max-w-5xl relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
               <div className="text-xs font-semibold tracking-widest uppercase text-emerald-400">High-Tech Simplicity</div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
@@ -614,7 +631,9 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* Feature 1 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Bell className="h-5 w-5" />
@@ -630,7 +649,9 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 2 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Search className="h-5 w-5" />
@@ -646,7 +667,9 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 3 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <BookOpen className="h-5 w-5" />
@@ -662,7 +685,9 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 4 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Clock className="h-5 w-5" />
@@ -678,7 +703,9 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 5 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Lock className="h-5 w-5" />
@@ -694,7 +721,9 @@ export default function LandingPage() {
               </div>
 
               {/* Feature 6 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/[0.01] to-transparent pointer-events-none z-0" />
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent group-hover:via-emerald-400/30 transition-all duration-500 pointer-events-none z-0" />
                 <div className="space-y-4">
                   <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Users className="h-5 w-5" />
@@ -714,8 +743,9 @@ export default function LandingPage() {
         </section>
 
         {/* Visual Highlights (Quick Numbers) */}
-        <section className="w-full py-10 md:py-12 border-t border-white/[0.04] bg-background">
-          <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+        <section className="w-full py-10 md:py-12 border-t border-white/[0.04] bg-background relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-emerald-500/[0.01] rounded-full blur-[100px] pointer-events-none z-0" />
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl relative z-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {[
                 { val: "1 place", label: "Unified Directory", icon: Layers },
@@ -723,7 +753,8 @@ export default function LandingPage() {
                 { val: "Direct", label: "Circular Downloads", icon: Download },
                 { val: "Realtime", label: "Active Countdown", icon: Calendar },
               ].map((item, idx) => (
-                <div key={idx} className="p-5 rounded-2xl border border-white/[0.03] bg-card/45 backdrop-blur-sm text-center space-y-2 group hover:border-emerald-500/20 hover:bg-emerald-950/5 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/5 transition-premium">
+                <div key={idx} className="p-5 rounded-2xl border border-white/[0.03] bg-card/45 backdrop-blur-sm text-center space-y-2 group hover:border-emerald-500/20 hover:bg-emerald-950/5 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/5 transition-premium relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/0 to-transparent group-hover:via-emerald-500/25 transition-all duration-500 pointer-events-none" />
                   <div className="h-8 w-8 rounded-lg bg-emerald-950/50 border border-emerald-500/10 flex items-center justify-center text-emerald-400 mx-auto group-hover:rotate-[4deg] group-hover:scale-110 group-hover:text-emerald-300 group-hover:border-emerald-400/20 transition-premium">
                     <item.icon className="h-4 w-4" />
                   </div>
@@ -738,49 +769,60 @@ export default function LandingPage() {
         </section>
 
         {/* Declaration & Independence Callout */}
-        <section className="w-full py-12 border-t border-white/[0.04] bg-emerald-950/5 relative overflow-hidden">
+        <section className="w-full py-12 border-t border-white/[0.04] bg-emerald-950/[0.02] relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_bottom_left,rgba(16,185,129,0.03),transparent)] pointer-events-none" />
-          <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center space-y-6 group/decl">
-            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mx-auto group-hover/decl:scale-110 group-hover/decl:rotate-[6deg] group-hover/decl:border-amber-400/40 transition-premium">
-              <ShieldAlert className="h-6 w-6" />
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground">Independent student initiative.</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto">
-              We love KIIT and wanted to contribute positively. This is not an official university platform, and it doesn&apos;t represent the Training & Placement cell. It&apos;s built on a peer-curated basis to support students navigating their career paths.
-            </p>
-            <div className="text-xs text-muted-foreground/55 border border-white/[0.04] px-4 py-2.5 rounded-full inline-block bg-background/50 hover:border-amber-500/20 transition-colors">
-              Not affiliated with, endorsed by, or operated by KIIT University
+          <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center">
+            <div className="p-8 md:p-10 rounded-3xl border border-white/[0.03] bg-card/25 backdrop-blur-md shadow-2xl relative overflow-hidden group/decl space-y-6">
+              {/* Decorative accent glow */}
+              <div className="absolute -top-12 -right-12 w-24 h-24 bg-amber-500/[0.02] rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/10 to-transparent" />
+              
+              <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mx-auto group-hover/decl:scale-110 group-hover/decl:rotate-[6deg] group-hover/decl:border-amber-400/40 transition-premium">
+                <ShieldAlert className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">Independent student initiative.</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto">
+                We love KIIT and wanted to contribute positively. This is not an official university platform, and it doesn&apos;t represent the Training & Placement cell. It&apos;s built on a peer-curated basis to support students navigating their career paths.
+              </p>
+              <div className="text-xs text-muted-foreground/55 border border-white/[0.04] px-4 py-2.5 rounded-full inline-block bg-background/50 hover:border-amber-500/20 transition-colors">
+                Not affiliated with, endorsed by, or operated by KIIT University
+              </div>
             </div>
           </div>
         </section>
 
         {/* Sticky Call-to-Action */}
         <section className="w-full py-16 md:py-20 border-t border-white/[0.04] relative overflow-hidden bg-background">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
-          <div className="container mx-auto px-4 md:px-6 text-center space-y-6 relative z-10 max-w-md">
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-              Simplify your search.
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              {isAuthenticated
-                ? "Your custom eligibility feed is configured and waiting. Go see recent circular additions."
-                : "Secure your access. Log in with your institutional email address and unlock drive tracking immediately."
-              }
-            </p>
-            <div>
-              {isAuthenticated ? (
-                <Link href="/jobs">
-                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0 group">
-                    Open Dashboard <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/login">
-                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0">
-                    Explore Avsaar Now
-                  </Button>
-                </Link>
-              )}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-emerald-500/[0.04] rounded-full blur-[120px] pointer-events-none" />
+          <div className="container mx-auto px-4 md:px-6 text-center relative z-10 max-w-2xl">
+            <div className="p-8 md:p-12 rounded-3xl border border-emerald-500/10 bg-emerald-950/[0.03] backdrop-blur-md shadow-2xl relative overflow-hidden group/cta-box space-y-6">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/25 to-transparent" />
+              
+              <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
+                Simplify your search.
+              </h2>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-md mx-auto">
+                {isAuthenticated
+                  ? "Your custom eligibility feed is configured and waiting. Go see recent circular additions."
+                  : "Secure your access. Log in with your institutional email address and unlock drive tracking immediately."
+                }
+              </p>
+              <div className="pt-2">
+                {isAuthenticated ? (
+                  <Link href="/jobs">
+                    <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0 group">
+                      Open Dashboard <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href="/login">
+                    <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0">
+                      Explore Avsaar Now
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </section>
