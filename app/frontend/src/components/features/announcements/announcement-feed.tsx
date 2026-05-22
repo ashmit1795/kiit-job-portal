@@ -17,6 +17,7 @@ interface AnnouncementFeedProps {
   onEdit?: (announcement: Announcement) => void;
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;
+  onCardClick?: (announcement: Announcement) => void;
 }
 
 export function AnnouncementFeed({
@@ -25,6 +26,7 @@ export function AnnouncementFeed({
   onEdit,
   onDelete,
   onTogglePin,
+  onCardClick,
 }: AnnouncementFeedProps) {
   const { user } = useAuth();
   const isAdminOrVolunteer = user?.role === "admin" || user?.role === "volunteer";
@@ -110,6 +112,7 @@ export function AnnouncementFeed({
           onEdit={onEdit}
           onDelete={onDelete}
           onTogglePin={onTogglePin}
+          onCardClick={onCardClick}
         />
       )}
 
@@ -121,6 +124,7 @@ export function AnnouncementFeed({
           onEdit={onEdit}
           onDelete={onDelete}
           onTogglePin={onTogglePin}
+          onCardClick={onCardClick}
         />
       )}
 
@@ -136,6 +140,7 @@ export function AnnouncementFeed({
               onEdit={onEdit}
               onDelete={onDelete}
               onTogglePin={onTogglePin}
+              onCardClick={onCardClick}
             />
           </div>
         ))}

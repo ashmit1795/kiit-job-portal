@@ -29,6 +29,7 @@ export interface Announcement {
   description: string;
   job_id: string | null;
   circular_file_path: string | null;
+  circular_number: string | null;
   announcement_type: AnnouncementType;
   is_pinned: boolean;
   announcement_priority: number;
@@ -56,6 +57,7 @@ export interface CreateAnnouncementPayload {
   announcement_type?: AnnouncementType;
   is_pinned?: boolean;
   circular?: File | null;
+  circular_number?: string | null;
 }
 
 export interface UpdateAnnouncementPayload {
@@ -66,4 +68,5 @@ export interface UpdateAnnouncementPayload {
   announcement_priority?: number;
   job_id?: string | null;
   circular?: File | null;
+  circular_number?: string | null;
 }

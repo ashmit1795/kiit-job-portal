@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AnnouncementFeed } from "@/components/features/announcements/announcement-feed";
 import { AnnouncementType } from "@/types/announcement";
 import { useAuth } from "@/providers/auth-provider";
@@ -24,6 +25,7 @@ import { toast } from "sonner";
 import type { AxiosError } from "axios";
 
 export default function AnnouncementsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const isAdminOrVolunteer = user?.role === "admin" || user?.role === "volunteer";
@@ -110,6 +112,7 @@ export default function AnnouncementsPage() {
         onEdit={(a) => setAnnouncementToEdit(a)}
         onDelete={(a) => setAnnouncementToDelete(a)}
         onTogglePin={(a) => togglePinMutation.mutate(a)}
+        onCardClick={(a) => router.push(`/announcements/${a.id}`)}
       />
 
       {isAdminOrVolunteer && (

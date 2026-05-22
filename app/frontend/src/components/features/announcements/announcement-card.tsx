@@ -2,7 +2,7 @@ import { Announcement, AnnouncementType } from "@/types/announcement";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Pin, Edit2, Trash2, Building, AlertTriangle } from "lucide-react";
+import { Pin, Edit2, Trash2, Building, AlertTriangle, ChevronRight } from "lucide-react";
 import { AnnouncementTypeBadge } from "./announcement-type-badge";
 import { AnnouncementMeta } from "./announcement-meta";
 import { CircularAttachmentCard } from "./circular-attachment-card";
@@ -16,6 +16,7 @@ interface AnnouncementCardProps {
   onDelete?: (announcement: Announcement) => void;
   onTogglePin?: (announcement: Announcement) => void;
   isTogglingPin?: boolean;
+  onCardClick?: (announcement: Announcement) => void;
 }
 
 const typeBorderColors: Record<AnnouncementType, string> = {
@@ -37,6 +38,7 @@ export function AnnouncementCard({
   onDelete,
   onTogglePin,
   isTogglingPin = false,
+  onCardClick,
 }: AnnouncementCardProps) {
   const borderColor = typeBorderColors[announcement.announcement_type] || "border-l-emerald-500";
   
@@ -47,7 +49,10 @@ export function AnnouncementCard({
   const canEdit = isAdmin || (isVolunteer && announcement.created_by === currentUser?.id);
 
   return (
-    <Card className={`border-l-4 ${borderColor} hover:shadow-lg hover:shadow-emerald-900/10 transition-all duration-200 bg-card relative overflow-visible`}>
+    <Card 
+      onClick={() => onCardClick?.(announcement)}
+      className={`border-l-4 ${borderColor} ${onCardClick ? "cursor-pointer hover:-translate-y-0.5 hover:border-l-emerald-400 group" : ""} hover:shadow-lg hover:shadow-emerald-900/10 transition-all duration-200 bg-card relative overflow-visible`}
+    >
       {announcement.is_pinned && (
         <div className="absolute -top-3 -right-3 z-10">
           <div className="bg-amber-500 text-white rounded-full p-1.5 shadow-lg shadow-amber-900/20">
@@ -74,7 +79,10 @@ export function AnnouncementCard({
                 variant="ghost"
                 size="icon"
                 className={`h-7 w-7 ${announcement.is_pinned ? "text-amber-400 hover:text-amber-300 hover:bg-amber-400/10" : "text-muted-foreground hover:text-foreground"}`}
-                onClick={() => onTogglePin?.(announcement)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTogglePin?.(announcement);
+                }}
                 disabled={isTogglingPin}
                 title={announcement.is_pinned ? "Unpin" : "Pin"}
               >
@@ -84,7 +92,10 @@ export function AnnouncementCard({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-muted-foreground hover:text-emerald-400 hover:bg-emerald-400/10"
-                onClick={() => onEdit?.(announcement)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(announcement);
+                }}
                 title="Edit"
               >
                 <Edit2 className="h-3.5 w-3.5" />
@@ -94,7 +105,10 @@ export function AnnouncementCard({
                   variant="ghost"
                   size="icon"
                   className="h-7 w-7 text-muted-foreground hover:text-red-400 hover:bg-red-400/10"
-                  onClick={() => onDelete?.(announcement)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete?.(announcement);
+                  }}
                   title="Delete"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -104,10 +118,13 @@ export function AnnouncementCard({
           )}
         </div>
 
-        <div className="space-y-1">
-          <h3 className="font-semibold text-lg leading-tight">
+        <div className="space-y-1 flex items-start justify-between gap-4">
+          <h3 className="font-semibold text-lg leading-tight transition-colors group-hover:text-emerald-400">
             {announcement.subject}
           </h3>
+          {onCardClick && (
+            <ChevronRight className="h-5 w-5 text-muted-foreground/50 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all mt-0.5 shrink-0" />
+          )}
         </div>
       </CardHeader>
 
@@ -124,7 +141,9 @@ export function AnnouncementCard({
         </div>
 
         {announcement.circular_file_path && (
-          <CircularAttachmentCard announcementId={announcement.id} />
+          <div onClick={(e) => e.stopPropagation()}>
+            <CircularAttachmentCard announcementId={announcement.id} />
+          </div>
         )}
 
         <div className="pt-3 border-t border-border/50">

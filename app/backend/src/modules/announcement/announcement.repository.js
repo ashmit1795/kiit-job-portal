@@ -24,6 +24,7 @@ class AnnouncementRepository {
 				description,
 				job_id,
 				circular_file_path,
+				circular_number,
 				announcement_type,
 				is_pinned,
 					announcement_priority,
@@ -83,6 +84,7 @@ class AnnouncementRepository {
 					description,
 					job_id,
 					circular_file_path,
+					circular_number,
 					announcement_type,
 					is_pinned,
 					announcement_priority,
@@ -121,7 +123,7 @@ class AnnouncementRepository {
 			.from("job_announcements")
 			.update(updates)
 			.eq("id", announcementId)
-			.select("id, subject, description, job_id, circular_file_path, announcement_type, is_pinned, announcement_priority, created_by, created_at, updated_at")
+			.select("id, subject, description, job_id, circular_file_path, circular_number, announcement_type, is_pinned, announcement_priority, created_by, created_at, updated_at")
 			.single();
 
 		if (error) {
