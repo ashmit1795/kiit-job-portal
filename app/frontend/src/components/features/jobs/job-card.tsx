@@ -40,15 +40,22 @@ const jobTypeLabels: Record<string, string> = {
 function getDeadlineInfo(deadline: string) {
   const now = new Date();
   const dl = new Date(deadline);
-  const diff = dl.getTime() - now.getTime();
-  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
 
-  if (days < 0) return { text: "Closed", color: "text-red-400", urgent: true };
-  if (days === 0) return { text: "Today", color: "text-red-400", urgent: true };
-  if (days === 1) return { text: "Tomorrow", color: "text-amber-400", urgent: true };
-  if (days <= 3) return { text: `${days} days left`, color: "text-amber-400", urgent: true };
-  if (days <= 7) return { text: `${days} days left`, color: "text-yellow-400", urgent: false };
-  return { text: `${days} days left`, color: "text-emerald-400", urgent: false };
+  if (dl.getTime() < now.getTime()) {
+    return { text: "Closed", color: "text-muted-foreground", urgent: false };
+  }
+
+  // Normalize dates to midnight local time to calculate calendar day difference
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfDeadline = new Date(dl.getFullYear(), dl.getMonth(), dl.getDate());
+  const diffTime = startOfDeadline.getTime() - startOfToday.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return { text: "Today", color: "text-rose-400", urgent: true };
+  if (diffDays === 1) return { text: "Tomorrow", color: "text-amber-400", urgent: true };
+  if (diffDays <= 3) return { text: `${diffDays} days left`, color: "text-amber-400", urgent: true };
+  if (diffDays <= 7) return { text: `${diffDays} days left`, color: "text-yellow-400", urgent: false };
+  return { text: `${diffDays} days left`, color: "text-emerald-400", urgent: false };
 }
 
 export function JobCard({ job, showStatus = false }: JobCardProps) {
