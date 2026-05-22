@@ -53,13 +53,13 @@ export default function LandingPage() {
       return (
         <div className={`flex items-center ${isMobile ? "flex-col w-full gap-4 mt-4" : "gap-3"}`}>
           <Link href="/jobs" className={isMobile ? "w-full" : ""}>
-            <Button variant="ghost" className={`font-medium gap-2 hover:bg-emerald-950/20 hover:text-emerald-400 ${isMobile ? "w-full justify-center py-6 text-base" : ""}`}>
+            <Button variant="ghost" className={`font-medium gap-2 transition-premium hover:bg-emerald-950/30 hover:text-emerald-400 active:scale-[0.97] ${isMobile ? "w-full justify-center py-6 text-base" : ""}`}>
               <Briefcase className="h-4 w-4" /> Dashboard
             </Button>
           </Link>
           <Link href="/profile" className={isMobile ? "w-full flex justify-center mt-2" : ""}>
             <div className={`flex items-center gap-2 cursor-pointer group ${isMobile ? "border border-border/60 p-3 rounded-2xl w-full justify-center bg-card/45" : ""}`}>
-              <Avatar className="h-8 w-8 ring-2 ring-emerald-500/20 group-hover:ring-emerald-500/50 transition-all">
+              <Avatar className="h-8 w-8 ring-2 ring-emerald-500/20 group-hover:ring-emerald-500/50 transition-premium">
                 {user?.avatar_url && <AvatarImage src={user.avatar_url} alt={user.full_name || "User"} />}
                 <AvatarFallback className="bg-emerald-950 text-emerald-400 font-semibold text-xs border border-emerald-500/20">
                   {avatarFallback}
@@ -78,10 +78,10 @@ export default function LandingPage() {
     return (
       <div className={`flex items-center ${isMobile ? "flex-col w-full gap-4 mt-6" : "gap-3"}`}>
         <Link href="/login" className={isMobile ? "w-full" : ""}>
-          <Button variant="ghost" className={`font-medium ${isMobile ? "w-full py-6 text-base" : ""}`}>Sign In</Button>
+          <Button variant="ghost" className={`font-medium transition-premium hover:bg-emerald-500/10 hover:text-emerald-300 active:scale-[0.97] ${isMobile ? "w-full py-6 text-base" : ""}`}>Sign In</Button>
         </Link>
         <Link href="/login" className={isMobile ? "w-full" : ""}>
-          <Button className={`bg-gradient-brand hover:opacity-90 text-white font-semibold rounded-full px-6 transition-all ${isMobile ? "w-full py-6 text-base shadow-lg shadow-emerald-500/20" : ""}`}>
+          <Button className={`bg-gradient-brand hover:opacity-95 text-white font-semibold rounded-full px-6 transition-premium hover:scale-[1.02] active:scale-[0.98] hover-shine hover:shadow-lg hover:shadow-emerald-500/25 ${isMobile ? "w-full py-6 text-base shadow-lg shadow-emerald-500/20" : ""}`}>
             Get Started
           </Button>
         </Link>
@@ -95,14 +95,14 @@ export default function LandingPage() {
     }
     if (isAuthenticated) {
       return (
-        <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto group/hero-cta">
           <Link href="/jobs" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0">
-              Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+            <Button className="w-full sm:w-auto h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 transition-premium hover:scale-[1.04] hover:-translate-y-0.5 hover-shine hover:shadow-emerald-500/20 hover:shadow-xl active:scale-[0.98] inline-flex items-center justify-center">
+              Go to Dashboard <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/hero-cta:translate-x-1" />
             </Button>
           </Link>
           <Link href="/profile" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full sm:w-auto h-12 px-8 rounded-full border-emerald-500/25 bg-emerald-950/20 text-emerald-400 hover:bg-emerald-500/10 font-semibold transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0">
+            <Button variant="outline" className="w-full sm:w-auto h-12 px-8 rounded-full border-emerald-500/25 bg-emerald-950/20 text-emerald-400 hover:bg-emerald-500/10 font-semibold transition-premium hover:scale-[1.04] hover:-translate-y-0.5 hover:shadow-emerald-950/45 hover:shadow-lg active:scale-[0.98]">
               My Profile <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
@@ -110,10 +110,10 @@ export default function LandingPage() {
       );
     }
     return (
-      <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-sm mx-auto">
+      <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-sm mx-auto group/hero-cta">
         <Link href="/login" className="w-full">
-          <Button className="w-full h-13 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white text-base font-semibold shadow-xl shadow-emerald-950/50 border border-emerald-500/35 transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0">
-            Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
+          <Button className="w-full h-13 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white text-base font-semibold shadow-xl shadow-emerald-950/50 border border-emerald-500/35 transition-premium hover:scale-[1.04] hover:-translate-y-0.5 hover-shine hover:shadow-emerald-500/30 active:scale-[0.98] flex items-center justify-center">
+            Get Started for Free <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover/hero-cta:translate-x-1.5" />
           </Button>
         </Link>
       </div>
@@ -209,15 +209,15 @@ export default function LandingPage() {
         <section className="w-full py-16 md:py-28 lg:py-36 flex flex-col justify-center items-center text-center px-4 overflow-hidden relative">
           
           {/* Ambient Lighting Orbs */}
-          <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] md:blur-[130px] animate-pulse pointer-events-none z-0" />
-          <div className="absolute bottom-10 left-1/3 w-[250px] md:w-[450px] h-[250px] md:h-[450px] bg-green-500/5 rounded-full blur-[90px] md:blur-[120px] pointer-events-none z-0" style={{ animationDelay: "1.5s" }} />
+          <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] md:blur-[130px] animate-drift-slow pointer-events-none z-0" />
+          <div className="absolute bottom-10 left-1/3 w-[250px] md:w-[450px] h-[250px] md:h-[450px] bg-green-500/5 rounded-full blur-[90px] md:blur-[120px] animate-drift-fast pointer-events-none z-0" />
 
           <div className="container max-w-5xl px-4 md:px-6 space-y-10 relative z-10">
             <div className="mx-auto max-w-[850px] space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
               
               {/* Badge Callout */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-950/45 px-4 py-1.5 text-xs md:text-sm font-medium text-emerald-400 shadow-inner backdrop-blur-md transition-all hover:border-emerald-500/40 hover:bg-emerald-950/65 cursor-default select-none mx-auto">
-                <Sparkles className="h-3.5 w-3.5 animate-pulse text-emerald-400" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-950/45 px-4 py-1.5 text-xs md:text-sm font-medium text-emerald-400 shadow-inner backdrop-blur-md transition-premium hover:border-emerald-500/45 hover:bg-emerald-950/65 hover:scale-[1.02] active:scale-[0.98] hover:shadow-emerald-500/10 hover:shadow-md cursor-default select-none mx-auto group/badge">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-400 group-hover/badge:rotate-12 group-hover/badge:scale-110 transition-transform duration-300" />
                 <span>Made by students, for students · KIIT Community</span>
               </div>
               
@@ -256,20 +256,20 @@ export default function LandingPage() {
             )}
 
             {/* Interactive UX Mockup Preview (Aesthetic Asset matching the screenshot) */}
-            <div className="w-full max-w-5xl mx-auto pt-8 animate-in fade-in zoom-in-95 duration-1000 delay-300 pointer-events-none select-none">
-              <div className="rounded-2xl border border-emerald-500/10 bg-[#020604] p-4 sm:p-6 shadow-2xl shadow-black/60 relative overflow-hidden group">
+            <div className="w-full max-w-5xl mx-auto pt-8 animate-in fade-in zoom-in-95 duration-1000 delay-300 select-none animate-float">
+              <div className="rounded-2xl border border-emerald-500/10 bg-[#020604] p-4 sm:p-6 shadow-2xl shadow-black/60 relative overflow-hidden transition-premium hover:border-emerald-500/20 group">
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                 
                 {/* Browser Header Bar */}
-                <div className="flex items-center justify-between border-b border-emerald-950/40 pb-4 mb-5 text-left pointer-events-none select-none">
+                <div className="flex items-center justify-between border-b border-emerald-950/40 pb-4 mb-5 text-left select-none">
                   {/* Red, Yellow, Green Window Dots */}
-                  <div className="flex items-center gap-1.5">
-                    <span className="h-3 w-3 rounded-full bg-[#ef4444]/90 shadow-sm shadow-[#ef4444]/30" />
-                    <span className="h-3 w-3 rounded-full bg-[#eab308]/90 shadow-sm shadow-[#eab308]/30" />
-                    <span className="h-3 w-3 rounded-full bg-[#22c55e]/90 shadow-sm shadow-[#22c55e]/30" />
+                  <div className="flex items-center gap-1.5 group/window-dots cursor-pointer">
+                    <span className="h-3 w-3 rounded-full bg-[#ef4444]/90 shadow-sm shadow-[#ef4444]/30 hover:bg-[#ef4444] transition-colors" />
+                    <span className="h-3 w-3 rounded-full bg-[#eab308]/90 shadow-sm shadow-[#eab308]/30 hover:bg-[#eab308] transition-colors" />
+                    <span className="h-3 w-3 rounded-full bg-[#22c55e]/90 shadow-sm shadow-[#22c55e]/30 hover:bg-[#22c55e] transition-colors" />
                   </div>
                   {/* Centered Address URL */}
-                  <div className="hidden sm:flex items-center gap-2 bg-[#050a08] border border-emerald-950/80 rounded-lg px-6 py-1.5 text-[11px] font-medium text-emerald-400/60 font-mono tracking-wide shadow-inner">
+                  <div className="hidden sm:flex items-center gap-2 bg-[#050a08] border border-emerald-950/80 rounded-lg px-6 py-1.5 text-[11px] font-medium text-emerald-400/60 font-mono tracking-wide shadow-inner transition-premium hover:border-emerald-500/25">
                     <Lock className="h-3 w-3 text-emerald-500/40" />
                     <span>avsaar.vercel.app/jobs</span>
                   </div>
@@ -283,12 +283,12 @@ export default function LandingPage() {
                 {/* Search Bar & Filter Row */}
                 <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-6">
                   {/* Search Input Mock */}
-                  <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-[#050a08] border border-emerald-950/60 flex-1 text-left">
+                  <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-[#050a08] border border-emerald-950/60 flex-1 text-left transition-premium hover:border-emerald-500/20 hover:bg-[#060e0a] cursor-pointer">
                     <Search className="h-4 w-4 text-emerald-500/40" />
                     <span className="text-xs sm:text-sm text-emerald-500/40">Search companies, roles...</span>
                   </div>
                   {/* Filter Select Mock */}
-                  <div className="flex items-center justify-between gap-6 px-3 py-2.5 rounded-lg bg-[#050a08] border border-emerald-950/60 text-left text-xs sm:text-sm text-emerald-400/80 min-w-[120px]">
+                  <div className="flex items-center justify-between gap-6 px-3 py-2.5 rounded-lg bg-[#050a08] border border-emerald-950/60 text-left text-xs sm:text-sm text-emerald-400/80 min-w-[120px] transition-premium hover:border-emerald-500/20 hover:bg-[#060e0a] cursor-pointer">
                     <span>All Types</span>
                     <ChevronDown className="h-4 w-4 text-emerald-500/60" />
                   </div>
@@ -298,7 +298,7 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
                   
                   {/* Card 1: Sales Development Representative */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#7c3aed] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 hover:border-emerald-500/10 transition-all duration-300">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#7c3aed] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card1">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#a78bfa] bg-[#7c3aed]/10 border border-[#7c3aed]/15 rounded px-2.5 py-0.5">
@@ -309,13 +309,13 @@ export default function LandingPage() {
                         </span>
                       </div>
                       
-                      <h4 className="font-bold text-base text-foreground leading-tight">
+                      <h4 className="font-bold text-base text-foreground leading-tight group-hover/card1:text-emerald-400 transition-colors">
                         Sales Development Representative...
                       </h4>
                       
                       {/* Company Info */}
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981]">
+                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981] group-hover/card1:scale-110 group-hover/card1:border-[#10b981]/40 transition-premium">
                           C
                         </div>
                         <span className="text-xs text-muted-foreground">ContraVault AI</span>
@@ -366,7 +366,7 @@ export default function LandingPage() {
                   </div>
 
                   {/* Card 2: Apprenticeship Programme */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#2563eb] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 hover:border-emerald-500/10 transition-all duration-300">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#2563eb] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card2">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#60a5fa] bg-[#2563eb]/10 border border-[#2563eb]/15 rounded px-2.5 py-0.5">
@@ -377,13 +377,13 @@ export default function LandingPage() {
                         </span>
                       </div>
                       
-                      <h4 className="font-bold text-base text-foreground leading-tight">
+                      <h4 className="font-bold text-base text-foreground leading-tight group-hover/card2:text-emerald-400 transition-colors">
                         Apprenticeship Programme
                       </h4>
                       
                       {/* Company Info */}
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981]">
+                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981] group-hover/card2:scale-110 group-hover/card2:border-[#10b981]/40 transition-premium">
                           D
                         </div>
                         <span className="text-xs text-muted-foreground">DBS Tech India</span>
@@ -421,15 +421,15 @@ export default function LandingPage() {
                       </div>
 
                       {/* Status */}
-                      <div className="flex items-center gap-1.5 text-xs text-red-500 font-semibold pt-1">
-                        <Clock className="h-3.5 w-3.5 text-red-500" />
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold pt-1">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground" />
                         <span>Closed</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Card 3: Software Engineer (variety: FTE Job and Deadline Today) */}
-                  <div className="p-5 rounded-xl border-l-4 border-l-[#db2777] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 hover:border-emerald-500/10 transition-all duration-300">
+                  <div className="p-5 rounded-xl border-l-4 border-l-[#db2777] border-y border-r border-[#0e1712] bg-[#050a08] flex flex-col justify-between min-h-[290px] shadow-lg shadow-black/20 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:border-emerald-500/20 hover:shadow-black/50 hover:shadow-xl cursor-pointer group/card3">
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-semibold text-[#f472b6] bg-[#db2777]/10 border border-[#db2777]/15 rounded px-2.5 py-0.5">
@@ -440,13 +440,13 @@ export default function LandingPage() {
                         </span>
                       </div>
                       
-                      <h4 className="font-bold text-base text-foreground leading-tight">
+                      <h4 className="font-bold text-base text-foreground leading-tight group-hover/card3:text-emerald-400 transition-colors">
                         Software Engineer
                       </h4>
                       
                       {/* Company Info */}
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981]">
+                        <div className="h-5 w-5 rounded bg-[#10b981]/10 border border-[#10b981]/20 flex items-center justify-center text-[10px] font-bold text-[#10b981] group-hover/card3:scale-110 group-hover/card3:border-[#10b981]/40 transition-premium">
                           A
                         </div>
                         <span className="text-xs text-muted-foreground">AntBox</span>
@@ -486,8 +486,8 @@ export default function LandingPage() {
                       </div>
 
                       {/* Status */}
-                      <div className="flex items-center gap-1.5 text-xs text-rose-500 font-semibold pt-1 animate-pulse">
-                        <Clock className="h-3.5 w-3.5 text-rose-500" />
+                      <div className="flex items-center gap-1.5 text-xs text-rose-400 font-semibold pt-1 animate-pulse">
+                        <Clock className="h-3.5 w-3.5 text-rose-400" />
                         <span>Today</span>
                       </div>
                     </div>
@@ -516,72 +516,72 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
               
               {/* WhatsApp Chaos Card */}
-              <div className="p-6 md:p-8 rounded-2xl border border-red-500/10 bg-red-950/5 flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-[40px] pointer-events-none" />
+              <div className="p-6 md:p-8 rounded-2xl border border-red-500/10 bg-red-950/5 flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-red-500/20 hover:bg-red-950/8 hover:shadow-2xl hover:shadow-red-950/25 group/chaos">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-[40px] pointer-events-none group-hover/chaos:scale-125 transition-transform duration-700" />
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-red-950/30 border border-red-900/20 flex items-center justify-center text-red-400">
+                    <div className="h-10 w-10 rounded-xl bg-red-950/30 border border-red-900/20 flex items-center justify-center text-red-400 group-hover/chaos:scale-110 group-hover/chaos:rotate-[-6deg] transition-premium">
                       <XCircle className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg text-foreground">The WhatsApp Chaos</h3>
+                      <h3 className="font-bold text-lg text-foreground group-hover/chaos:text-red-400 transition-colors">The WhatsApp Chaos</h3>
                       <p className="text-xs text-muted-foreground/60">Fragmented, noisy, stressful</p>
                     </div>
                   </div>
 
                   <ul className="space-y-3.5 text-sm text-muted-foreground/80">
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <X className="h-4 w-4 text-red-500/60 mt-0.5 shrink-0" />
                       <span>Circulars get buried under casual chats and replies.</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <X className="h-4 w-4 text-red-500/60 mt-0.5 shrink-0" />
                       <span>No way to search by eligibility (CGPA, branch, or batch).</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <X className="h-4 w-4 text-red-500/60 mt-0.5 shrink-0" />
                       <span>Missing application deadlines due to chaotic notifications.</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <X className="h-4 w-4 text-red-500/60 mt-0.5 shrink-0" />
                       <span>Forwarded PDFs lack dynamic tracking or bookmarks.</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="border-t border-red-900/15 pt-6 mt-8 text-xs font-semibold text-red-400/80">
+                <div className="border-t border-red-900/15 pt-6 mt-8 text-xs font-semibold text-red-400/85">
                   Result: Missed updates & career anxiety.
                 </div>
               </div>
 
               {/* Avsaar Calm Card */}
-              <div className="p-6 md:p-8 rounded-2xl border border-emerald-500/20 bg-emerald-950/5 flex flex-col justify-between relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none" />
+              <div className="p-6 md:p-8 rounded-2xl border border-emerald-500/20 bg-emerald-950/5 flex flex-col justify-between relative overflow-hidden transition-premium hover:-translate-y-1.5 hover:scale-[1.005] hover:border-emerald-500/35 hover:bg-emerald-950/8 hover:shadow-2xl hover:shadow-emerald-950/25 group/calm">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[40px] pointer-events-none group-hover/calm:scale-125 transition-transform duration-700" />
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-emerald-900/40 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
+                    <div className="h-10 w-10 rounded-xl bg-emerald-900/40 border border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover/calm:scale-110 group-hover/calm:rotate-[6deg] transition-premium">
                       <CheckCircle2 className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg text-emerald-400">The अवSaar Calm</h3>
+                      <h3 className="font-bold text-lg text-emerald-400 group-hover/calm:text-emerald-300 transition-colors">The अवSaar Calm</h3>
                       <p className="text-xs text-emerald-400/60">Structured, personal, quiet</p>
                     </div>
                   </div>
 
                   <ul className="space-y-3.5 text-sm text-emerald-100/80">
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                       <span>A single dashboard where every placement drives lives.</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                       <span>Automatic eligibility match based on your academic profile.</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                       <span>Structured deadline calendar with visual alerts.</span>
                     </li>
-                    <li className="flex items-start gap-2.5">
+                    <li className="flex items-start gap-2.5 transition-premium hover:translate-x-1">
                       <CheckCircle2 className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                       <span>Original circular downloads with single-click access.</span>
                     </li>
@@ -613,9 +613,9 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* Feature 1 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Bell className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Centralized Drive Feeds</h3>
@@ -623,15 +623,15 @@ export default function LandingPage() {
                     Circulars, placements, FTE, internships, hackathons — organized dynamically.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Drive Catalogues
                 </div>
               </div>
 
               {/* Feature 2 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Search className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Eligibility Filters</h3>
@@ -639,15 +639,15 @@ export default function LandingPage() {
                     Input your CGPA, branch, and batch once. Let our algorithm filter the feed automatically.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Personalized matching
                 </div>
               </div>
 
               {/* Feature 3 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <BookOpen className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Immediate PDF Access</h3>
@@ -655,15 +655,15 @@ export default function LandingPage() {
                     Download drive files directly with single-click signed, secured links.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Document archive
                 </div>
               </div>
 
               {/* Feature 4 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Clock className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Active Deadline Trackers</h3>
@@ -671,15 +671,15 @@ export default function LandingPage() {
                     Always see how many hours or days remain before registration closes.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Expiry awareness
                 </div>
               </div>
 
               {/* Feature 5 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Lock className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Secure Domain Lock</h3>
@@ -687,15 +687,15 @@ export default function LandingPage() {
                     Ensured domain lockdown restricting platform access exclusively to `@kiit.ac.in` addresses.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Community security
                 </div>
               </div>
 
               {/* Feature 6 */}
-              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-all duration-300 group">
+              <div className="p-6 rounded-2xl border border-white/[0.04] bg-background/50 flex flex-col justify-between h-[230px] hover:border-emerald-500/20 hover:bg-card/30 transition-premium hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/10 group">
                 <div className="space-y-4">
-                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+                  <div className="h-10 w-10 rounded-xl bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:rotate-[3deg] group-hover:scale-105 group-hover:text-emerald-300 group-hover:border-emerald-400/35 transition-premium">
                     <Users className="h-5 w-5" />
                   </div>
                   <h3 className="font-bold text-lg text-foreground">Peer-Managed Curation</h3>
@@ -703,7 +703,7 @@ export default function LandingPage() {
                     Verified student volunteers post opportunities, moderated immediately by admins.
                   </p>
                 </div>
-                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400/60 transition-colors">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground/45 group-hover:text-emerald-400 transition-colors">
                   Crowdsourced moderation
                 </div>
               </div>
@@ -722,13 +722,13 @@ export default function LandingPage() {
                 { val: "Direct", label: "Circular Downloads", icon: Download },
                 { val: "Realtime", label: "Active Countdown", icon: Calendar },
               ].map((item, idx) => (
-                <div key={idx} className="p-5 rounded-2xl border border-white/[0.03] bg-card/45 backdrop-blur-sm text-center space-y-2 group hover:border-emerald-500/10 hover:bg-emerald-950/5 transition-all">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-950/50 flex items-center justify-center text-emerald-400 mx-auto group-hover:scale-105 transition-transform">
+                <div key={idx} className="p-5 rounded-2xl border border-white/[0.03] bg-card/45 backdrop-blur-sm text-center space-y-2 group hover:border-emerald-500/20 hover:bg-emerald-950/5 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-lg hover:shadow-emerald-950/5 transition-premium">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-950/50 border border-emerald-500/10 flex items-center justify-center text-emerald-400 mx-auto group-hover:rotate-[4deg] group-hover:scale-110 group-hover:text-emerald-300 group-hover:border-emerald-400/20 transition-premium">
                     <item.icon className="h-4 w-4" />
                   </div>
                   <div>
                     <p className="text-xl sm:text-2xl font-extrabold text-gradient-brand">{item.val}</p>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground uppercase font-medium tracking-wide mt-1">{item.label}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground uppercase font-medium tracking-wide mt-1 group-hover:text-emerald-400 transition-colors">{item.label}</p>
                   </div>
                 </div>
               ))}
@@ -739,15 +739,15 @@ export default function LandingPage() {
         {/* Declaration & Independence Callout */}
         <section className="w-full py-16 border-t border-white/[0.04] bg-emerald-950/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_bottom_left,rgba(16,185,129,0.03),transparent)] pointer-events-none" />
-          <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center space-y-6">
-            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mx-auto">
+          <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center space-y-6 group/decl">
+            <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mx-auto group-hover/decl:scale-110 group-hover/decl:rotate-[6deg] group-hover/decl:border-amber-400/40 transition-premium">
               <ShieldAlert className="h-6 w-6" />
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-foreground">Independent student initiative.</h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto">
               We love KIIT and wanted to contribute positively. This is not an official university platform, and it doesn&apos;t represent the Training & Placement cell. It&apos;s built on a peer-curated basis to support students navigating their career paths.
             </p>
-            <div className="text-xs text-muted-foreground/50 border border-white/[0.04] px-4 py-2.5 rounded-full inline-block bg-background/50">
+            <div className="text-xs text-muted-foreground/55 border border-white/[0.04] px-4 py-2.5 rounded-full inline-block bg-background/50 hover:border-amber-500/20 transition-colors">
               Not affiliated with, endorsed by, or operated by KIIT University
             </div>
           </div>
@@ -769,13 +769,13 @@ export default function LandingPage() {
             <div>
               {isAuthenticated ? (
                 <Link href="/jobs">
-                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0">
-                    Open Dashboard <ArrowRight className="ml-2 h-4 w-4" />
+                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0 group">
+                    Open Dashboard <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
                 </Link>
               ) : (
                 <Link href="/login">
-                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:translate-y-0">
+                  <Button className="h-12 px-8 rounded-full bg-gradient-brand hover:opacity-95 text-white font-semibold shadow-lg shadow-emerald-950/40 border border-emerald-500/35 hover-shine transition-premium hover:scale-[1.04] hover:-translate-y-0.5 active:translate-y-0">
                     Explore Avsaar Now
                   </Button>
                 </Link>
@@ -812,7 +812,7 @@ export default function LandingPage() {
                   { href: "/blog", label: "Preparation Guides" },
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-colors">
+                    <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-block">
                       {link.label}
                     </Link>
                   </li>
@@ -830,7 +830,7 @@ export default function LandingPage() {
                   { href: "/cookies", label: "Cookie Policy" },
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-colors">
+                    <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-block">
                       {link.label}
                     </Link>
                   </li>
@@ -847,9 +847,9 @@ export default function LandingPage() {
                   { href: "https://linkedin.com", label: "LinkedIn Network" },
                   { href: "https://twitter.com", label: "Community Feed" },
                 ].map((link) => (
-                  <li key={link.href}>
-                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-colors inline-flex items-center gap-1">
-                      {link.label} <ArrowRight className="h-3 w-3 -rotate-45" />
+                  <li key={link.href} className="group/link">
+                    <a href={link.href} target="_blank" rel="noopener noreferrer" className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-flex items-center gap-1">
+                      {link.label} <ArrowRight className="h-3 w-3 -rotate-45 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
                     </a>
                   </li>
                 ))}
