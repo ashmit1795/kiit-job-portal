@@ -6,6 +6,7 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -85,6 +86,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Toaster />
+            <Analytics />
           </AuthProvider>
         </QueryProvider>
       </body>
