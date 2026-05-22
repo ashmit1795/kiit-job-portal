@@ -10,6 +10,8 @@ export const createAnnouncementSchema = z.object({
 		.optional()
 		.transform((value) => (value === "" || value === null ? null : value)),
 
+	circular_number: z.string("Circular number is required").min(1, "Circular number cannot be empty"),
+
 	announcement_type: z
 		.enum(
 			["general", "deadline_extension", "shortlist", "test_link", "venue_update", "eligibility_update", "joining_update", "result", "warning"],

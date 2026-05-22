@@ -19,8 +19,12 @@ class AnnouncementService {
 		let circularFilePath = null;
 
 		if (file) {
-			const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
-			circularFilePath = `announcements/${Date.now()}-${safeName}`;
+			if (payload.circular_number) {
+				circularFilePath = `announcements/${payload.circular_number}.pdf`;
+			} else {
+				const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+				circularFilePath = `announcements/${Date.now()}-${safeName}`;
+			}
 
 			const { error } = await supabase.storage.from("job-circulars").upload(circularFilePath, file.buffer, {
 				contentType: "application/pdf",
@@ -38,6 +42,7 @@ class AnnouncementService {
 			description: payload.description,
 			job_id: jobId,
 			circular_file_path: circularFilePath,
+			circular_number: payload.circular_number ?? null,
 			announcement_type: payload.announcement_type,
 			is_pinned: payload.is_pinned ?? false,
 			announcement_priority: payload.announcement_priority ?? 0,
@@ -106,6 +111,7 @@ class AnnouncementService {
 		let updates = {
 			subject: payload.subject ?? existing.subject,
 			description: payload.description ?? existing.description,
+			circular_number: payload.circular_number !== undefined ? payload.circular_number : existing.circular_number,
 			announcement_type: payload.announcement_type ?? existing.announcement_type,
 			is_pinned: payload.is_pinned !== undefined ? (payload.is_pinned === "true" || payload.is_pinned === true) : existing.is_pinned,
 			announcement_priority: payload.announcement_priority ?? existing.announcement_priority,
@@ -118,8 +124,13 @@ class AnnouncementService {
 		}
 
 		if (file) {
-			const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
-			const circularFilePath = `announcements/${Date.now()}-${safeName}`;
+			let circularFilePath;
+			if (updates.circular_number) {
+				circularFilePath = `announcements/${updates.circular_number}.pdf`;
+			} else {
+				const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+				circularFilePath = `announcements/${Date.now()}-${safeName}`;
+			}
 
 			const { error } = await supabase.storage.from("job-circulars").upload(circularFilePath, file.buffer, {
 				contentType: "application/pdf",
