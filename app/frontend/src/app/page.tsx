@@ -206,7 +206,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <main className="flex-1 z-10 relative">
-        <section className="w-full py-16 md:py-28 lg:py-36 flex flex-col justify-center items-center text-center px-4 overflow-hidden relative">
+        <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 lg:pt-28 lg:pb-16 flex flex-col justify-center items-center text-center px-4 overflow-hidden relative">
           
           {/* Ambient Lighting Orbs */}
           <div className="absolute top-12 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/10 rounded-full blur-[100px] md:blur-[130px] animate-drift-slow pointer-events-none z-0" />
@@ -501,8 +501,9 @@ export default function LandingPage() {
         </section>
 
         {/* Frustration Comparison Section (Sleek UX Layout) */}
-        <section className="w-full py-20 md:py-28 border-t border-white/[0.04] relative">
-          <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+        <section className="w-full py-12 md:py-16 border-t border-white/[0.04] relative overflow-hidden bg-background/30">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[350px] md:w-[600px] h-[350px] md:h-[600px] bg-emerald-500/[0.02] rounded-full blur-[120px] pointer-events-none z-0" />
+          <div className="container mx-auto px-4 md:px-6 max-w-5xl relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
               <div className="text-xs font-semibold tracking-widest uppercase text-emerald-400">The Modern Alternative</div>
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
@@ -598,7 +599,7 @@ export default function LandingPage() {
         </section>
 
         {/* Feature Grid with Modern Cards */}
-        <section className="w-full py-20 md:py-28 border-t border-white/[0.04] bg-card/15">
+        <section className="w-full py-12 md:py-16 border-t border-white/[0.04] bg-card/15">
           <div className="container mx-auto px-4 md:px-6 max-w-5xl">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
               <div className="text-xs font-semibold tracking-widest uppercase text-emerald-400">High-Tech Simplicity</div>
@@ -713,7 +714,7 @@ export default function LandingPage() {
         </section>
 
         {/* Visual Highlights (Quick Numbers) */}
-        <section className="w-full py-16 border-t border-white/[0.04] bg-background">
+        <section className="w-full py-10 md:py-12 border-t border-white/[0.04] bg-background">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {[
@@ -737,7 +738,7 @@ export default function LandingPage() {
         </section>
 
         {/* Declaration & Independence Callout */}
-        <section className="w-full py-16 border-t border-white/[0.04] bg-emerald-950/5 relative overflow-hidden">
+        <section className="w-full py-12 border-t border-white/[0.04] bg-emerald-950/5 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_bottom_left,rgba(16,185,129,0.03),transparent)] pointer-events-none" />
           <div className="container mx-auto px-4 md:px-6 max-w-3xl text-center space-y-6 group/decl">
             <div className="h-12 w-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center text-amber-400 mx-auto group-hover/decl:scale-110 group-hover/decl:rotate-[6deg] group-hover/decl:border-amber-400/40 transition-premium">
@@ -754,7 +755,7 @@ export default function LandingPage() {
         </section>
 
         {/* Sticky Call-to-Action */}
-        <section className="w-full py-20 border-t border-white/[0.04] relative overflow-hidden bg-background">
+        <section className="w-full py-16 md:py-20 border-t border-white/[0.04] relative overflow-hidden bg-background">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none" />
           <div className="container mx-auto px-4 md:px-6 text-center space-y-6 relative z-10 max-w-md">
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
