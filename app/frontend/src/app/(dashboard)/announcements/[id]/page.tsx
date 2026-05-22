@@ -336,10 +336,10 @@ export default function AnnouncementDetailPage() {
 
           {/* Admin Administrative Panel */}
           {canEdit && (
-            <Card className="border-amber-700/20 bg-amber-900/5 overflow-hidden shadow-sm">
-              <CardHeader className="bg-amber-950/20 border-b border-amber-700/20 px-4 py-3">
-                <CardTitle className="text-xs font-semibold flex items-center gap-2 text-amber-400">
-                  <ShieldCheck className="h-4 w-4" /> Admin Controls
+            <Card className="border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden shadow-sm">
+              <CardHeader className="bg-muted/15 border-b border-border/30 px-4 py-3">
+                <CardTitle className="text-xs font-semibold flex items-center gap-2 text-foreground">
+                  <ShieldCheck className="h-4 w-4 text-amber-500" /> Admin Controls
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 space-y-3">
@@ -348,16 +348,16 @@ export default function AnnouncementDetailPage() {
                   disabled={togglePinMutation.isPending}
                   variant="outline"
                   size="sm"
-                  className={`w-full font-semibold border-amber-700/30 gap-1.5 h-9 justify-start ${
+                  className={`w-full text-sm font-medium gap-2 h-9 justify-start transition-all duration-200 ${
                     announcement.is_pinned
-                      ? "text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
-                      : "text-muted-foreground hover:text-amber-400 hover:bg-amber-500/5"
+                      ? "text-amber-400 bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20"
+                      : "text-foreground/80 border-border/50 hover:text-amber-400 hover:bg-amber-500/5 hover:border-amber-500/20"
                   }`}
                 >
                   {togglePinMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                   ) : (
-                    <Pin className="h-4 w-4 shrink-0" fill={announcement.is_pinned ? "currentColor" : "none"} />
+                    <Pin className="h-4 w-4 shrink-0 text-amber-500" fill={announcement.is_pinned ? "currentColor" : "none"} />
                   )}
                   {announcement.is_pinned ? "Unpin Announcement" : "Pin Announcement"}
                 </Button>
@@ -366,7 +366,7 @@ export default function AnnouncementDetailPage() {
                   onClick={() => setIsEditOpen(true)}
                   variant="outline"
                   size="sm"
-                  className="w-full font-semibold border-emerald-700/20 text-emerald-400 hover:bg-emerald-950/20 gap-1.5 h-9 justify-start"
+                  className="w-full text-sm font-medium border-border/50 text-foreground/80 hover:text-emerald-400 hover:bg-emerald-500/5 hover:border-emerald-500/20 gap-2 h-9 justify-start transition-all duration-200"
                 >
                   <Edit2 className="h-4 w-4 text-emerald-500 shrink-0" />
                   Edit Announcement
@@ -376,7 +376,7 @@ export default function AnnouncementDetailPage() {
                   onClick={() => setIsDeleteOpen(true)}
                   variant="outline"
                   size="sm"
-                  className="w-full font-semibold border-red-700/20 text-red-400 hover:bg-red-950/20 gap-1.5 h-9 justify-start"
+                  className="w-full text-sm font-medium border-border/50 text-red-400 hover:text-red-300 hover:bg-red-500/5 hover:border-red-500/20 gap-2 h-9 justify-start transition-all duration-200"
                 >
                   <Trash2 className="h-4 w-4 text-red-500 shrink-0" />
                   Delete Announcement
