@@ -1,9 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "Read the Terms of Service for अवSaar to learn about eligibility guidelines, volunteer and contributor codes of conduct, and platform rules for our independent placement portal.",
+};
 
 export default function TermsPage() {
   return (

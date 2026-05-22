@@ -1,9 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "Read the Privacy Policy for अवSaar to understand how we securely collect, store, and process student profile data, educational records, and uploaded resume PDFs.",
+};
 
 export default function PrivacyPage() {
   return (

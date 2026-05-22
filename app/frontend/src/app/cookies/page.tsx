@@ -1,9 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Cookie Policy",
+  description: "Read the Cookie Policy for अवSaar to learn how we utilize cookies for user authentication, session security, and dynamic UI theme preferences.",
+};
 
 export default function CookiesPage() {
   return (

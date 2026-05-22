@@ -1,9 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Blog & Preparation Guide",
+  description: "Read placement advice, technical interview preparation tips, and platform updates from the student volunteer team behind अवSaar.",
+};
 
 const posts = [
   { title: "Placement Season 2026 Kickoff", date: "March 10, 2026", excerpt: "The placement season for the 2026 graduating batch has officially begun. Stay tuned for daily updates on company visits and circular releases." },

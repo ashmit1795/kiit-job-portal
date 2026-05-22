@@ -1,9 +1,13 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Heart, Lightbulb, Users, Target, Telescope } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn about अवSaar — an independent, student-driven placement information and career updates community platform for KIIT students. Discover our mission, features, and community contribution model.",
+};
 
 export default function AboutPage() {
   return (
