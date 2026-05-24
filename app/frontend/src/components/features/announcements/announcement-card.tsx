@@ -129,17 +129,6 @@ export function AnnouncementCard({
       </CardHeader>
 
       <CardContent className="pb-4 space-y-4">
-        <div className="prose prose-sm prose-invert max-w-none text-muted-foreground
-          prose-headings:text-foreground prose-strong:text-foreground
-          prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
-          prose-code:text-emerald-400 prose-code:bg-muted/50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-          prose-p:leading-snug
-        ">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {announcement.description}
-          </ReactMarkdown>
-        </div>
-
         {announcement.circular_file_path && (
           <div onClick={(e) => e.stopPropagation()}>
             <CircularAttachmentCard announcementId={announcement.id} />
