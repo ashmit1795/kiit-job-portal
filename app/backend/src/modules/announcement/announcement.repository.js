@@ -56,8 +56,11 @@ class AnnouncementRepository {
 
 		query = query.eq("is_active", true);
 
-		const from = (page - 1) * limit;
-		const to = from + limit - 1;
+		const pageNum = parseInt(page, 10) || 1;
+		const limitNum = parseInt(limit, 10) || 20;
+
+		const from = (pageNum - 1) * limitNum;
+		const to = from + limitNum - 1;
 
 		const { data, error, count } = await query.range(from, to);
 
@@ -68,9 +71,9 @@ class AnnouncementRepository {
 		}
 
 		const total = count ?? 0;
-		const totalPages = Math.ceil(total / limit);
+		const totalPages = Math.ceil(total / limitNum);
 
-		return { announcements: data, total, page, limit, totalPages };
+		return { announcements: data, total, page: pageNum, limit: limitNum, totalPages };
 	}
 
 	async getAnnouncementById(announcementId) {
