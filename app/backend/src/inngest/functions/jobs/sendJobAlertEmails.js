@@ -24,6 +24,12 @@ export const sendJobAlertEmails = inngest.createFunction(
 		],
 	},
 	async ({ event, step }) => {
+		// Do not send job alerts if the deadline has already passed
+		const deadline = new Date(event.data.deadline);
+		if (deadline < new Date()) {
+			return { sent: 0, reason: "deadline_passed" };
+		}
+
 		const subscribers = await step.run("fetch-eligible-subscribers", async () => {
 			return subscriptionRepository.getEligibleSubscribers(event.data.branch_ids, event.data.batch_ids);
 		});
