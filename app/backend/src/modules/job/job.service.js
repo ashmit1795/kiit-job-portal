@@ -90,6 +90,19 @@ class JobService {
 			filteredJobs = jobs.filter((job) => job.approval_status === "approved");
 		}
 
+		// Sort: Open opportunities first, then closed ones. In each group, sort by created_at desc (newest first).
+		const now = new Date();
+		filteredJobs.sort((a, b) => {
+			const aClosed = new Date(a.deadline) < now;
+			const bClosed = new Date(b.deadline) < now;
+
+			if (aClosed !== bClosed) {
+				return aClosed ? 1 : -1;
+			}
+
+			return new Date(b.created_at) - new Date(a.created_at);
+		});
+
 		return filteredJobs.map((job) => this.formatJob(job));
 	}
 
