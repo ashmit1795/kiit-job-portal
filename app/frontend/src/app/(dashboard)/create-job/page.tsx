@@ -98,6 +98,7 @@ export default function CreateJobPage() {
       joining_date: formData.joining_date || undefined,
       apply_link_1: formData.apply_link_1 || undefined,
       apply_link_2: formData.apply_link_2 || undefined,
+      created_at: formData.created_at ? new Date(formData.created_at).toISOString() : undefined,
     } as CreateJobPayload;
 
     createJobMutation.mutate(payload);
@@ -183,7 +184,7 @@ export default function CreateJobPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>Deadline *</Label>
                     <Input required type="datetime-local" value={formData.deadline || ""} onChange={(e) => setFormData({ ...formData, deadline: e.target.value })} />
@@ -191,6 +192,10 @@ export default function CreateJobPage() {
                   <div className="space-y-2">
                     <Label>Joining Date</Label>
                     <Input placeholder="e.g. May/June 2027" value={formData.joining_date || ""} onChange={(e) => setFormData({ ...formData, joining_date: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Created Date (Backdate)</Label>
+                    <Input type="datetime-local" value={formData.created_at || ""} onChange={(e) => setFormData({ ...formData, created_at: e.target.value })} />
                   </div>
                 </div>
 

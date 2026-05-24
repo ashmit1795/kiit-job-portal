@@ -19,6 +19,7 @@ export interface CreateJobPayload {
   batches: string[];
   locations: string[];
   circular_file: File;
+  created_at?: string;
 }
 
 export const jobService = {
