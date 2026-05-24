@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Briefcase, Sparkles, AlertTriangle } from "lucide-react";
+import { Search, Briefcase, Sparkles, AlertTriangle, RotateCw } from "lucide-react";
+import { toast } from "sonner";
 
 const JOB_TYPE_LABELS: Record<string, string> = {
   all: "All Types",
@@ -133,35 +134,70 @@ export default function JobsFeedPage() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [activeTab, setActiveTab] = useState("all");
 
-  const { data: allJobs, isLoading: isAllLoading, error: allJobsError, refetch: refetchAllJobs } = useQuery({
+  const { data: allJobs, isLoading: isAllLoading, error: allJobsError, refetch: refetchAllJobs, isFetching: isAllFetching } = useQuery({
     queryKey: ["jobs"],
     queryFn: jobService.fetchJobs,
+    enabled: activeTab === "all",
   });
 
-  const { data: feedJobs, isLoading: isFeedLoading, error: feedJobsError, refetch: refetchFeedJobs } = useQuery({
+  const { data: feedJobs, isLoading: isFeedLoading, error: feedJobsError, refetch: refetchFeedJobs, isFetching: isFeedFetching } = useQuery({
     queryKey: ["jobs", "feed"],
     queryFn: jobService.fetchJobFeed,
-    enabled: !!user?.profile_completed,
+    enabled: activeTab === "feed" && !!user?.profile_completed,
   });
+
+  const isRefetching = activeTab === "feed" ? isFeedFetching : isAllFetching;
+
+  const handleRefresh = async () => {
+    try {
+      if (activeTab === "feed") {
+        await refetchFeedJobs();
+      } else {
+        await refetchAllJobs();
+      }
+      toast.success("Feed refreshed");
+    } catch (err) {
+      toast.error("Failed to refresh feed");
+    }
+  };
 
   const showStatus = user?.role === "admin" || user?.role === "volunteer";
 
   return (
     <div className="space-y-5">
-      <Tabs defaultValue="all" className="w-full">
-        {user?.role !== "admin" && (
-          <TabsList className="bg-muted/30 border border-border/50">
-            <TabsTrigger value="all" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
-              <Briefcase className="h-4 w-4" />
-              All Jobs
-            </TabsTrigger>
-            <TabsTrigger value="feed" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
-              <Sparkles className="h-4 w-4" />
-              My Feed
-            </TabsTrigger>
-          </TabsList>
-        )}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex items-center justify-between gap-4">
+          {user?.role !== "admin" ? (
+            <TabsList className="bg-muted/30 border border-border/50">
+              <TabsTrigger value="all" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
+                <Briefcase className="h-4 w-4" />
+                All Jobs
+              </TabsTrigger>
+              <TabsTrigger value="feed" className="gap-2 data-[state=active]:bg-emerald-600/15 data-[state=active]:text-emerald-400">
+                <Sparkles className="h-4 w-4" />
+                My Feed
+              </TabsTrigger>
+            </TabsList>
+          ) : (
+            <div className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <Briefcase className="h-5 w-5 text-emerald-500" />
+              Jobs Management
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            className="h-9 px-3 gap-2 text-xs border-border/50 hover:bg-muted/50 transition-colors"
+            disabled={isRefetching}
+            title="Refresh Feed"
+          >
+            <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-emerald-500" : "text-muted-foreground"}`} />
+            {isRefetching ? "Refreshing..." : "Refresh Feed"}
+          </Button>
+        </div>
 
         <div className="mt-4">
           <FilterBar

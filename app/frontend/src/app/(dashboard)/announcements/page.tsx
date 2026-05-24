@@ -6,7 +6,7 @@ import { AnnouncementFeed } from "@/components/features/announcements/announceme
 import { AnnouncementType } from "@/types/announcement";
 import { useAuth } from "@/providers/auth-provider";
 import { Button } from "@/components/ui/button";
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, RotateCw } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -38,6 +38,20 @@ export default function AnnouncementsPage() {
   
   const [announcementToDelete, setAnnouncementToDelete] = useState<Announcement | null>(null);
 
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefetching(true);
+    try {
+      await queryClient.refetchQueries({ queryKey: ["announcements"] });
+      toast.success("Updates feed refreshed");
+    } catch (err) {
+      toast.error("Failed to refresh updates");
+    } finally {
+      setIsRefetching(false);
+    }
+  };
+
   const togglePinMutation = useMutation({
     mutationFn: (announcement: Announcement) => 
       announcementService.updateAnnouncement(announcement.id, { is_pinned: !announcement.is_pinned }),
@@ -61,6 +75,17 @@ export default function AnnouncementsPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleRefresh}
+            className="h-9 w-9 border-border/50 hover:bg-muted/50 transition-colors"
+            disabled={isRefetching}
+            title="Refresh Feed"
+          >
+            <RotateCw className={`h-4 w-4 ${isRefetching ? "animate-spin text-emerald-500" : "text-muted-foreground"}`} />
+          </Button>
+
           <div className="flex items-center gap-2 bg-muted/30 border border-border/50 rounded-md px-3 py-1">
             <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={typeFilter} onValueChange={(val) => setTypeFilter((val as AnnouncementType | "all") ?? "all")}>

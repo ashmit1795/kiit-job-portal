@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OverviewTab } from "@/components/features/admin/overview-tab";
 import { UsersTab } from "@/components/features/admin/users-tab";
@@ -12,8 +11,11 @@ import { JobsTab } from "@/components/features/admin/jobs-tab";
 import { AcademicsTab } from "@/components/features/admin/academics-tab";
 import { LogsTab } from "@/components/features/admin/logs-tab";
 import { AnnouncementsTab } from "@/components/features/admin/announcements-tab";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
-  LayoutDashboard, Users, UserCheck, Briefcase, BookOpen, Activity, Megaphone
+  LayoutDashboard, Users, UserCheck, Briefcase, BookOpen, Activity, Megaphone, RotateCw
 } from "lucide-react";
 
 const TABS = [
@@ -40,6 +42,27 @@ function AdminContent() {
 
   if (!user || user.role !== "admin") return null;
 
+  const queryClient = useQueryClient();
+  const [isRefetching, setIsRefetching] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefetching(true);
+    try {
+      if (activeTab === "announcements") {
+        await queryClient.refetchQueries({ queryKey: ["announcements"] });
+      } else if (activeTab === "academics") {
+        await queryClient.refetchQueries({ queryKey: ["academics"] });
+      } else {
+        await queryClient.refetchQueries({ queryKey: ["admin"] });
+      }
+      toast.success("Dashboard refreshed");
+    } catch (err) {
+      toast.error("Failed to refresh dashboard");
+    } finally {
+      setIsRefetching(false);
+    }
+  };
+
   const handleTabChange = (tab: string) => {
     router.push(`/admin?tab=${tab}`, { scroll: false });
   };
@@ -47,11 +70,24 @@ function AdminContent() {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Manage users, jobs, academic structure, and view activity logs.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Manage users, jobs, academic structure, and view activity logs.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          className="h-9 px-3 gap-2 text-xs border-border/50 hover:bg-muted/50 transition-colors self-start sm:self-center"
+          disabled={isRefetching}
+          title="Refresh Data"
+        >
+          <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-emerald-500" : "text-muted-foreground"}`} />
+          {isRefetching ? "Refreshing..." : "Refresh Data"}
+        </Button>
       </div>
 
       {/* Tab navigation */}
