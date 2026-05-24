@@ -6,11 +6,6 @@ import env from "../../config/env.js";
 const BASE_URL = env.FRONTEND_BASE_URL;
 const LOGO_URL = env.LOGO_URL;
 
-function formatValue(value, fallback = "Not specified") {
-	if (value === null || value === undefined || value === "") return fallback;
-	return value;
-}
-
 function formatDeadline(value) {
 	if (!value) return "Not specified";
 	const date = new Date(value);
@@ -25,14 +20,8 @@ function formatDeadline(value) {
 	});
 }
 
-function formatMoney(value) {
-	if (value === null || value === undefined || value === "") return "Not specified";
-	if (typeof value === "number") return `${value} LPA`;
-	return value;
-}
-
 function buildCtaLink(job) {
-	return job.apply_link_1 || `${BASE_URL}/jobs`;
+	return job.apply_link_1 || `${BASE_URL}/jobs/${job.job_id || job.id}`;
 }
 
 const JOB_TYPE_MAP = {
@@ -49,6 +38,45 @@ export function getJobTypeLabel(type) {
 	return JOB_TYPE_MAP[type] || type.charAt(0).toUpperCase() + type.slice(1);
 }
 
+const CUSTOM_COPY = {
+	placement: {
+		heading: "New Career Opportunity Live! 🚀",
+		description: (company, role) => `Exciting news! <strong>${company}</strong> is recruiting for a full-time <strong>${role}</strong> role. This is your chance to kickstart your professional career!`,
+		cta: "View Placement & Apply →"
+	},
+	internship: {
+		heading: "New Internship Opportunity Live! 💼",
+		description: (company, role) => `Kickstart your hands-on experience! <strong>${company}</strong> is hiring an <strong>${role}</strong> intern. Build your skills and gain valuable real-world exposure!`,
+		cta: "View Internship & Apply →"
+	},
+	internship_fulltime: {
+		heading: "Internship + Full-Time Job Opportunity! 🎯",
+		description: (company, role) => `Get the best of both worlds! <strong>${company}</strong> has posted an <strong>${role}</strong> opportunity with a transition to a full-time role (PPO). Secure your future!`,
+		cta: "View Opportunity & Apply →"
+	},
+	hackathon: {
+		heading: "New Hackathon Challenge Live! ⚡",
+		description: (company, role) => `Ready to showcase your talent? <strong>${company}</strong> has announced the <strong>${role}</strong> hackathon! Push your boundaries and compete with the best.`,
+		cta: "Register for Hackathon →"
+	},
+	webinar: {
+		heading: "Upcoming Industry Webinar Scheduled! 📢",
+		description: (company, role) => `Never stop learning! <strong>${company}</strong> is hosting a webinar on <strong>${role}</strong>. Secure your virtual seat and learn from professionals.`,
+		cta: "Register for Webinar →"
+	},
+	talk: {
+		heading: "Exclusive Expert Talk Scheduled! 🎙️",
+		description: (company, role) => `Get direct insights from leaders! <strong>${company}</strong> is presenting an expert talk on <strong>${role}</strong>. Elevate your knowledge.`,
+		cta: "Join Expert Talk →"
+	}
+};
+
+const fallbackCopy = {
+	heading: "New Placement Alert! 🚀",
+	description: (company, role) => `A new opportunity has been posted: <strong>${company}</strong> is hiring for <strong>${role}</strong>. Check it out and apply today!`,
+	cta: "View Details & Apply →"
+};
+
 /**
  * Job alert email template for Avsaar
  * @param {object} job - Job payload from Inngest event
@@ -63,6 +91,80 @@ export function jobAlertTemplate(job, user) {
 	const ctaLink = buildCtaLink(job);
 	const jobType = getJobTypeLabel(job.job_type);
 
+	// Get custom copy
+	const copy = CUSTOM_COPY[job.job_type] || fallbackCopy;
+	const bodyText = copy.description(job.company_name || "a leading company", job.role_title || "Specialist");
+
+	// Build dynamic details table rows - ONLY render available, specified fields!
+	const rows = [];
+
+	if (job.ctc && job.ctc !== "Not specified" && job.ctc !== "null" && job.ctc !== "undefined") {
+		rows.push(`
+            <tr>
+              <td class="detail-label">Compensation (CTC)</td>
+              <td class="detail-value" style="color: #10b981;">${job.ctc}</td>
+            </tr>
+		`);
+	}
+
+	if (job.stipend && job.stipend !== "Not specified" && job.stipend !== "null" && job.stipend !== "undefined") {
+		rows.push(`
+            <tr>
+              <td class="detail-label">Stipend</td>
+              <td class="detail-value" style="color: #10b981;">${job.stipend}</td>
+            </tr>
+		`);
+	}
+
+	if (job.min_cgpa && job.min_cgpa > 0) {
+		rows.push(`
+            <tr>
+              <td class="detail-label">Minimum CGPA</td>
+              <td class="detail-value">≥ ${job.min_cgpa}</td>
+            </tr>
+		`);
+	}
+
+	if (job.joining_date && job.joining_date !== "Not specified" && job.joining_date !== "null" && job.joining_date !== "undefined") {
+		rows.push(`
+            <tr>
+              <td class="detail-label">Joining Date</td>
+              <td class="detail-value">${job.joining_date}</td>
+            </tr>
+		`);
+	}
+
+	if (job.locations && job.locations.length > 0) {
+		const locStr = Array.isArray(job.locations) ? job.locations.join(", ") : job.locations;
+		if (locStr !== "Not specified" && locStr !== "null" && locStr !== "undefined") {
+			rows.push(`
+                <tr>
+                  <td class="detail-label">Location</td>
+                  <td class="detail-value">${locStr}</td>
+                </tr>
+			`);
+		}
+	}
+
+	if (job.deadline) {
+		rows.push(`
+            <tr>
+              <td class="detail-label">Apply Deadline</td>
+              <td class="detail-value" style="color: #f87171;">${formatDeadline(job.deadline)}</td>
+            </tr>
+		`);
+	}
+
+	// Adjust padding-bottom styles dynamically so the last row has 0 padding (avoids layout gaps)
+	const tableRows = rows.map((row, index) => {
+		const isLast = index === rows.length - 1;
+		if (isLast) {
+			return row.replace(/class="detail-label"/g, 'class="detail-label" style="padding-bottom: 0;"')
+			          .replace(/class="detail-value"/g, 'class="detail-value" style="padding-bottom: 0;"');
+		}
+		return row;
+	}).join("\n");
+
 	return `
 <!DOCTYPE html>
 <html lang="en"
@@ -74,7 +176,7 @@ export function jobAlertTemplate(job, user) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>New ${jobType} Opportunity</title>
+  <title>${copy.heading}</title>
   <!--[if mso]>
   <noscript>
     <xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
@@ -140,31 +242,34 @@ export function jobAlertTemplate(job, user) {
       margin-bottom: 20px;
     }
     .hero-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 6px;
+      margin-bottom: 12px;
       position: relative;
       z-index: 2;
+      line-height: 1.3;
     }
     .hero-subtitle {
       font-size: 14px;
-      color: #9ca3af;
-      margin-bottom: 16px;
+      color: #cbd5e1;
+      margin-bottom: 18px;
       position: relative;
       z-index: 2;
+      line-height: 1.5;
     }
     .job-badge {
       display: inline-block;
       padding: 4px 12px;
       border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
       color: #10b981;
       border: 1px solid rgba(16,185,129,0.35);
       background: rgba(16,185,129,0.08);
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       position: relative;
       z-index: 2;
     }
@@ -185,7 +290,7 @@ export function jobAlertTemplate(job, user) {
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px;
       padding: 18px 18px 6px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
     .detail-table {
       width: 100%;
@@ -194,11 +299,11 @@ export function jobAlertTemplate(job, user) {
     .detail-label {
       color: #94a3b8;
       font-weight: 600;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
       padding-bottom: 12px;
-      vertical-align: top;
+      vertical-align: middle;
       text-align: left;
     }
     .detail-value {
@@ -207,7 +312,7 @@ export function jobAlertTemplate(job, user) {
       font-weight: 700;
       text-align: right;
       padding-bottom: 12px;
-      vertical-align: top;
+      vertical-align: middle;
     }
     .footer {
       text-align: center;
@@ -228,28 +333,19 @@ export function jobAlertTemplate(job, user) {
       </div>
 
       <div class="hero-card">
-        <div class="hero-title">Hey ${firstName}, new opportunity is live 🚀</div>
-        <div class="hero-subtitle"><strong>${formatValue(job.company_name)}</strong> is hiring for <strong>${formatValue(job.role_title)}</strong>.</div>
+        <div class="hero-title">Hello ${firstName}, ${copy.heading}</div>
+        <div class="hero-subtitle">${bodyText}</div>
         <div class="job-badge">${jobType}</div>
 
+        ${rows.length > 0 ? `
         <div class="details-card">
           <table class="detail-table" cellpadding="0" cellspacing="0">
-            <tr>
-              <td class="detail-label">CTC / Stipend</td>
-              <td class="detail-value">${formatMoney(job.ctc || job.stipend)}</td>
-            </tr>
-            <tr>
-              <td class="detail-label">Deadline</td>
-              <td class="detail-value">${formatDeadline(job.deadline)}</td>
-            </tr>
-            <tr>
-              <td class="detail-label" style="padding-bottom: 0;">Min CGPA</td>
-              <td class="detail-value" style="padding-bottom: 0;">${formatValue(job.min_cgpa)}</td>
-            </tr>
+            ${tableRows}
           </table>
         </div>
+        ` : ""}
 
-        <a class="cta-button" href="${ctaLink}">View & Apply →</a>
+        <a class="cta-button" href="${ctaLink}">${copy.cta}</a>
       </div>
 
       <div class="footer">
