@@ -38,6 +38,24 @@ export function getJobTypeLabel(type) {
 	return JOB_TYPE_MAP[type] || type.charAt(0).toUpperCase() + type.slice(1);
 }
 
+const CUSTOM_SUBJECTS = {
+	placement: (company, role) => `🚀 New Full-Time Placement: ${role} at ${company} | अवSaar Alert`,
+	internship: (company, role) => `💼 New Internship Opportunity: ${role} at ${company} | अवSaar Alert`,
+	internship_fulltime: (company, role) => `🎯 New Internship + PPO: ${role} at ${company} | अवSaar Alert`,
+	hackathon: (company, role) => `⚡ New Hackathon Challenge: ${role} by ${company} | अवSaar Alert`,
+	webinar: (company, role) => `📢 Upcoming Webinar: ${role} by ${company} | अवSaar Alert`,
+	talk: (company, role) => `🎙️ Exclusive Expert Talk: ${role} by ${company} | अवSaar Alert`,
+};
+
+export function getJobAlertSubject(job) {
+	const subjectFn = CUSTOM_SUBJECTS[job.job_type];
+	if (subjectFn) {
+		return subjectFn(job.company_name || "a leading company", job.role_title || "Specialist");
+	}
+	return `🚀 New Opportunity: ${job.role_title || "Specialist"} at ${job.company_name || "a leading company"} | अवSaar Alert`;
+}
+
+
 const CUSTOM_COPY = {
 	placement: {
 		heading: "New Career Opportunity Live! 🚀",
