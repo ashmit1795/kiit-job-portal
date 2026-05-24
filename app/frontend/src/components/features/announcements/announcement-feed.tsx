@@ -50,8 +50,11 @@ export function AnnouncementFeed({
         // The current API contract doesn't explicitly mention type filtering, so we might need to filter client-side or just not pass it if the backend ignores it.
       }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) =>
-      lastPage.meta.page < lastPage.meta.totalPages ? lastPage.meta.page + 1 : undefined,
+    getNextPageParam: (lastPage) => {
+      const pageNum = Number(lastPage.meta.page);
+      const totalPages = Number(lastPage.meta.totalPages);
+      return pageNum < totalPages ? pageNum + 1 : undefined;
+    },
   });
 
   const allAnnouncements = useMemo(() => {
