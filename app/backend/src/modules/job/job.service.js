@@ -65,6 +65,7 @@ class JobService {
 			p_branches: payload.branches,
 			p_batches: payload.batches,
 			p_locations: payload.locations ?? [],
+			p_created_at: payload.created_at ?? null,
 		});
 
 		if (approvalStatus === "approved") {

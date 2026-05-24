@@ -94,4 +94,12 @@ export const createJobSchema = z.object({
 	batches: z.array(z.string().uuid("Invalid batch ID")).min(1, "At least one eligible batch must be provided"),
 
 	locations: z.array(z.string().min(1, "Location cannot be empty")).optional().default([]),
+
+	created_at: z
+		.string()
+		.datetime("Invalid created_at format. Expected ISO datetime")
+		.optional()
+		.or(z.literal(""))
+		.transform((v) => (v === "" ? null : v))
+		.default(null),
 });
