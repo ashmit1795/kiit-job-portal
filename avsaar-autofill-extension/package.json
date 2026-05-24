@@ -1,0 +1,33 @@
+{
+  "name": "avsaar-autofill-extension",
+  "version": "1.0.0",
+  "description": "Avsaar Autofill Assistant — Smart Google Forms Placement Autofill Chrome Extension",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:popup": "vite build",
+    "build:content": "vite build --config vite.content.config.ts",
+    "build:background": "vite build --config vite.background.config.ts",
+    "build": "npm run build:popup && npm run build:content && npm run build:background",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "framer-motion": "^11.11.17",
+    "fuse.js": "^7.0.0",
+    "lucide-react": "^0.460.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.280",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.1"
+  }
+}

@@ -1,0 +1,44 @@
+import fs from 'fs';
+import path from 'path';
+
+const iconBase64 = 
+  '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';
+
+const targetDir = path.resolve('public');
+if (!fs.existsSync(targetDir)) {
+  fs.mkdirSync(targetDir, { recursive: true });
+}
+
+const buffer = Buffer.from(iconBase64, 'base64');
+fs.writeFileSync(path.join(targetDir, 'icon-16.png'), buffer);
+fs.writeFileSync(path.join(targetDir, 'icon-48.png'), buffer);
+fs.writeFileSync(path.join(targetDir, 'icon-128.png'), buffer);
+
+console.log('Premium Avsaar icons created successfully in public/.');
