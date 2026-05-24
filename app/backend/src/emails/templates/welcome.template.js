@@ -42,18 +42,24 @@ export function welcomeTemplate(user) {
 				{ icon: "✅", title: "Approve Postings", desc: "Review and approve volunteer-submitted job circulars." },
 				{ icon: "📊", title: "Analytics Dashboard", desc: "View platform stats, logs, and volunteer activity." },
 			]
+		: isVolunteer
+		? [
+				{ icon: "✍️", title: "Post Opportunities", desc: "Submit job circulars, internships, and webinars with official PDF circular attachments." },
+				{ icon: "📈", title: "Track Submissions", desc: "Monitor your postings in real-time as they go through admin review and publish live." },
+				{ icon: "🎯", title: "Stay In The Loop", desc: "View all matching placement drives, internships, and webinars for your own batch/branch." },
+			]
 		: [
 				{
 					icon: "📋",
 					title: "Latest Circulars",
-					desc: "Placement drives, internships, hackathons, and career opportunities — all in one place, shared by fellow students.",
+					desc: "Placement drives, internships, hackathons, and webinars — all in one place, shared by fellow students.",
 				},
 				{
 					icon: "🎯",
 					title: "Personalized Feed",
-					desc: "Jobs matched to your branch, batch, and CGPA automatically. No noise, just what matters to you.",
+					desc: "Jobs matched automatically to your branch, batch, and CGPA. Zero noise, only what you qualify for.",
 				},
-				{ icon: "📥", title: "Download Instantly", desc: "Access and download opportunity PDFs directly from the portal, no redirects." },
+				{ icon: "📥", title: "Download Instantly", desc: "Access and download official placement PDFs directly from the portal, no redirects." },
 			];
 
 	return `
@@ -208,6 +214,32 @@ export function welcomeTemplate(user) {
       margin-bottom: 28px;
     }
     .hero-subtext strong { color: #e2e8f0; }
+
+    /* Story Box styles */
+    .story-box-table {
+      background: rgba(16, 185, 129, 0.04);
+      border: 1px dashed rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 10px;
+      margin-bottom: 28px;
+    }
+    .story-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #10b981;
+      margin-bottom: 8px;
+    }
+    .story-text {
+      font-size: 13.5px;
+      color: #9ca3af;
+      line-height: 1.65;
+    }
+    .story-text strong {
+      color: #ffffff;
+    }
 
     /* CTA — block on all viewports for reliable rendering */
     .cta-button {
@@ -374,7 +406,7 @@ export function welcomeTemplate(user) {
         </div>
 
         <p class="hero-subtext">
-          You're now part of <strong>अवSaar</strong> — an independent, student-built career and opportunity platform made for the KIIT community. We're not affiliated with KIIT University; we're students who wanted something better and built it ourselves.
+          You're now part of <strong>अवSaar</strong> — an independent student-built placement aggregator designed to solve the chaos of scattered information. Built by students who wanted something better, it serves as a clean, centralized, and eligibility-aware source of truth.
           ${
 				isAdmin
 					? " As an admin, you help keep the platform running smoothly — moderating opportunities and supporting the community."
@@ -384,7 +416,21 @@ export function welcomeTemplate(user) {
 			}
         </p>
 
-        <a href="${ctaHref}" class="cta-button">${ctaLabel} →</a>
+        <!-- 💡 Why अवSaar? Story Section -->
+        <table class="story-box-table" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 10px; margin-bottom: 28px; background: rgba(16,185,129,0.04); border: 1px dashed rgba(16,185,129,0.25); border-radius: 12px; padding: 20px;">
+          <tr>
+            <td>
+              <div class="story-title" style="font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #10b981; margin-bottom: 8px;">💡 The Story of अवSaar</div>
+              <p class="story-text" style="font-size: 13.5px; color: #9ca3af; line-height: 1.65; margin: 0;">
+                For years, placement updates at KIIT have arrived through fragmented, noisy channels. Critical job circulars got buried under hundreds of chat messages, eligibility criteria required manual checking, and deadlines were easy to miss.
+                <br><br>
+                The name <strong>अवSaar</strong> is born from the blend of <strong>अवसर (Avsar — Opportunity)</strong> and <strong>सार (Saar — Essence)</strong>. It is our vision of the <em>essence of opportunity</em>: a single, centralized, searchable, and eligibility-aware source of truth designed by students who lived this problem, for students who want a better future.
+              </p>
+            </td>
+          </tr>
+        </table>
+
+        <a href="${ctaHref}" class="cta-button" style="display: block; padding: 15px 32px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff !important; font-size: 15px; font-weight: 700; border-radius: 12px; letter-spacing: 0.2px; text-decoration: none; text-align: center; box-shadow: 0 4px 24px rgba(16,185,129,0.40);">${ctaLabel} →</a>
         <p class="cta-note">
           ${
 				isAdmin
