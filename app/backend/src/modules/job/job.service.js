@@ -82,13 +82,10 @@ class JobService {
 	}
 
 	async getJobs(user) {
-		const jobs = await jobRepository.listJobs();
+		const approvalStatus = (user.role === "student" || user.role === "volunteer") ? "approved" : null;
+		const jobs = await jobRepository.listJobs(approvalStatus);
 
 		let filteredJobs = jobs;
-
-		if (user.role === "student" || user.role === "volunteer") {
-			filteredJobs = jobs.filter((job) => job.approval_status === "approved");
-		}
 
 		// Sort: Open opportunities first, then closed ones. In each group, sort by created_at desc (newest first).
 		const now = new Date();

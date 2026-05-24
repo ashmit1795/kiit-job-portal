@@ -87,8 +87,8 @@ class JobRepository {
 	/**
 	 * Fetch all jobs with populated eligibility data.
 	 */
-	async listJobs() {
-		const { data, error } = await supabase
+	async listJobs(approvalStatus = null) {
+		let query = supabase
 			.schema("placement")
 			.from("jobs")
 			.select(
@@ -135,8 +135,13 @@ class JobRepository {
                 )
 			`,
 			)
-			.eq("is_active", true)
-			.order("created_at", { ascending: false });
+			.eq("is_active", true);
+
+		if (approvalStatus) {
+			query = query.eq("approval_status", approvalStatus);
+		}
+
+		const { data, error } = await query.order("created_at", { ascending: false });
 
 		if (error) {
 			const mapped = mapSupabaseError(error);
