@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate.middleware.js";
 import roleGuard from "../../middlewares/roleGuard.middleware.js";
-import { createJobSchema } from "../../validators/job.validator.js";
+import { createJobSchema, updateJobSchema } from "../../validators/job.validator.js";
 import jobController from "./job.controller.js";
 import { uploadCircular } from "../../middlewares/upload.middleware.js";
 
@@ -27,6 +27,12 @@ router.get("/feed", jobController.getJobFeed);
  * Job details
  */
 router.get("/:id", jobController.getJobById);
+
+/**
+ * Update job
+ * Admin + Volunteer (checks owner inside service)
+ */
+router.patch("/:id", roleGuard("admin", "volunteer"), uploadCircular, validate(updateJobSchema), jobController.updateJob);
 
 /**
  * Download circular

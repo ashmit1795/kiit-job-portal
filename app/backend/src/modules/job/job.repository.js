@@ -231,6 +231,18 @@ class JobRepository {
 
 		return data;
 	}
+
+	async updateJob(payload) {
+		const { data, error } = await supabase.schema("placement").rpc("update_job", payload);
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data;
+	}
 }
 
 export default new JobRepository();

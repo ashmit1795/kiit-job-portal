@@ -94,6 +94,32 @@ class JobController {
 			next(err);
 		}
 	}
+
+	async updateJob(req, res, next) {
+		try {
+			const { id } = req.params;
+
+			// Parse branches, batches and locations if they are passed as JSON strings from FormData (multipart)
+			if (typeof req.body.branches === "string") {
+				req.body.branches = JSON.parse(req.body.branches);
+			}
+			if (typeof req.body.batches === "string") {
+				req.body.batches = JSON.parse(req.body.batches);
+			}
+			if (typeof req.body.locations === "string") {
+				req.body.locations = JSON.parse(req.body.locations);
+			}
+
+			const job = await jobService.updateJob(req.user, id, req.body, req.file);
+
+			return new AppResponse({
+				message: "Job updated successfully",
+				data: job,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 const jobController = new JobController();
