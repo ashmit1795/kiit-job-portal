@@ -7,7 +7,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon, CheckCircle, XCircle, ShieldCheck } from "lucide-react";
+import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon, CheckCircle, XCircle, ShieldCheck, Pencil } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -17,6 +17,7 @@ import { AnnouncementFeed } from "@/components/features/announcements/announceme
 import { CreateAnnouncementModal } from "@/components/features/announcements/create-announcement-modal";
 import { EditAnnouncementModal } from "@/components/features/announcements/edit-announcement-modal";
 import { DeleteAnnouncementDialog } from "@/components/features/announcements/delete-announcement-dialog";
+import { EditJobModal } from "@/components/features/jobs/edit-job-modal";
 import { Announcement } from "@/types/announcement";
 import { announcementService } from "@/services/announcement.service";
 import { Megaphone, ChevronDown, ChevronUp, Plus } from "lucide-react";
@@ -36,6 +37,7 @@ export default function JobDetailPage() {
   const [isCreateUpdateOpen, setIsCreateUpdateOpen] = useState(false);
   const [updateToEdit, setUpdateToEdit] = useState<Announcement | null>(null);
   const [updateToDelete, setUpdateToDelete] = useState<Announcement | null>(null);
+  const [isEditJobOpen, setIsEditJobOpen] = useState(false);
 
   const togglePinMutation = useMutation({
     mutationFn: (announcement: Announcement) => 
@@ -107,6 +109,7 @@ export default function JobDetailPage() {
   const isExpired = new Date(job.deadline) < new Date();
   const isAdmin = user?.role === "admin";
   const isPending = job.approval_status === "pending";
+  const canEdit = isAdmin || (user?.role === "volunteer" && job.posted_by === user.id);
 
   // Build approval badge
   const statusBadge = () => {
@@ -172,7 +175,19 @@ export default function JobDetailPage() {
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
-            {isAdmin && statusBadge()}
+            <div className="flex items-center gap-2">
+              {canEdit && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditJobOpen(true)}
+                  className="h-8 border-border/50 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-1 font-semibold"
+                >
+                  <Pencil className="h-3 w-3" /> Edit
+                </Button>
+              )}
+              {isAdmin && statusBadge()}
+            </div>
             <div className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full ${
               isExpired
                 ? "bg-red-600/10 text-red-400 border border-red-700/20"
@@ -447,6 +462,14 @@ export default function JobDetailPage() {
               isOpen={true}
               onClose={() => setUpdateToDelete(null)}
               announcement={updateToDelete}
+            />
+          )}
+
+          {isEditJobOpen && (
+            <EditJobModal
+              isOpen={true}
+              onClose={() => setIsEditJobOpen(false)}
+              job={job}
             />
           )}
         </>

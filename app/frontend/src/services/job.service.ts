@@ -70,4 +70,23 @@ export const jobService = {
     const { data } = await api.patch<ApiResponse<Job>>(`/jobs/${id}/reject`);
     return data.data;
   },
+
+  updateJob: async (id: string, payload: Omit<CreateJobPayload, "circular_file"> & { circular_file?: File }) => {
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (key === "circular_file") {
+          formData.append("circular", value as File);
+        } else if (Array.isArray(value)) {
+          // Pass arrays stringified so controller multipart parser parses them perfectly
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value.toString());
+        }
+      }
+    });
+
+    const { data } = await api.patch<ApiResponse<Job>>(`/jobs/${id}`, formData);
+    return data.data;
+  },
 };
