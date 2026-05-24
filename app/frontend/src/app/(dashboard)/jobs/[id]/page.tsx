@@ -159,9 +159,16 @@ export default function JobDetailPage() {
               </Badge>
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight break-words">{job.role_title}</h1>
-            <div className="flex items-center gap-2 text-lg text-muted-foreground font-medium">
-              <Building className="h-5 w-5 text-emerald-500 shrink-0" />
-              <span className="break-words">{job.company_name}</span>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm md:text-base text-muted-foreground font-medium">
+              <div className="flex items-center gap-1.5">
+                <Building className="h-4.5 w-4.5 text-emerald-500 shrink-0" />
+                <span className="break-words">{job.company_name}</span>
+              </div>
+              <div className="hidden sm:block h-1 w-1 rounded-full bg-zinc-700" />
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground/80">
+                <CalendarDays className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                <span>Posted on {new Date(job.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+              </div>
             </div>
           </div>
           <div className="flex flex-col items-end gap-2 shrink-0">
@@ -248,8 +255,8 @@ export default function JobDetailPage() {
                 )}
                 <div className="flex flex-col gap-1 p-3 rounded-lg bg-muted/30">
                   <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Deadline</span>
-                  <span className="font-semibold flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4 text-emerald-500" />
+                  <span className="font-semibold flex items-center gap-1.5 text-rose-400">
+                    <CalendarDays className="h-4 w-4 shrink-0" />
                     {new Date(job.deadline).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
                   </span>
                 </div>
