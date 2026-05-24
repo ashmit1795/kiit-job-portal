@@ -103,3 +103,57 @@ export const createJobSchema = z.object({
 		.transform((v) => (v === "" ? null : v))
 		.default(null),
 });
+
+export const updateJobSchema = z.object({
+	circular_number: z.string("Circular number is required").min(1, "Circular number cannot be empty"),
+
+	company_name: z.string("Company name is required").min(1, "Company name cannot be empty"),
+
+	role_title: z.string("Role title is required").min(1, "Role title cannot be empty"),
+
+	job_type: z.enum(["placement", "internship", "internship_fulltime", "webinar", "hackathon", "talk"], {
+		errorMap: () => ({ message: "Invalid job type" }),
+	}),
+
+	ctc: z.string().optional().default(null),
+
+	stipend: z.string().optional().default(null),
+
+	min_cgpa: z.coerce.number().min(0, "Minimum CGPA must be >= 0").max(10, "Minimum CGPA must be <= 10").optional().default(null),
+
+	deadline: z.coerce.string("Deadline is required").datetime("Invalid deadline format. Expected ISO datetime"),
+
+	joining_date: z.string().optional().default(null),
+
+	description: z.string().optional().default(null),
+
+	apply_link_1: z
+		.string()
+		.url("apply_link_1 must be a valid URL")
+		.optional()
+		.or(z.literal(""))
+		.transform((v) => (v === "" ? null : v))
+		.default(null),
+
+	apply_link_2: z
+		.string()
+		.url("apply_link_2 must be a valid URL")
+		.optional()
+		.or(z.literal(""))
+		.transform((v) => (v === "" ? null : v))
+		.default(null),
+
+	branches: z.array(z.string().uuid("Invalid branch ID")).min(1, "At least one eligible branch must be provided"),
+
+	batches: z.array(z.string().uuid("Invalid batch ID")).min(1, "At least one eligible batch must be provided"),
+
+	locations: z.array(z.string().min(1, "Location cannot be empty")).optional().default([]),
+
+	created_at: z
+		.string()
+		.datetime("Invalid created_at format. Expected ISO datetime")
+		.optional()
+		.or(z.literal(""))
+		.transform((v) => (v === "" ? null : v))
+		.default(null),
+});

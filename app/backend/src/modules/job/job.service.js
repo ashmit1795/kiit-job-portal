@@ -219,6 +219,77 @@ class JobService {
 		return data.signedUrl;
 	}
 
+	async updateJob(user, jobId, payload, file) {
+		const existing = await jobRepository.findById(jobId);
+		if (!existing) {
+			throw new AppError("Job not found", 404);
+		}
+
+		if (user.role === "volunteer" && existing.posted_by !== user.id) {
+			throw new AppError("You can only update your own job postings", 403);
+		}
+
+		let circularFilePath = existing.circular_file_path;
+
+		if (file) {
+			circularFilePath = `circulars/${payload.circular_number || existing.circular_number}.pdf`;
+			const { error } = await supabase.storage.from("job-circulars").upload(circularFilePath, file.buffer, {
+				contentType: "application/pdf",
+				upsert: true,
+			});
+
+			if (error) {
+				logger.error("Supabase storage upload error:", error);
+				throw new AppError("Failed to upload circular file", 500);
+			}
+		}
+
+		// Keep approval status unchanged
+		const approvalStatus = existing.approval_status;
+
+		await jobRepository.updateJob({
+			p_job_id: jobId,
+			p_circular_number: payload.circular_number,
+			p_company_name: payload.company_name,
+			p_role_title: payload.role_title,
+			p_job_type: payload.job_type,
+			p_ctc: payload.ctc ?? null,
+			p_stipend: payload.stipend ?? null,
+			p_min_cgpa: payload.min_cgpa ?? null,
+			p_deadline: payload.deadline,
+			p_joining_date: payload.joining_date ?? null,
+			p_description: payload.description ?? null,
+			p_apply_link_1: payload.apply_link_1 ?? null,
+			p_apply_link_2: payload.apply_link_2 ?? null,
+			p_circular_file_path: circularFilePath,
+			p_approval_status: approvalStatus,
+			p_branches: payload.branches,
+			p_batches: payload.batches,
+			p_locations: payload.locations ?? [],
+			p_created_at: payload.created_at ?? null,
+		});
+
+		// Log admin or volunteer action
+		try {
+			await adminRepository.insertLog({
+				admin_id: user.id,
+				action: "update_job",
+				target_type: "job",
+				target_id: jobId,
+				details: {
+					company_name: payload.company_name,
+					role_title: payload.role_title,
+					circular_number: payload.circular_number,
+				},
+			});
+		} catch (e) {
+			logger.warn("Failed to write log for job update", e);
+		}
+
+		const updated = await jobRepository.findById(jobId);
+		return this.formatJob(updated);
+	}
+
 	formatJob(job) {
 		return {
 			id: job.id,
