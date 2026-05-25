@@ -39,6 +39,8 @@ export interface Announcement {
   updated_at: string;
   created_by_user: AnnouncementCreatedByUser | null;
   job: AnnouncementJob | null;
+  eligible_branches?: { id: string; name: string; code: string }[];
+  eligible_batches?: { id: string; year: string }[];
 }
 
 export interface PaginatedAnnouncements {
@@ -60,6 +62,8 @@ export interface CreateAnnouncementPayload {
   send_email?: boolean;
   circular?: File | null;
   circular_number?: string | null;
+  branches?: string[];
+  batches?: string[];
 }
 
 export interface UpdateAnnouncementPayload {
@@ -71,4 +75,6 @@ export interface UpdateAnnouncementPayload {
   job_id?: string | null;
   circular?: File | null;
   circular_number?: string | null;
+  branches?: string[];
+  batches?: string[];
 }
