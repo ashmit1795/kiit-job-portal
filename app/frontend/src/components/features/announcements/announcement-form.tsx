@@ -10,6 +10,7 @@ import { CheckCircle, Upload, Loader2, ArrowRight } from "lucide-react";
 import { announcementTypeConfig } from "./announcement-type-badge";
 import { useQuery } from "@tanstack/react-query";
 import { adminService } from "@/services/admin.service";
+import { useAuth } from "@/providers/auth-provider";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 
@@ -30,11 +31,13 @@ export function AnnouncementForm({
   isSubmitting,
   submitLabel = "Submit",
 }: AnnouncementFormProps) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState<Partial<CreateAnnouncementPayload>>({
     subject: initialValues?.subject || "",
     announcement_type: initialValues?.announcement_type || "general",
     job_id: initialValues?.job_id || "global", // using 'global' as empty state for Select
     is_pinned: initialValues?.is_pinned || false,
+    send_email: false,
     circular_number: initialValues?.circular_number || "KIIT-DU/T&P/26/",
   });
 
@@ -64,6 +67,7 @@ export function AnnouncementForm({
       announcement_type: formData.announcement_type as AnnouncementType,
       job_id: formData.job_id === "global" ? null : formData.job_id,
       is_pinned: formData.is_pinned,
+      send_email: formData.send_email,
       circular: file,
       circular_number: formData.circular_number || null,
     };
@@ -202,15 +206,32 @@ export function AnnouncementForm({
         )}
       </div>
 
-      <label className="flex items-center gap-2 cursor-pointer pt-1">
-        <input 
-          type="checkbox" 
-          checked={formData.is_pinned}
-          onChange={(e) => setFormData({ ...formData, is_pinned: e.target.checked })}
-          className="rounded border-border bg-muted/50 text-emerald-500 focus:ring-emerald-500/20"
-        />
-        <span className="text-sm font-medium">Pin this update to the top</span>
-      </label>
+      <div className="flex flex-col gap-3 pt-1">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input 
+            type="checkbox" 
+            checked={formData.is_pinned}
+            onChange={(e) => setFormData({ ...formData, is_pinned: e.target.checked })}
+            className="rounded border-border bg-muted/50 text-emerald-500 focus:ring-emerald-500/20 h-4 w-4"
+          />
+          <span className="text-sm font-medium">Pin this update to the top</span>
+        </label>
+
+        {user?.role === "admin" && !initialValues?.subject && (
+          <label className="flex items-center gap-3 cursor-pointer text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 p-3 rounded-lg hover:bg-emerald-500/10 transition-colors">
+            <input 
+              type="checkbox" 
+              checked={formData.send_email}
+              onChange={(e) => setFormData({ ...formData, send_email: e.target.checked })}
+              className="rounded border-emerald-500/30 bg-muted/50 text-emerald-500 focus:ring-emerald-500/20 h-4 w-4 shrink-0"
+            />
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">Send immediate email notifications to students</span>
+              <span className="text-[11px] text-muted-foreground mt-0.5">This will immediately email all opted-in target students.</span>
+            </div>
+          </label>
+        )}
+      </div>
 
       <Button type="submit" className="w-full bg-gradient-brand text-white" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

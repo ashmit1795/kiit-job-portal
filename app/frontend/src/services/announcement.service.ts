@@ -42,6 +42,7 @@ export const announcementService = {
     if (payload.job_id) formData.append("job_id", payload.job_id);
     if (payload.announcement_type) formData.append("announcement_type", payload.announcement_type);
     formData.append("is_pinned", String(payload.is_pinned ?? false));
+    if (payload.send_email !== undefined) formData.append("send_email", String(payload.send_email));
     if (payload.circular) formData.append("circular", payload.circular);
     if (payload.circular_number) formData.append("circular_number", payload.circular_number);
 
@@ -66,5 +67,10 @@ export const announcementService = {
 
   deleteAnnouncement: async (id: string): Promise<void> => {
     await api.delete(`/announcements/${id}`);
+  },
+
+  sendManualAlert: async (id: string): Promise<{ success: boolean }> => {
+    const { data } = await api.post<ApiResponse<{ success: boolean }>>(`/announcements/${id}/send-alert`);
+    return data.data!;
   },
 };

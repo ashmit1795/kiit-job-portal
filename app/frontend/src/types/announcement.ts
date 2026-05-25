@@ -33,6 +33,7 @@ export interface Announcement {
   announcement_type: AnnouncementType;
   is_pinned: boolean;
   announcement_priority: number;
+  alert_sent: boolean;
   created_by: string;
   created_at: string;
   updated_at: string;
@@ -56,6 +57,7 @@ export interface CreateAnnouncementPayload {
   job_id?: string | null;
   announcement_type?: AnnouncementType;
   is_pinned?: boolean;
+  send_email?: boolean;
   circular?: File | null;
   circular_number?: string | null;
 }

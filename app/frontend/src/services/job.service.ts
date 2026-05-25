@@ -71,6 +71,11 @@ export const jobService = {
     return data.data;
   },
 
+  sendManualAlert: async (id: string) => {
+    const { data } = await api.post<ApiResponse<{ success: boolean }>>(`/jobs/${id}/send-alert`);
+    return data.data;
+  },
+
   updateJob: async (id: string, payload: Omit<CreateJobPayload, "circular_file"> & { circular_file?: File }) => {
     const formData = new FormData();
     Object.entries(payload).forEach(([key, value]) => {
