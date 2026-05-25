@@ -7,7 +7,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon, CheckCircle, XCircle, ShieldCheck, Pencil } from "lucide-react";
+import { Loader2, ArrowLeft, Download, MapPin, CalendarDays, GraduationCap, Building, Briefcase, IndianRupee, ExternalLink, Clock, Link as LinkIcon, CheckCircle, XCircle, ShieldCheck, Pencil, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -21,6 +21,7 @@ import { EditJobModal } from "@/components/features/jobs/edit-job-modal";
 import { Announcement } from "@/types/announcement";
 import { announcementService } from "@/services/announcement.service";
 import { Megaphone, ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { SendAlertConfirmationModal } from "@/components/ui/send-alert-confirmation-modal";
 import type { AxiosError } from "axios";
 
 export default function JobDetailPage() {
@@ -38,6 +39,7 @@ export default function JobDetailPage() {
   const [updateToEdit, setUpdateToEdit] = useState<Announcement | null>(null);
   const [updateToDelete, setUpdateToDelete] = useState<Announcement | null>(null);
   const [isEditJobOpen, setIsEditJobOpen] = useState(false);
+  const [isSendAlertOpen, setIsSendAlertOpen] = useState(false);
 
   const togglePinMutation = useMutation({
     mutationFn: (announcement: Announcement) => 
@@ -72,6 +74,17 @@ export default function JobDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
     },
     onError: () => toast.error("Failed to reject job"),
+  });
+
+  const sendAlertMutation = useMutation({
+    mutationFn: () => jobService.sendManualAlert(jobId),
+    onSuccess: () => {
+      toast.success("Email alerts dispatched successfully!");
+      setIsSendAlertOpen(false);
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(err.response?.data?.message || "Failed to dispatch email alerts.");
+    },
   });
 
   const handleDownloadCircular = async () => {
@@ -232,6 +245,33 @@ export default function JobDetailPage() {
                   Reject
                 </Button>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Admin Action Bar — only for admins on approved jobs to send alerts */}
+      {isAdmin && !isPending && job.approval_status === "approved" && (
+        <Card className="border-emerald-700/20 bg-emerald-900/5 backdrop-blur-sm shadow-sm overflow-hidden hover:border-emerald-700/30 transition-colors">
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-emerald-400">
+                <ShieldCheck className="h-5 w-5 shrink-0" />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-foreground">Admin Administrative Panel</span>
+                  <span className="text-xs text-muted-foreground mt-0.5">Dispatch manually triggered email notifications for this job opportunity</span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/30 bg-emerald-500/5 font-semibold gap-1.5 h-9"
+                onClick={() => setIsSendAlertOpen(true)}
+                disabled={sendAlertMutation.isPending}
+              >
+                <Send className="h-4 w-4 shrink-0" />
+                Send Email Alerts
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -472,6 +512,15 @@ export default function JobDetailPage() {
               job={job}
             />
           )}
+
+          <SendAlertConfirmationModal
+            isOpen={isSendAlertOpen}
+            onClose={() => setIsSendAlertOpen(false)}
+            onConfirm={() => sendAlertMutation.mutate()}
+            isPending={sendAlertMutation.isPending}
+            title="Send Job Notification Emails?"
+            description={`Are you sure you want to send email notifications for the opportunity "${job.role_title}" at "${job.company_name}"? This will immediately email all matching opted-in eligible students.`}
+          />
         </>
       )}
     </div>

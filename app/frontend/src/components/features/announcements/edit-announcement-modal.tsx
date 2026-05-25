@@ -50,8 +50,10 @@ export function EditAnnouncementModal({ isOpen, onClose, announcement }: EditAnn
               subject: announcement.subject,
               description: announcement.description,
               announcement_type: announcement.announcement_type,
-              job_id: announcement.job_id,
+              job_id: announcement.job_id || "global",
               is_pinned: announcement.is_pinned,
+              branches: announcement.eligible_branches?.map(b => b.id) || [],
+              batches: announcement.eligible_batches?.map(b => b.id) || [],
             }}
             existingCircularPath={announcement.circular_file_path}
             onSubmit={(payload) => updateMutation.mutate(payload)}

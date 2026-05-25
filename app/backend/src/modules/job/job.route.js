@@ -46,5 +46,7 @@ router.patch("/:id/approve", roleGuard("admin"), jobController.approveJob);
 
 router.patch("/:id/reject", roleGuard("admin"), jobController.rejectJob);
 
+router.post("/:id/send-alert", roleGuard("admin"), jobController.sendManualAlert);
+
 export default router;
 

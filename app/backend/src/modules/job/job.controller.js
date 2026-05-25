@@ -120,6 +120,20 @@ class JobController {
 			next(err);
 		}
 	}
+
+	async sendManualAlert(req, res, next) {
+		try {
+			const { id } = req.params;
+			const result = await jobService.sendManualAlert(req.user, id);
+
+			return new AppResponse({
+				message: "Email notifications dispatched successfully",
+				data: result,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 const jobController = new JobController();

@@ -345,6 +345,42 @@ class JobService {
 			batch_ids: job.eligible_batches?.map((b) => b.batch?.id).filter(Boolean) ?? [],
 		};
 	}
+
+	async sendManualAlert(user, jobId) {
+		if (user.role !== "admin") {
+			throw new AppError("Only admins can send email notifications", 403);
+		}
+
+		const job = await jobRepository.findById(jobId);
+		if (!job) {
+			throw new AppError("Job not found", 404);
+		}
+
+		if (job.approval_status !== "approved") {
+			throw new AppError("Cannot send email alerts for unapproved jobs", 400);
+		}
+
+		// Dispatch Inngest event
+		await inngest.send({
+			name: "job/posted",
+			data: this.buildJobPostedPayload(job),
+		});
+
+		// Log admin action
+		try {
+			await adminRepository.insertLog({
+				admin_id: user.id,
+				action: "send_job_alert",
+				target_type: "job",
+				target_id: jobId,
+				details: JSON.stringify({ company_name: job.company_name, role_title: job.role_title }),
+			});
+		} catch (e) {
+			logger.warn("Failed to write admin log for job manual alert", e);
+		}
+
+		return { success: true };
+	}
 }
 
 export default new JobService();

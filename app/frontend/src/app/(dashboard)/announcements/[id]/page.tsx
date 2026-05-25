@@ -24,6 +24,8 @@ import {
   User,
   ShieldCheck,
   ChevronRight,
+  Send,
+  CheckCircle,
 } from "lucide-react";
 
 import { announcementService } from "@/services/announcement.service";
@@ -36,6 +38,7 @@ import { AnnouncementTypeBadge } from "@/components/features/announcements/annou
 import { CircularAttachmentCard } from "@/components/features/announcements/circular-attachment-card";
 import { EditAnnouncementModal } from "@/components/features/announcements/edit-announcement-modal";
 import { DeleteAnnouncementDialog } from "@/components/features/announcements/delete-announcement-dialog";
+import { SendAlertConfirmationModal } from "@/components/ui/send-alert-confirmation-modal";
 
 export default function AnnouncementDetailPage() {
   const params = useParams();
@@ -50,6 +53,7 @@ export default function AnnouncementDetailPage() {
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isSendAlertOpen, setIsSendAlertOpen] = useState(false);
 
   // Fetch the announcement by ID
   const { data: announcement, isLoading, error } = useQuery({
@@ -70,6 +74,19 @@ export default function AnnouncementDetailPage() {
     },
     onError: (err: AxiosError<{ message?: string }>) => {
       toast.error(err.response?.data?.message || "Failed to update pin status");
+    },
+  });
+
+  // Send Alert Mutation
+  const sendAlertMutation = useMutation({
+    mutationFn: () => announcementService.sendManualAlert(id),
+    onSuccess: () => {
+      toast.success("Email alerts dispatched successfully!");
+      queryClient.invalidateQueries({ queryKey: ["announcements", id] });
+      setIsSendAlertOpen(false);
+    },
+    onError: (err: AxiosError<{ message?: string }>) => {
+      toast.error(err.response?.data?.message || "Failed to dispatch email alerts.");
     },
   });
 
@@ -343,6 +360,37 @@ export default function AnnouncementDetailPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-4 space-y-3">
+                {isAdmin && (
+                  <div className="pb-2 border-b border-border/30">
+                    {announcement.alert_sent ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-lg bg-emerald-600/10 text-emerald-400 border border-emerald-700/20 justify-center">
+                          <CheckCircle className="h-4 w-4 shrink-0" /> Email Alerts Dispatched
+                        </div>
+                        <Button
+                          onClick={() => setIsSendAlertOpen(true)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-sm font-medium border-border/50 text-foreground/80 hover:text-emerald-400 hover:bg-emerald-500/5 hover:border-emerald-500/20 gap-2 h-9 justify-start transition-all duration-200"
+                        >
+                          <Send className="h-4 w-4 text-emerald-500 shrink-0" />
+                          Resend Email Alert
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => setIsSendAlertOpen(true)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-sm font-medium border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/30 bg-emerald-500/5 gap-2 h-9 justify-start transition-all duration-200"
+                      >
+                        <Send className="h-4 w-4 text-emerald-500 shrink-0 animate-pulse" />
+                        Send Email Alert
+                      </Button>
+                    )}
+                  </div>
+                )}
+
                 <Button
                   onClick={() => togglePinMutation.mutate()}
                   disabled={togglePinMutation.isPending}
@@ -404,6 +452,15 @@ export default function AnnouncementDetailPage() {
               // Redirect back to updates or the origin page upon deletion
               router.push(backPath);
             }}
+          />
+
+          <SendAlertConfirmationModal
+            isOpen={isSendAlertOpen}
+            onClose={() => setIsSendAlertOpen(false)}
+            onConfirm={() => sendAlertMutation.mutate()}
+            isPending={sendAlertMutation.isPending}
+            title={announcement.alert_sent ? "Resend Announcement Email?" : "Send Announcement Email?"}
+            description={`Are you sure you want to send email notifications for the update "${announcement.subject}"? This will immediately email all opted-in target students.`}
           />
         </>
       )}

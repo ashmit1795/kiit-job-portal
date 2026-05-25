@@ -27,4 +27,12 @@ export const createAnnouncementSchema = z.object({
 		.transform((val) => val === true || val === "true")
 		.optional()
 		.default(false),
+
+	branches: z
+		.array(z.string().uuid("Invalid branch ID"))
+		.optional(),
+
+	batches: z
+		.array(z.string().uuid("Invalid batch ID"))
+		.optional(),
 });

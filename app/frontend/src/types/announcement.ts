@@ -33,11 +33,14 @@ export interface Announcement {
   announcement_type: AnnouncementType;
   is_pinned: boolean;
   announcement_priority: number;
+  alert_sent: boolean;
   created_by: string;
   created_at: string;
   updated_at: string;
   created_by_user: AnnouncementCreatedByUser | null;
   job: AnnouncementJob | null;
+  eligible_branches?: { id: string; name: string; code: string }[];
+  eligible_batches?: { id: string; year: string }[];
 }
 
 export interface PaginatedAnnouncements {
@@ -56,8 +59,11 @@ export interface CreateAnnouncementPayload {
   job_id?: string | null;
   announcement_type?: AnnouncementType;
   is_pinned?: boolean;
+  send_email?: boolean;
   circular?: File | null;
   circular_number?: string | null;
+  branches?: string[];
+  batches?: string[];
 }
 
 export interface UpdateAnnouncementPayload {
@@ -69,4 +75,6 @@ export interface UpdateAnnouncementPayload {
   job_id?: string | null;
   circular?: File | null;
   circular_number?: string | null;
+  branches?: string[];
+  batches?: string[];
 }

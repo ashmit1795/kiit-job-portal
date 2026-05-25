@@ -4,6 +4,13 @@ import announcementService from "./announcement.service.js";
 class AnnouncementController {
 	async createAnnouncement(req, res, next) {
 		try {
+			if (req.body.branches && typeof req.body.branches === "string") {
+				req.body.branches = JSON.parse(req.body.branches);
+			}
+			if (req.body.batches && typeof req.body.batches === "string") {
+				req.body.batches = JSON.parse(req.body.batches);
+			}
+
 			const announcement = await announcementService.createAnnouncement(req.user, req.body, req.file);
 
 			return new AppResponse({
@@ -17,7 +24,7 @@ class AnnouncementController {
 
 	async getAnnouncements(req, res, next) {
 		try {
-			const { announcements, total, page, limit, totalPages } = await announcementService.getAnnouncements(req.query);
+			const { announcements, total, page, limit, totalPages } = await announcementService.getAnnouncements(req.user, req.query);
 
 			return new AppResponse({
 				message: "Announcements fetched successfully",
@@ -51,6 +58,13 @@ class AnnouncementController {
 
 	async updateAnnouncement(req, res, next) {
 		try {
+			if (req.body.branches && typeof req.body.branches === "string") {
+				req.body.branches = JSON.parse(req.body.branches);
+			}
+			if (req.body.batches && typeof req.body.batches === "string") {
+				req.body.batches = JSON.parse(req.body.batches);
+			}
+
 			const updated = await announcementService.updateAnnouncement(req.user, req.params.id, req.body, req.file);
 
 			return new AppResponse({
@@ -82,6 +96,20 @@ class AnnouncementController {
 			return new AppResponse({
 				message: "Announcement circular URL generated",
 				data: { url },
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
+
+	async sendManualAlert(req, res, next) {
+		try {
+			const { id } = req.params;
+			const result = await announcementService.sendManualAlert(req.user, id);
+
+			return new AppResponse({
+				message: "Email notifications dispatched successfully",
+				data: result,
 			}).send(res);
 		} catch (err) {
 			next(err);
