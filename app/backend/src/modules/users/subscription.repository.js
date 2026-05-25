@@ -60,6 +60,17 @@ class SubscriptionRepository {
 
 		return data ?? [];
 	}
+
+	async getAllSubscribers() {
+		const { data, error } = await supabase.schema("placement").rpc("get_all_subscribers");
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+		}
+
+		return data ?? [];
+	}
 }
 
 export default new SubscriptionRepository();

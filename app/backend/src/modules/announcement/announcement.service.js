@@ -4,6 +4,7 @@ import supabase from "../../config/supabase.js";
 import announcementRepository from "./announcement.repository.js";
 import jobRepository from "../job/job.repository.js";
 import adminRepository from "../admin/admin.repository.js";
+import { inngest } from "../../inngest/client.js";
 
 class AnnouncementService {
 	async createAnnouncement(user, payload, file) {
@@ -37,6 +38,9 @@ class AnnouncementService {
 			}
 		}
 
+		const sendEmail = payload.send_email === "true" || payload.send_email === true;
+		const shouldSendEmail = user.role === "admin" && sendEmail;
+
 		const announcement = await announcementRepository.createAnnouncement({
 			subject: payload.subject,
 			description: payload.description,
@@ -47,7 +51,22 @@ class AnnouncementService {
 			is_pinned: payload.is_pinned ?? false,
 			announcement_priority: payload.announcement_priority ?? 0,
 			created_by: user.id,
+			alert_sent: shouldSendEmail,
 		});
+
+		if (shouldSendEmail) {
+			try {
+				const fullAnnouncement = await announcementRepository.getAnnouncementById(announcement.id);
+				if (fullAnnouncement) {
+					await inngest.send({
+						name: "announcement/posted",
+						data: fullAnnouncement,
+					});
+				}
+			} catch (err) {
+				logger.error("Failed to send announcement alert during creation:", err);
+			}
+		}
 
 		// Log admin action
 		try {
@@ -187,6 +206,41 @@ class AnnouncementService {
 		}
 
 		return deleted;
+	}
+
+	async sendManualAlert(user, id) {
+		if (user.role !== "admin") {
+			throw new AppError("Only admins can send email notifications", 403);
+		}
+
+		const announcement = await announcementRepository.getAnnouncementById(id);
+		if (!announcement) {
+			throw new AppError("Announcement not found", 404);
+		}
+
+		// Dispatch Inngest event
+		await inngest.send({
+			name: "announcement/posted",
+			data: announcement,
+		});
+
+		// Mark as sent
+		await announcementRepository.markAlertSent(id, true);
+
+		// Log admin action
+		try {
+			await adminRepository.insertLog({
+				admin_id: user.id,
+				action: "send_announcement_alert",
+				target_type: "announcement",
+				target_id: id,
+				details: JSON.stringify({ subject: announcement.subject }),
+			});
+		} catch (e) {
+			logger.warn("Failed to write admin log for announcement manual alert", e);
+		}
+
+		return { success: true };
 	}
 }
 

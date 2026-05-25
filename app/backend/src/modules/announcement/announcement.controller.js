@@ -87,6 +87,20 @@ class AnnouncementController {
 			next(err);
 		}
 	}
+
+	async sendManualAlert(req, res, next) {
+		try {
+			const { id } = req.params;
+			const result = await announcementService.sendManualAlert(req.user, id);
+
+			return new AppResponse({
+				message: "Email notifications dispatched successfully",
+				data: result,
+			}).send(res);
+		} catch (err) {
+			next(err);
+		}
+	}
 }
 
 const announcementController = new AnnouncementController();

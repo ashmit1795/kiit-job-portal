@@ -27,6 +27,7 @@ class AnnouncementRepository {
 				circular_number,
 				announcement_type,
 				is_pinned,
+				alert_sent,
 					announcement_priority,
 					created_by,
 					created_at,
@@ -90,6 +91,7 @@ class AnnouncementRepository {
 					circular_number,
 					announcement_type,
 					is_pinned,
+					alert_sent,
 					announcement_priority,
 					created_by,
 					created_at,
@@ -126,7 +128,7 @@ class AnnouncementRepository {
 			.from("job_announcements")
 			.update(updates)
 			.eq("id", announcementId)
-			.select("id, subject, description, job_id, circular_file_path, circular_number, announcement_type, is_pinned, announcement_priority, created_by, created_at, updated_at")
+			.select("id, subject, description, job_id, circular_file_path, circular_number, announcement_type, is_pinned, announcement_priority, created_by, created_at, updated_at, alert_sent")
 			.single();
 
 		if (error) {
@@ -153,6 +155,36 @@ class AnnouncementRepository {
 		}
 
 		return data;
+	}
+
+	async markAlertSent(announcementId, status = true) {
+		const { data, error } = await supabase
+			.schema("placement")
+			.from("job_announcements")
+			.update({ alert_sent: status })
+			.eq("id", announcementId)
+			.select("id, alert_sent")
+			.single();
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data;
+	}
+
+	async getAllSubscribers() {
+		const { data, error } = await supabase.schema("placement").rpc("get_all_subscribers");
+
+		if (error) {
+			const mapped = mapSupabaseError(error);
+			if (mapped) throw mapped;
+			throw error;
+		}
+
+		return data ?? [];
 	}
 }
 

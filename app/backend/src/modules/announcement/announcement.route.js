@@ -38,4 +38,6 @@ router.delete("/:id", roleGuard("admin", "volunteer"), announcementController.de
  */
 router.get("/:id/circular", announcementController.downloadCircular);
 
+router.post("/:id/send-alert", roleGuard("admin"), announcementController.sendManualAlert);
+
 export default router;
