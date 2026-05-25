@@ -2,18 +2,89 @@ import supabase from "../../config/supabase.js";
 import mapSupabaseError from "../../utils/mapSupabaseError.js";
 
 class AnnouncementRepository {
-	async createAnnouncement(payload) {
+	formatAnnouncement(ann) {
+		if (!ann) return null;
+		return {
+			...ann,
+			eligible_branches: ann.eligible_branches?.map((b) => ({
+				id: b.branch?.id || b.id,
+				code: b.branch?.code || b.code,
+				name: b.branch?.name || b.name,
+			})) ?? [],
+			eligible_batches: ann.eligible_batches?.map((b) => ({
+				id: b.batch?.id || b.id,
+				year: b.batch?.year || b.year,
+			})) ?? [],
+		};
+	}
+
+	async createAnnouncement(payload, branchIds = [], batchIds = []) {
 		const { data, error } = await supabase.schema("placement").from("job_announcements").insert(payload).select("id").single();
 
 		if (error) {
 			const mapped = mapSupabaseError(error);
 			if (mapped) throw mapped;
+			throw error;
+		}
+
+		// Insert eligible branches if standalone and branch targets provided
+		if (!payload.job_id && branchIds && branchIds.length > 0) {
+			const branchRows = branchIds.map(branchId => ({ announcement_id: data.id, branch_id: branchId }));
+			const { error: branchError } = await supabase.schema("placement").from("announcement_eligible_branches").insert(branchRows);
+			if (branchError) {
+				const mapped = mapSupabaseError(branchError);
+				if (mapped) throw mapped;
+				throw branchError;
+			}
+		}
+
+		// Insert eligible batches if standalone and batch targets provided
+		if (!payload.job_id && batchIds && batchIds.length > 0) {
+			const batchRows = batchIds.map(batchId => ({ announcement_id: data.id, batch_id: batchId }));
+			const { error: batchError } = await supabase.schema("placement").from("announcement_eligible_batches").insert(batchRows);
+			if (batchError) {
+				const mapped = mapSupabaseError(batchError);
+				if (mapped) throw mapped;
+				throw batchError;
+			}
 		}
 
 		return data;
 	}
 
-	async listAnnouncements({ jobId, page = 1, limit = 20 } = {}) {
+	async listAnnouncements({ jobId, page = 1, limit = 20, branchId, batchId, userRole } = {}) {
+		const pageNum = parseInt(page, 10) || 1;
+		const limitNum = parseInt(limit, 10) || 20;
+		const from = (pageNum - 1) * limitNum;
+		const to = from + limitNum - 1;
+
+		if ((userRole === "student" || userRole === "volunteer") && branchId && batchId) {
+			// Call high-performance RPC for targeted announcements feed
+			const { data, error, count } = await supabase
+				.schema("placement")
+				.rpc("get_announcement_feed", {
+					p_branch_id: branchId,
+					p_batch_id: batchId,
+				}, { count: "exact" })
+				.order("is_pinned", { ascending: false })
+				.order("announcement_priority", { ascending: false })
+				.order("created_at", { ascending: false })
+				.range(from, to);
+
+			if (error) {
+				const mapped = mapSupabaseError(error);
+				if (mapped) throw mapped;
+				throw error;
+			}
+
+			const formattedData = data?.map(ann => this.formatAnnouncement(ann)) ?? [];
+			const total = count ?? 0;
+			const totalPages = Math.ceil(total / limitNum);
+
+			return { announcements: formattedData, total, page: pageNum, limit: limitNum, totalPages };
+		}
+
+		// Otherwise: Admins and Volunteers see everything
 		let query = supabase
 			.schema("placement")
 			.from("job_announcements")
@@ -28,22 +99,35 @@ class AnnouncementRepository {
 				announcement_type,
 				is_pinned,
 				alert_sent,
-					announcement_priority,
-					created_by,
-					created_at,
-					updated_at,
-					created_by_user:users(
+				announcement_priority,
+				created_by,
+				created_at,
+				updated_at,
+				created_by_user:users(
+					id,
+					full_name,
+					avatar_url,
+					role
+				),
+				job:jobs(
+					id,
+					company_name,
+					role_title,
+					circular_number
+				),
+				eligible_branches:announcement_eligible_branches(
+					branch:branches(
 						id,
-						full_name,
-						avatar_url,
-						role
-					),
-					job:jobs(
-						id,
-						company_name,
-						role_title,
-						circular_number
+						name,
+						code
 					)
+				),
+				eligible_batches:announcement_eligible_batches(
+					batch:batches(
+						id,
+						year
+					)
+				)
 				`,
 				{ count: "exact" },
 			)
@@ -57,12 +141,6 @@ class AnnouncementRepository {
 
 		query = query.eq("is_active", true);
 
-		const pageNum = parseInt(page, 10) || 1;
-		const limitNum = parseInt(limit, 10) || 20;
-
-		const from = (pageNum - 1) * limitNum;
-		const to = from + limitNum - 1;
-
 		const { data, error, count } = await query.range(from, to);
 
 		if (error) {
@@ -71,10 +149,11 @@ class AnnouncementRepository {
 			throw error;
 		}
 
+		const formattedData = data?.map(ann => this.formatAnnouncement(ann)) ?? [];
 		const total = count ?? 0;
 		const totalPages = Math.ceil(total / limitNum);
 
-		return { announcements: data, total, page: pageNum, limit: limitNum, totalPages };
+		return { announcements: formattedData, total, page: pageNum, limit: limitNum, totalPages };
 	}
 
 	async getAnnouncementById(announcementId) {
@@ -107,6 +186,19 @@ class AnnouncementRepository {
 						company_name,
 						role_title,
 						circular_number
+					),
+					eligible_branches:announcement_eligible_branches(
+						branch:branches(
+							id,
+							name,
+							code
+						)
+					),
+					eligible_batches:announcement_eligible_batches(
+						batch:batches(
+							id,
+							year
+						)
 					)
 				`,
 			)
@@ -119,10 +211,10 @@ class AnnouncementRepository {
 			throw error;
 		}
 
-		return data;
+		return this.formatAnnouncement(data);
 	}
 
-	async updateAnnouncement(announcementId, updates) {
+	async updateAnnouncement(announcementId, updates, branchIds, batchIds) {
 		const { data, error } = await supabase
 			.schema("placement")
 			.from("job_announcements")
@@ -137,7 +229,47 @@ class AnnouncementRepository {
 			throw error;
 		}
 
-		return data;
+		// Handle eligible branches update if standalone
+		if (!data.job_id && branchIds !== undefined) {
+			const { error: deleteError } = await supabase.schema("placement").from("announcement_eligible_branches").delete().eq("announcement_id", announcementId);
+			if (deleteError) {
+				const mapped = mapSupabaseError(deleteError);
+				if (mapped) throw mapped;
+				throw deleteError;
+			}
+
+			if (branchIds && branchIds.length > 0) {
+				const branchRows = branchIds.map(branchId => ({ announcement_id: announcementId, branch_id: branchId }));
+				const { error: insertError } = await supabase.schema("placement").from("announcement_eligible_branches").insert(branchRows);
+				if (insertError) {
+					const mapped = mapSupabaseError(insertError);
+					if (mapped) throw mapped;
+					throw insertError;
+				}
+			}
+		}
+
+		// Handle eligible batches update if standalone
+		if (!data.job_id && batchIds !== undefined) {
+			const { error: deleteError } = await supabase.schema("placement").from("announcement_eligible_batches").delete().eq("announcement_id", announcementId);
+			if (deleteError) {
+				const mapped = mapSupabaseError(deleteError);
+				if (mapped) throw mapped;
+				throw deleteError;
+			}
+
+			if (batchIds && batchIds.length > 0) {
+				const batchRows = batchIds.map(batchId => ({ announcement_id: announcementId, batch_id: batchId }));
+				const { error: insertError } = await supabase.schema("placement").from("announcement_eligible_batches").insert(batchRows);
+				if (insertError) {
+					const mapped = mapSupabaseError(insertError);
+					if (mapped) throw mapped;
+					throw insertError;
+				}
+			}
+		}
+
+		return this.getAnnouncementById(announcementId);
 	}
 
 	async softDeleteAnnouncement(announcementId) {

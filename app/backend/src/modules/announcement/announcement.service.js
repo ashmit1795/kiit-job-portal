@@ -41,6 +41,9 @@ class AnnouncementService {
 		const sendEmail = payload.send_email === "true" || payload.send_email === true;
 		const shouldSendEmail = user.role === "admin" && sendEmail;
 
+		const branchIds = payload.branches ?? [];
+		const batchIds = payload.batches ?? [];
+
 		const announcement = await announcementRepository.createAnnouncement({
 			subject: payload.subject,
 			description: payload.description,
@@ -52,7 +55,7 @@ class AnnouncementService {
 			announcement_priority: payload.announcement_priority ?? 0,
 			created_by: user.id,
 			alert_sent: shouldSendEmail,
-		});
+		}, branchIds, batchIds);
 
 		if (shouldSendEmail) {
 			try {
@@ -84,8 +87,19 @@ class AnnouncementService {
 		return { id: announcement.id };
 	}
 
-	async getAnnouncements({ job_id: jobId, page, limit }) {
-		return announcementRepository.listAnnouncements({ jobId, page, limit });
+	async getAnnouncements(user, query) {
+		const jobId = query.job_id ?? null;
+		const page = query.page ?? 1;
+		const limit = query.limit ?? 20;
+
+		return announcementRepository.listAnnouncements({
+			jobId,
+			page,
+			limit,
+			branchId: user.branch?.id,
+			batchId: user.batch?.id,
+			userRole: user.role,
+		});
 	}
 
 	async getAnnouncementById(announcementId) {
@@ -164,7 +178,10 @@ class AnnouncementService {
 			updates.circular_file_path = circularFilePath;
 		}
 
-		const updated = await announcementRepository.updateAnnouncement(announcementId, updates);
+		const branchIds = payload.branches;
+		const batchIds = payload.batches;
+
+		const updated = await announcementRepository.updateAnnouncement(announcementId, updates, branchIds, batchIds);
 
 		// Log admin action
 		try {

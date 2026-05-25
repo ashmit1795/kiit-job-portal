@@ -35,8 +35,16 @@ export const sendAnnouncementAlertEmails = inngest.createFunction(
 					const batchIds = job.eligible_batches?.map((b) => b.id) || [];
 					return subscriptionRepository.getEligibleSubscribers(branchIds, batchIds);
 				}
+			} else {
+				// Standalone: Check if targeting specific branches/batches
+				const branchIds = announcement.eligible_branches?.map((b) => b.id) || [];
+				const batchIds = announcement.eligible_batches?.map((b) => b.id) || [];
+
+				if (branchIds.length > 0 || batchIds.length > 0) {
+					return subscriptionRepository.getEligibleSubscribers(branchIds, batchIds);
+				}
 			}
-			// Global or fallback: fetch all active subscribers
+			// Truly Global or fallback: fetch all active subscribers
 			return subscriptionRepository.getAllSubscribers();
 		});
 
