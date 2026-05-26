@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { X, Sparkles, Megaphone, Info } from "lucide-react";
 
 const MESSAGES = [
-  "अवSaar is currently in beta — help us test by exploring all dashboard features!",
-  "This is a community-driven project — we would love to hear your feedback & suggestions!",
-  "A central hub for KIIT placements, internships, and career updates."
+  <span>अवSaar is currently in beta — help us test by exploring all dashboard features!</span>,
+  <span>This is a community-driven project — <a href="https://forms.gle/NfcXBM7uYaxNU33u9" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 underline font-semibold transition-colors pointer-events-auto">share your feedback & suggestions!</a></span>,
+  <span>A central hub for KIIT placements, internships, and career updates.</span>
 ];
 
 const ICONS = [Sparkles, Megaphone, Info];

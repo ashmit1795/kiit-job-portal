@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Briefcase, User, FilePlus, Settings, LogOut, Menu, X, Megaphone } from "lucide-react";
+import { Briefcase, User, FilePlus, Settings, LogOut, Menu, X, Megaphone, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -154,6 +154,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       <Settings className="mr-2 h-4 w-4" /> Admin Panel
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem
+                    onClick={() => window.open("https://forms.gle/NfcXBM7uYaxNU33u9", "_blank")}
+                    className="cursor-pointer text-emerald-400 focus:text-emerald-400 focus:bg-emerald-950/20"
+                  >
+                    <Sparkles className="mr-2 h-4 w-4 text-emerald-400" /> Share Feedback
+                  </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>

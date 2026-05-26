@@ -851,13 +851,25 @@ export default function LandingPage() {
                 {[
                   { href: "/about", label: "Origin Story" },
                   { href: "/contact", label: "Contact Us" },
+                  { href: "https://forms.gle/NfcXBM7uYaxNU33u9", label: "Give Feedback", isExternal: true },
                   { href: "/faqs", label: "Help Center" },
                   { href: "/blog", label: "Preparation Guides" },
                 ].map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-block">
-                      {link.label}
-                    </Link>
+                    {link.isExternal ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-block"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className="text-xs sm:text-sm text-muted-foreground hover:text-emerald-400 transition-premium hover:translate-x-1 inline-block">
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
