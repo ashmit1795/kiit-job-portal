@@ -99,7 +99,7 @@ class UserService {
 		}
 
 		/* -----------------------------
-			Update cached metadata
+			Update cached metadata & synchronize admin roles dynamically
 		------------------------------ */
 
 		const updates = {};
@@ -110,6 +110,18 @@ class UserService {
 
 		if (avatarUrl && user?.avatar_url !== avatarUrl) {
 			updates.avatar_url = avatarUrl;
+		}
+
+		// Dynamically synchronize admin role if Vercel env variable changes
+		if (env.ADMIN_EMAILS.includes(email)) {
+			if (user?.role !== "admin") {
+				updates.role = "admin";
+				updates.profile_completed = true; // Admins automatically bypass onboarding gates
+			}
+		} else if (user?.role === "admin") {
+			// If they were an admin in the database but are no longer in the Vercel config, demote to student
+			updates.role = "student";
+			updates.profile_completed = false; // Require profile completion on demotion
 		}
 
 		if (user && Object.keys(updates).length > 0) {
