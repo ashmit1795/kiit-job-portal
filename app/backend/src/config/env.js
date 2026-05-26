@@ -20,7 +20,7 @@ class Env {
 		this.FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL;
 		this.LOGO_URL = process.env.LOGO_URL;
 
-		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim()) : [];
+		this.ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map((e) => e.trim().toLowerCase()) : [];
 
 		this.validate();
 	}

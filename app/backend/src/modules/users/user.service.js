@@ -33,7 +33,7 @@ class UserService {
 	 * @throws {AppError} - Throws an AppError if the email format is invalid or if any database error occurs during user creation.
 	 */
 	async syncUser(supabaseUser) {
-		const email = supabaseUser.email;
+		const email = supabaseUser.email.toLowerCase();
 
 		/* -----------------------------
 		Validate email domain
