@@ -58,6 +58,77 @@ class AnnouncementRepository {
 		const from = (pageNum - 1) * limitNum;
 		const to = from + limitNum - 1;
 
+		// 1. If jobId is provided, bypass branch/batch filtering entirely and show all updates for this specific job posting page
+		if (jobId) {
+			let query = supabase
+				.schema("placement")
+				.from("job_announcements")
+				.select(
+					`
+					id,
+					subject,
+					description,
+					job_id,
+					circular_file_path,
+					circular_number,
+					announcement_type,
+					is_pinned,
+					alert_sent,
+					announcement_priority,
+					created_by,
+					created_at,
+					updated_at,
+					created_by_user:users(
+						id,
+						full_name,
+						avatar_url,
+						role
+					),
+					job:jobs(
+						id,
+						company_name,
+						role_title,
+						circular_number
+					),
+					eligible_branches:announcement_eligible_branches(
+						branch:branches(
+							id,
+							name,
+							code
+						)
+					),
+					eligible_batches:announcement_eligible_batches(
+						batch:batches(
+							id,
+							year
+						)
+					)
+					`,
+					{ count: "exact" },
+				)
+				.eq("job_id", jobId)
+				.eq("is_active", true)
+				.order("is_pinned", { ascending: false })
+				.order("announcement_priority", { ascending: false })
+				.order("created_at", { ascending: false })
+				.range(from, to);
+
+			const { data, error, count } = await query;
+
+			if (error) {
+				const mapped = mapSupabaseError(error);
+				if (mapped) throw mapped;
+				throw error;
+			}
+
+			const formattedData = data?.map(ann => this.formatAnnouncement(ann)) ?? [];
+			const total = count ?? 0;
+			const totalPages = Math.ceil(total / limitNum);
+
+			return { announcements: formattedData, total, page: pageNum, limit: limitNum, totalPages };
+		}
+
+		// 2. Main Announcement Feed for students & volunteers: apply branch/batch targeted eligibility filtering
 		if ((userRole === "student" || userRole === "volunteer") && branchId && batchId) {
 			// Call high-performance RPC for targeted announcements feed
 			const { data, error, count } = await supabase
@@ -84,7 +155,7 @@ class AnnouncementRepository {
 			return { announcements: formattedData, total, page: pageNum, limit: limitNum, totalPages };
 		}
 
-		// Otherwise: Admins and Volunteers see everything
+		// 3. Otherwise: Admins and Volunteers see everything in admin/moderation tabs
 		let query = supabase
 			.schema("placement")
 			.from("job_announcements")
@@ -134,10 +205,6 @@ class AnnouncementRepository {
 			.order("is_pinned", { ascending: false })
 			.order("announcement_priority", { ascending: false })
 			.order("created_at", { ascending: false });
-
-		if (jobId) {
-			query = query.eq("job_id", jobId);
-		}
 
 		query = query.eq("is_active", true);
 
