@@ -1,193 +1,230 @@
-# Avsaar — Project Context & Design Decisions
+# Avsaar — Technical Context & Architectural Design Decisions
 
-> This document captures the **why** behind implementation choices. Read the [README](./readme.md) for setup & usage.
-
----
-
-## Product Vision & Positioning
-
-### What Avsaar Is
-
-Avsaar is an **independent, student-built placement information platform** for the KIIT community. It is **not** an official KIIT University product, not operated by the T&P department, and not affiliated with any institutional body.
-
-**Core purpose:** Centralize placement-related information — circulars, internship notices, hackathons, deadlines — into one clean, searchable, eligibility-aware platform. Students discover opportunities here, then apply through the company's own process.
-
-**What it is NOT:** A job application platform, an official T&P portal, or a university-sanctioned system.
-
-### The Problem We're Solving
-
-Placement information at KIIT is fragmented. Circulars arrive through multiple WhatsApp groups, forwarded PDFs, Telegram channels, and emails — with no central record, no search, no eligibility filtering, and no deadline tracking. Students miss opportunities because of information chaos, not lack of qualification.
-
-Avsaar solves this by providing a clean, permanent home for every placement opportunity — organized, filtered to each student's eligibility profile, and always accessible.
-
-### Community Model
-
-Avsaar runs on a **community contribution model**:
-- **Volunteers** (trusted students) post circulars and keep information current
-- **Admins** review volunteer content before it goes live
-- **Students** access a curated, eligibility-filtered feed
-
-Information is best-effort and community-maintained. The platform explicitly encourages users to cross-reference critical details with official KIIT T&P communications.
-
-### Long-term Vision
-
-The long-term vision is a smoother, more organized placement experience for everyone in the KIIT ecosystem. As an independent initiative, we hope the work here contributes positively — and if it resonates with stakeholders at KIIT's T&P department in the future, we'd genuinely welcome a conversation about how we can work together toward an even better placement ecosystem. Until then, we're building independently and openly.
+> This document details the **architectural design patterns, engineering context, database choices, and system design decisions** behind the Avsaar placement aggregator platform. For developer installation instructions, see the [README](./readme.md).
 
 ---
 
-## System Purpose
+## 🌟 Product Vision & Technical Positioning
 
-Avsaar is a **placement opportunity aggregator** — NOT a job application platform.
+Avsaar was conceived to solve the problem of highly fragmented placement communications at KIIT University. Rather than attempting to replace official University systems, it functions as a highly targeted **placement information index and discovery engine**.
 
-Students discover opportunities here, then apply through the company's own process. The portal provides:
-- Opportunity discovery with eligibility filtering
-- Circular PDF archive with signed, expiring download URLs
-- Deadline visibility and tracking
-- Centralized record replacing scattered WhatsApp/Telegram groups
-- Email notification system for new matching opportunities
+### What It Is & What It Is Not
+*   **Discoverability vs. Application:** Avsaar does **not** host active job application forms or store official submission records. It acts as an aggregator. The student discovers opportunities matching their profile, downloads verified PDF circulars, and uses the provided redirect links to submit applications on official portals (e.g. Superset, Cocubes, or direct company forms).
+*   **Independent Ecosystem:** Built as a volunteer-driven student aggregator, Avsaar separates operational security boundaries from university servers. Security is enforced by the application layer, using Google OAuth to restrict access exclusively to users with `@kiit.ac.in` email addresses.
 
 ---
 
-## Key Design Decisions
+## 🏗️ Core Architectural Design Decisions
 
-### 1. Custom `placement` Schema
-All tables live under `placement.*` instead of the default `public` schema. This keeps application data separate from Supabase's internal tables and provides a clean namespace.
+### 1. Isolated `placement` Schema (PostgreSQL Namespace Separation)
+To prevent collision with Supabase's default tables, all application-specific tables, types, and procedures exist inside a dedicated `placement` schema:
+*   **Benefits:** Clear database boundaries, easy migration exports, and isolated query logs.
+*   **Implementation:** All migration files use the `placement.table_name` prefix. Row Level Security (RLS) is bypassed at the database level because queries are managed through the backend using a secure `service_role` connection.
 
-### 2. Circular Number + Role Title Uniqueness
-Jobs are uniquely identified by `(circular_number, role_title)` because a single circular often contains multiple roles (e.g., SDE, Data Analyst). Each role becomes a separate job record.
+### 2. Composite Uniqueness: `(circular_number, role_title)`
+A single university placement circular often lists multiple positions with varying compensation packages, eligibility criteria, and joining dates (e.g. a company hiring both Software Engineers and Data Analysts in one document).
+*   **Decision:** Jobs are uniquely identified by a composite key of `(circular_number, role_title)`.
+*   **Rationale:** Allows a single circular to map to multiple roles in the database. When the backend receives a PDF, it processes it as distinct job listings, ensuring students see precise role eligibility requirements (e.g. B.Tech CSE for the SDE role, and B.Tech ALL for the Analyst role).
 
-### 3. Backend User Sync (not Supabase triggers)
-User records are created/updated in the auth middleware via `userService.syncUser()` rather than using Supabase database triggers. This gives the backend full control over:
-- Email domain validation (`@kiit.ac.in`)
-- Role assignment (checking `ADMIN_EMAILS`)
-- Roll number extraction from email
+### 3. Decoupled Express Auth Sync (Avoiding Database Triggers)
+When a student authenticates via Google OAuth, their record is synced to the `placement.users` table through backend logic in the `userService.syncUser()` middleware, rather than using automated Supabase database triggers.
+*   **Rationale:**
+    *   **Control over Domain Verification:** Allows the Express server to intercept and reject non-`@kiit.ac.in` logins with clean `403 Forbidden` JSON responses before database writes occur.
+    *   **Automated Administrative Role Binding:** On new registrations, the backend checks the user's email against the environment's `ADMIN_EMAILS` list, automatically granting admin privileges where appropriate.
+    *   **Roll Number Extraction:** The backend programmatically parses the numerical prefix from the student's KIIT email (e.g. `2205001@kiit.ac.in` -> `2205001`) and saves it as their official roll number automatically during sync.
 
-### 4. Service Role Key on Backend
-The backend uses the Supabase **service role key** (not anon key) because it needs to:
-- Verify JWT tokens via `supabase.auth.getUser(token)`
-- Access storage buckets for circular/resume uploads
-- Run RPC functions and query all tables without RLS restrictions
+### 4. Express Security Boundary & RLS Bypassing
+Row Level Security (RLS) is disabled for the `placement` database schema. The Express backend acts as the sole access controller and security boundary:
+*   **Backend Connection:** Enforced using Supabase's high-privilege `service_role` key.
+*   **Security Stack:** Every incoming HTTP request must pass through the `authenticate` middleware, which verifies the JWT using `supabase.auth.getUser()`.
+*   **Role-Based Access Control (RBAC):** Express route layers use the `roleGuard` middleware (`roleGuard("admin", "volunteer")`) to restrict write and update operations, keeping database tables clean and performant.
 
-### 5. No RLS on `placement` Tables
-All database access goes through the Express backend, which enforces auth + role checks via middleware. RLS is not applied on the `placement` schema — the backend acts as the security boundary.
+### 5. Atomic Operations via Stored Procedures (RPCs)
+To prevent partial data writes during network issues, complex multi-table mutations are wrapped in database-level transactional stored procedures:
 
-### 6. RPC Functions for Complex Operations
-- `create_job_v3` — wraps job insertion + branch/batch/location linking in a single DB transaction
-- `get_job_feed` — performs the eligibility join (branch ∩ batch ∩ CGPA) at the database level, and handles the "ALL" branch case by expanding to all branches under the same program
-- `get_eligible_subscribers` — returns opted-in users eligible for a specific job posting (used by Inngest job alert function)
-- `admin_dashboard_stats` — aggregates user/job counts in one query (8 metrics)
+#### `placement.create_job_v3(...)`
+Executes atomic inserts across four tables:
+```sql
+CREATE OR REPLACE FUNCTION placement.create_job_v3(
+  p_circular_number text, p_company_name text, ... p_branch_ids uuid[], p_batch_ids uuid[], p_locations text[]
+) RETURNS uuid AS $$
+DECLARE v_job_id uuid;
+BEGIN
+  INSERT INTO placement.jobs (...) VALUES (...) RETURNING id INTO v_job_id;
+  
+  -- Insert Work Locations
+  INSERT INTO placement.job_locations (job_id, location)
+  SELECT v_job_id, unnest(p_locations);
+  
+  -- Insert Target Branches
+  INSERT INTO placement.job_eligible_branches (job_id, branch_id)
+  SELECT v_job_id, unnest(p_branch_ids);
+  
+  -- Insert Target Batches
+  INSERT INTO placement.job_eligible_batches (job_id, batch_id)
+  SELECT v_job_id, unnest(p_batch_ids);
+  
+  RETURN v_job_id;
+END;
+$$ LANGUAGE plpgsql;
+```
+*   **Benefit:** Guarantees that job metadata, locations, targeted branches, and eligible batches are written successfully as a single transaction.
 
-### 7. "ALL" Branch Support
-For jobs that apply to every branch within a program, an "ALL" sentinel branch is used when posting. Both the `get_job_feed` RPC and the `get_eligible_subscribers` RPC handle this by expanding "ALL" to include all specific branches under the same program — so students only see what's actually relevant to them, and job posters don't need to manually select every branch.
-
-### 8. Inngest + Brevo Email Architecture
-Background email workflows are handled by [Inngest](https://inngest.com) for reliable background job execution:
-- **Welcome email** — fires on `avsaar/user.created` event
-- **Profile reminder** — fires on `avsaar/user.created` with a 48h delay (dev: immediate) for users who haven't completed their profile
-- **Job alert emails** — fires on `avsaar/job.approved` event; queries eligible opted-in subscribers via `get_eligible_subscribers` RPC, then sends batched emails via Brevo SMTP
-
-The job alert function includes a 2-minute delay in production to allow for any last-minute job edits before notifications go out.
-
-### 9. Job Alert Subscription Model
-- On onboarding, users are opted-in by default (checkbox, pre-ticked)
-- Subscription is stored in `job_alert_subscriptions` with `email_alerts: true/false`
-- Users can change their preference at any time from the Notifications tab in their profile
-
-### 10. Frontend Auth Token Management
-The token lifecycle is centralized in `AuthProvider`:
-- `onAuthStateChange` is the **single source of truth** — no duplicate `getSession()` calls
-- Token is passed to `api.ts` via `setAccessToken()` — the Axios interceptor reads from a module-level variable (zero-latency, no async)
-- The 401 interceptor auto-redirects to `/login` on token expiry
-
-### 11. Profile Completion Guard
-The `profileGuard` middleware blocks students/volunteers from accessing core features (jobs, feed) until they complete their profile (branch, batch, CGPA, percentages). Admins bypass this requirement.
-
-### 12. Admin Dashboard Architecture
-The admin dashboard is a **6-tab SPA** at `/admin` with tab state synced to the URL (`?tab=<name>`), making each tab directly shareable and deep-linkable:
-- Each tab is a **self-contained lazy-loaded component** — data only fetches when the tab is first visited
-- All destructive actions go through a **confirmation dialog** before executing
-- Every mutation automatically writes to `placement.admin_logs` via the backend
-- `date-utils.ts` provides zero-dependency date formatting to avoid adding `date-fns` to the bundle
-
----
-
-## Roles & Permissions
-
-| Capability | Student | Volunteer | Admin |
-|-----------|:-------:|:---------:|:-----:|
-| View approved jobs | ✅ | ✅ | ✅ |
-| View personalized feed | ✅ | ✅ | ✅ |
-| Download circulars | ✅ | ✅ | ✅ |
-| Upload resume | ✅ | ✅ | ✅ |
-| Manage notification preferences | ✅ | ✅ | ✅ |
-| Create job postings | ❌ | ✅ (pending review) | ✅ (auto-approved) |
-| Approve/reject jobs | ❌ | ❌ | ✅ |
-| View all job statuses | ❌ | ❌ | ✅ |
-| Manage users (search, filter, role change, delete) | ❌ | ❌ | ✅ |
-| Promote student → volunteer / admin | ❌ | ❌ | ✅ |
-| Demote volunteer → student | ❌ | ❌ | ✅ |
-| View volunteer job stats | ❌ | ❌ | ✅ |
-| Create / delete programs, branches, batches | ❌ | ❌ | ✅ |
-| View admin audit log | ❌ | ❌ | ✅ |
-| Skip profile completion | ❌ | ❌ | ✅ |
+#### `placement.update_job(...)`
+Handles updates by cleaning up old relation trees and inserting updated associations:
+*   **Logic:** Updates core job metadata in `placement.jobs`, deletes old records in `job_eligible_branches`, `job_eligible_batches`, and `job_locations` matching the job ID, and inserts the updated relations. This approach keeps queries fast and simple.
 
 ---
 
-## Development Guidelines
+## 📢 Targeted Announcements Architecture
 
-1. **Keep business logic in services** — controllers only parse requests and send responses
-2. **Keep repositories database-only** — no business rules, just queries
-3. **Never put logic in controllers** — they should be thin wrappers
-4. **Normalize API responses** — always use `AppResponse` for success, `AppError` for errors
-5. **Validate early** — use Zod schemas via `validate` middleware before reaching controllers
-6. **Use RPC for complex queries** — multi-table inserts and filtered feeds belong in Postgres functions
-7. **Inngest for all background work** — never do async side-effects inline in controllers
-
----
-
-## Storage Structure
+To prevent students from seeing unrelated announcements (e.g. B.Tech Computer Science students seeing updates meant for Mechanical Engineering students), the Announcements system was redesigned with targeted filtering:
 
 ```
-Supabase Storage
-├── job-circulars/
-│   └── circulars/{circular_number}.pdf
-└── resumes/
-    └── resumes/{user_id}.pdf
+                            ┌────────────────────────┐
+                            │    job_announcements   │
+                            └───────────┬────────────┘
+                                        │
+                                        ▼ Is Job-Linked?
+                                       / \
+                                     YES  NO
+                                     /      \
+           ┌────────────────────────┐        ┌────────────────────────┐
+           │   Inherits Job Targets │        │ Evaluates Direct Joint │
+           │  (Branch/Batch Cutoff) │        │  Targeting Databases   │
+           └────────────────────────┘        └────────────────────────┘
 ```
 
-Signed URLs (60s expiry) are generated on-demand for downloads — files are never publicly accessible.
+### 1. Junction Tables
+Standalone announcements use dedicated junction tables to filter visibility:
+*   `placement.announcement_eligible_branches` — `(announcement_id, branch_id)` Composite Primary Key.
+*   `placement.announcement_eligible_batches` — `(announcement_id, batch_id)` Composite Primary Key.
+
+### 2. High-Performance SQL Engine: `get_announcement_feed`
+The `placement.get_announcement_feed(p_branch_id, p_batch_id)` RPC function handles announcement filtering at the database layer:
+*   **Case 1: Job-Linked Updates:** If an announcement is linked to a job ID, it inherits and evaluates the eligibility criteria defined for that job (`job_eligible_branches` and `job_eligible_batches`).
+*   **Case 2: Standalone Updates:** If there is no linked job ID, the function checks the announcement targeting tables. If both targeting tables are empty, the announcement is treated as a **global broadcast** and is visible to all students.
+*   **Case 3: Targeted Standalone:** If targeting configurations exist, the function ensures the announcement is only returned if the student's branch and batch IDs match the targeted lists.
+*   **Wildcard Program Matching:** Recognizes the `ALL` wildcard branch ID, matching all branches belonging to the same academic program to simplify targeting for organizers.
 
 ---
 
-## Environment-Specific Behavior
+## ✉️ Transactional Notifications & On-Demand Dispatch
 
-### Dev Auth Mode
-When `DEV_AUTH_ENABLED=true` and `NODE_ENV !== production`, the auth middleware accepts an `x-dev-email` header instead of a JWT token. This allows API testing without going through the OAuth flow.
+Avsaar balances real-time student updates with system safety using Inngest background workers and manual confirmation overrides:
 
-### Admin Detection
-Admins are identified by the `ADMIN_EMAILS` environment variable (comma-separated). Non-KIIT emails in this list are also allowed to authenticate (exception to the domain restriction).
+```
+                  ┌──────────────────────────────────────────┐
+                  │   Administrative Core Dispatch Request   │
+                  └────────────────────┬─────────────────────┘
+                                       │
+                                       ▼
+                  ┌──────────────────────────────────────────┐
+                  │    Trigger Double-Confirm Safety Modal   │
+                  └────────────────────┬─────────────────────┘
+                                       │
+                                       ▼ Confirmed
+                  ┌──────────────────────────────────────────┐
+                  │  Execute `POST /:id/send-alert` Endpoint  │
+                  └────────────────────┬─────────────────────┘
+                                       │
+                                       ▼
+                  ┌──────────────────────────────────────────┐
+                  │ Emit Inngest Event Queue (`job/posted`)   │
+                  └────────────────────┬─────────────────────┘
+                                       │
+                                       ▼ Runs Asynchronously
+                  ┌──────────────────────────────────────────┐
+                  │      `sendAnnouncementAlertEmails`       │
+                  └──────────────────────────────────────────┘
+```
 
-### Email Delay
-Job alert emails have a 2-minute delay in production (`NODE_ENV === 'production'`) and fire immediately in development for easy testing.
+### 1. Inngest Background Workers
+*   **Welcome Flow (`user/signed_up`):** Triggers on registration to send a welcome email and set up initial profile details.
+*   **Profile Setup Reminder:** Schedules an automated reminder 48 hours after registration for users who haven't completed their profiles.
+*   **Opportunity and Announcement Alerts:** Queries targeted student email addresses and schedules batched dispatches.
+
+### 2. Manual On-Demand Dispatch
+To allow admins to choose when notifications are sent, the system provides **Manual Dispatch Triggers**:
+*   **Verification Indicators:** Renders an *"Email Alerts Dispatched"* badge on details pages once notifications are sent, or a *"Send Email Alerts"* button if the alert queue has not been run.
+*   **Accidental Mail Protection:** Both manual actions are guarded by a premium UI modal (`SendAlertConfirmationModal`), preventing accidental notification blasts to thousands of students.
+
+### 3. Stored Procedure Cardinality Patch
+We patched `placement.get_eligible_subscribers` to handle selective targeting combinations:
+```sql
+AND (cardinality(p_branch_ids) = 0 OR u.branch_id = ANY(p_branch_ids))
+AND (cardinality(p_batch_ids) = 0 OR u.batch_id = ANY(p_batch_ids))
+```
+*   **Why it Matters:** Allows announcements or jobs to target all branches of a specific batch (or all batches of a specific branch) without failing when one of the target arrays is empty.
 
 ---
 
-## Admin Audit Logging
+## ⚡ Platform Performance & Optimization Policies
 
-Every admin mutation writes a record to `placement.admin_logs`. This is handled by `AdminRepository.insertLog()` called from the service layer. Logged actions include:
+### 1. Lazy-Tab TanStack Query Optimization
+On the student opportunities feed, the platform separated the tab query logic to improve page response times:
+*   **Previous Behavior:** Navigating to `/jobs` triggered simultaneous API fetches for all listings, eligible matches, and active deadlines. This caused database connection spikes and slowed page loads.
+*   **Optimized Behavior:** Queries are bound to the `activeTab` value:
+    *   `allJobs` queries only run when the active tab is `all`.
+    *   `feedJobs` queries only run when the active tab is `feed`.
+*   **Refresh Scoping:** Clicking the page's refresh button only refetches the active tab's query context, cutting database and network load in half.
 
-| Action | Triggered by |
-|--------|----|
-| `approve_job` / `reject_job` | `jobService.approveJob()` / `rejectJob()` |
-| `promote_user` / `demote_user` | `adminService.updateUserRole()` |
-| `change_user_role` | `adminService.updateUserRole()` |
-| `delete_user` | `adminService.deleteUser()` |
-| `create_program` / `delete_program` | `academicService.createProgram()` / `deleteProgram()` |
-| `create_branch` / `delete_branch` | `academicService.createBranch()` / `deleteBranch()` |
-| `create_batch` / `delete_batch` | `academicService.createBatch()` / `deleteBatch()` |
+### 2. Double-Pass Chronological Sorting
+To ensure students see relevant posts first, the `job.service.js` uses a double-pass sorting strategy:
+*   **Active Opportunities:** Items with future deadlines are grouped and sorted by creation date (`created_at DESC`).
+*   **Closed Opportunities:** Items with past deadlines are sorted and displayed below the active listings.
+*   **Benefit:** Prioritizes active opportunities while keeping closed postings accessible as historical references.
+
+### 3. Pagination Range Parsing Fix
+Fixed a type coercion bug where backend page parameters from string queries were concatenated instead of added mathematically, causing incorrect row queries:
+*   **Fix:** Enforced strict base-10 integer parsing (`parseInt(page, 10)`) at the controller level.
+*   **Result:** Ensures the database processes range offsets correctly (e.g. `.range(10, 19)` instead of fetching thousands of rows), keeping response times fast as the database grows.
+
+### 4. Chronological Backdating
+The database RPC supports an optional `p_created_at` timestamp. This allows administrators to backdate postings, ensuring historical circular archives remain chronologically accurate.
 
 ---
 
-## Disclaimer
+## 🎨 Premium User Interface Design Decisions
 
-Avsaar is an independent student initiative. This codebase and platform are **not affiliated with, endorsed by, or operated by KIIT University**. All institutional names and trademarks belong to their respective owners. Information on the platform is community-contributed and best-effort.
+### 1. Dark Mode Aesthetic
+Avsaar features a premium, responsive dark interface inspired by glassmorphic design principles:
+*   **harmonized Palette:** Uses deep charcoal backgrounds (`from-emerald-950/20 via-zinc-950 to-emerald-950/20`) combined with emerald green accents to create a cohesive, modern visual experience.
+*   **Typography:** Google Fonts' *Outfit* serves as the primary font family, providing clean readability for dense data tables and markdown text.
+
+### 2. Client Hydration Guards in Beta Banner
+The cycler beta banner uses local storage to save its dismissal state across page reloads. To prevent React server-side rendering (SSR) mismatch errors during initialization, the component uses hydration state checks:
+```tsx
+const [isMounted, setIsMounted] = useState(false);
+useEffect(() => {
+  setIsMounted(true);
+}, []);
+
+if (!isMounted) return null; // Prevents SSR/Client mismatch
+```
+*   **Benefit:** Guarantees clean, error-free browser rendering while preserving the banner's visual state.
+
+---
+
+## 👥 Capabilities Matrix
+
+| Action / Permission | Student | Volunteer | Admin | Backend Policy |
+| :--- | :---: | :---: | :---: | :--- |
+| **View Active Opportunities Feed** | ✅ | ✅ | ✅ | Session validation verified. |
+| **Download Official PDF Circulars**| ✅ | ✅ | ✅ | Expiring download URL generation policy. |
+| **Upload Resume PDF** | ✅ | ✅ | ✅ | Restricted to `resumes/{user_id}.pdf`. |
+| **Post Opportunities & Announcements**| ❌ | ✅ | ✅ | Requires `roleGuard("admin", "volunteer")`. |
+| **Approve / Reject Opportunities** | ❌ | ❌ | ✅ | Requires `roleGuard("admin")`. |
+| **Promote / Demote User Roles** | ❌ | ❌ | ✅ | Requires `roleGuard("admin")`. |
+| **Configure Academic Structures** | ❌ | ❌ | ✅ | Requires `roleGuard("admin")`. |
+| **Audit Admin Logs** | ❌ | ❌ | ✅ | Requires `roleGuard("admin")`. |
+
+---
+
+## 🛠️ Development & Rationale Rules
+
+1.  **Isolated Business Logic:** Keep business logic inside service classes. Controllers should remain thin wrappers that parse queries and construct responses.
+2.  **Isolated Repository Queries:** Repositories should handle database interactions and RPC queries exclusively. Keep business rules and permission checks out of this layer.
+3.  **Strict Schema Validation:** Use Zod schemas at the routing layer to validate all incoming data payloads before hitting controller logic.
+4.  **Decoupled Async Work:** Offload heavy or time-consuming tasks (like email dispatches) to background workers using Inngest event triggers.
+5.  **Audit Trail Compliance:** Every administrative mutation must log an entry in `placement.admin_logs` to maintain clear system accountability.
